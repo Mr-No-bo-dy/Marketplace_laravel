@@ -9,11 +9,7 @@ class GeneralController extends Controller
 {
     public function index()
     {
-        // $allSellers = Seller::all();
-        $sellerModel = new Seller();
-        $allSellers = $sellerModel->getSellers();
-
-        return view('sellers.sellers', ['sellers' => $allSellers]);
+        return view('index');
     }
 
     public function create()

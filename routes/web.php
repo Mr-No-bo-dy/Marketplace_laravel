@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\MarketplaceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,19 +19,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/', [GeneralController::class, 'index'])->name('index');
+
+// Seller
+Route::get('/seller/registration', [SellerController::class, 'create'])->name('seller.create');
+Route::post('/seller/store', [SellerController::class, 'store'])->name('seller.store');
+
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
         // Marketplace
-        Route::get('/marketplace', [MarketplaceController::class, 'view'])->name('admin.marketplace');
-        Route::get('/marketplace/create', [MarketplaceController::class, 'store'])->name('admin.marketplace.store');
-        Route::get('/marketplace/update/{id_marketplace}', [MarketplaceController::class, 'update'])->name('admin.marketplace.update');
-        Route::post('/marketplace/create', [MarketplaceController::class, 'save'])->name('admin.marketplace.create');
+        Route::get('/marketplace', [MarketplaceController::class, 'show'])->name('admin.marketplace');
+        Route::get('/marketplace/store', [MarketplaceController::class, 'create'])->name('admin.marketplace.create');
+        Route::get('/marketplace/update/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.update');
+        Route::post('/marketplace/store', [MarketplaceController::class, 'store'])->name('admin.marketplace.store');
         Route::post('/marketplace/delete', [MarketplaceController::class, 'delete'])->name('admin.marketplace.delete');
 
         Route::get('/users', [UserController::class, 'users'])->name('admin.users');
-        Route::get('/sellers', [GeneralController::class, 'index'])->name('sellers.sellers');
 
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

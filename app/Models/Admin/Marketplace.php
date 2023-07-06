@@ -4,10 +4,10 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use App\Models\Config\Base;
+// use App\Models\Config\Base;
 
-// class Marketplace extends Model
-class Marketplace extends Base
+class Marketplace extends Model
+// class Marketplace extends Base
 {
         /**
      * The table associated with the model.
@@ -33,7 +33,7 @@ class Marketplace extends Base
      * 
      * @param array $data
      */
-    public function saveMarketplace(array $data)
+    public function storeMarketplace(array $data)
     {
         DB::table($this->table)
             ->insert($data);

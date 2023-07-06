@@ -12,22 +12,19 @@ class MarketplaceController extends Controller
     /**
      * Display all Marketplaces
      */
-    public function view()
+    public function show()
     {
         $marketplaceModel = new Marketplace();
 
         $marketplaces = $marketplaceModel->all();
-        $content = [
-            'marketplaces' => $marketplaces,
-        ];
 
-        return view('admin.marketplaces.index', $content);
+        return view('admin.marketplaces.index', ['marketplaces' => $marketplaces]);
     }
     
     /**
      * Display Marketplace creation form
      */
-    public function store()
+    public function create()
     {
         return view('admin.marketplaces.create');
     }
@@ -35,22 +32,21 @@ class MarketplaceController extends Controller
     /**
      * Display Marketplace update form
      */
-    public function update(Request $request)
+    public function edit($idMarketplace)
     {
         $marketplaceModel = new Marketplace();
 
-        $idMarketplace = $request->route('id_marketplace');
         $marketplace = $marketplaceModel->find($idMarketplace);
 
         return view('admin.marketplaces.update', ['marketplace' => $marketplace]);
     }
 
     /**
-     * Save (Create or Update) Marketplace
+     * Store (Create or Update) Marketplace
      * 
      * @param object \Illuminate\Http\Request $request
      */
-    public function save(Request $request)
+    public function store(Request $request)
     {
         $marketplaceModel = new Marketplace();
 
@@ -65,7 +61,7 @@ class MarketplaceController extends Controller
         if (!empty($idMarketplace)) {
             $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
         } else {
-            $marketplaceModel->saveMarketplace($setMarketplaceData);
+            $marketplaceModel->storeMarketplace($setMarketplaceData);
         }
 
         return redirect()->route('admin.marketplace');

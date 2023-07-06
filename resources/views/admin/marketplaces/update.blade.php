@@ -6,7 +6,7 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h1>Update Marketplace</h1>
-                <form action="{{ route('admin.marketplace.create') }}" method="post">
+                <form action="{{ route('admin.marketplace.store') }}" method="post">
                     @csrf
 
                     <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">

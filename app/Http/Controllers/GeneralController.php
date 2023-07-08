@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Seller;
 
 class GeneralController extends Controller
 {
@@ -11,10 +10,4 @@ class GeneralController extends Controller
     {
         return view('index');
     }
-
-    public function create()
-    {
-        
-    }
-
 }

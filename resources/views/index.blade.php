@@ -1,6 +1,6 @@
-@extends('components.header')
+@include('components.header')
 
    <a class="inline-block m-3" href="{{ route('admin.dashboard') }}">Admin</a>
-   <a class="inline-block m-3" href="{{ route('seller.create') }}">Create</a>
+   <a class="inline-block m-3" href="{{ route('seller') }}">Sellers</a>
 
-@extends('components.footer')
+@include('components.footer')

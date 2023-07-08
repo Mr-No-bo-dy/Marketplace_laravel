@@ -22,19 +22,23 @@ Route::get('/', function () {
 Route::get('/', [GeneralController::class, 'index'])->name('index');
 
 // Seller
+Route::get('/seller', [SellerController::class, 'index'])->name('seller');
 Route::get('/seller/registration', [SellerController::class, 'create'])->name('seller.create');
 Route::post('/seller/store', [SellerController::class, 'store'])->name('seller.store');
+Route::get('/seller/edit/{id_seller}', [SellerController::class, 'edit'])->name('seller.edit');
+Route::post('/seller/update', [SellerController::class, 'update'])->name('seller.update');
+Route::post('/seller/delete', [SellerController::class, 'destroy'])->name('seller.delete');
 
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
         // Marketplace
-        Route::get('/marketplace', [MarketplaceController::class, 'show'])->name('admin.marketplace');
+        Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('admin.marketplace');
         Route::get('/marketplace/store', [MarketplaceController::class, 'create'])->name('admin.marketplace.create');
-        Route::get('/marketplace/update/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.update');
+        Route::get('/marketplace/edit/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.edit');
         Route::post('/marketplace/store', [MarketplaceController::class, 'store'])->name('admin.marketplace.store');
-        Route::post('/marketplace/delete', [MarketplaceController::class, 'delete'])->name('admin.marketplace.delete');
+        Route::post('/marketplace/delete', [MarketplaceController::class, 'destroy'])->name('admin.marketplace.delete');
 
         Route::get('/users', [UserController::class, 'users'])->name('admin.users');
 

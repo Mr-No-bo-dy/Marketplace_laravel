@@ -12,7 +12,7 @@ class MarketplaceController extends Controller
     /**
      * Display all Marketplaces
      */
-    public function show()
+    public function index()
     {
         $marketplaceModel = new Marketplace();
 
@@ -70,7 +70,7 @@ class MarketplaceController extends Controller
     /**
      * Delete Marketplace
      */
-    public function delete(Request $request)
+    public function destroy(Request $request)
     {
         $marketplaceModel = new Marketplace();
 

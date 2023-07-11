@@ -16,7 +16,6 @@ class SellerController extends Controller
     {
         $sellerModel = new Seller();
 
-        // $sellers = $sellerModel->all();
         $sellers = $sellerModel->getAllSellers();
 
         return view('seller.index', ['sellers' => $sellers]);

@@ -1,6 +1,5 @@
-@include('components.header')
+@extends('layouts.site')
 
-   <a class="inline-block m-3" href="{{ route('admin.dashboard') }}">Admin</a>
-   <a class="inline-block m-3" href="{{ route('seller') }}">Sellers</a>
+@section('content')
 
-@include('components.footer')
+@endsection

@@ -32,9 +32,18 @@ class Seller extends Model
     ];
 
     /**
-     * Get all entities from DB table Sellers
+     * Implode $this->fillable for this DB table
      * 
-     * @param int $idSeller
+     * @return string
+     */
+    public function tableFields(string $alias)
+    {
+        return implode(', ', array_map(fn($field) =>  $alias . "." . $field, $this->fillable));
+        return implode(', ', array_map(fn($field) =>  "`" . $alias . "`.`" . $field . "`", $this->fillable));
+    }
+
+    /**
+     * Get all entities from DB table Sellers
      * 
      * @return array $sellers
      */
@@ -43,6 +52,8 @@ class Seller extends Model
         $sellers = DB::table($this->table, 's')
                         ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
                         ->select('marketplaces.country', 's.*')
+                        // ->select('marketplaces.country', $this->tableFields('s'))
+                        // ->select('marketplaces.country', 's.id_marketplace', 's.name', 's.surname', 's.email', 's.phone')
                         ->get();
 
         return $sellers;
@@ -60,7 +71,8 @@ class Seller extends Model
         $sellers = DB::table($this->table, 's')
                         ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
                         ->leftJoin('sellers_passwords', 'sellers_passwords.'.$this->primaryKey, '=', 's.'.$this->primaryKey)
-                        ->select('marketplaces.country', 'marketplaces.country_code', 'sellers_passwords.password', 's.*')
+                        ->select('marketplaces.country', 'sellers_passwords.password', 's.*')
+                        // ->select('marketplaces.country', $this->tableFields('s'))
                         ->where('s.'.$this->primaryKey, $idSeller)
                         ->get();
 

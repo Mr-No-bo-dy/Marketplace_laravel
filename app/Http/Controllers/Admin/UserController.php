@@ -8,11 +8,11 @@ use App\Models\Admin\User;
 
 class UserController extends Controller
 {
-    public function users()
-    {
-        $userModel = new User();
-        $users = $userModel->getUsers();
+   public function users()
+   {
+      $userModel = new User();
+      $users = $userModel->getUsers();
 
-        return view('admin.users.users', ['users' => $users]);
-    }
+      return view('admin.users.users', ['users' => $users]);
+   }
 }

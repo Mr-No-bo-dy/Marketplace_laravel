@@ -31,16 +31,16 @@ class Seller extends Model
         'phone',
     ];
 
-    /**
-     * Implode $this->fillable for this DB table
-     * 
-     * @return string
-     */
-    public function tableFields(string $alias)
-    {
-        return implode(', ', array_map(fn($field) =>  $alias . "." . $field, $this->fillable));
-        return implode(', ', array_map(fn($field) =>  "`" . $alias . "`.`" . $field . "`", $this->fillable));
-    }
+    // /**
+    //  * Implode $this->fillable for this DB table
+    //  * 
+    //  * @return string
+    //  */
+    // public function tableFields(string $alias)
+    // {
+    //     return implode(', ', array_map(fn($field) =>  $alias . "." . $field, $this->fillable));
+    //     return implode(', ', array_map(fn($field) =>  "`" . $alias . "`.`" . $field . "`", $this->fillable));
+    // }
 
     /**
      * Get all entities from DB table Sellers
@@ -53,7 +53,6 @@ class Seller extends Model
                         ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
                         ->select('marketplaces.country', 's.*')
                         // ->select('marketplaces.country', $this->tableFields('s'))
-                        // ->select('marketplaces.country', 's.id_marketplace', 's.name', 's.surname', 's.email', 's.phone')
                         ->get();
 
         return $sellers;

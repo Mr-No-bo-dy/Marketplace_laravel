@@ -8,9 +8,9 @@ use App\Models\Admin\Marketplace;
 
 class AdminController extends Controller
 {
-    public function dashboard()
-    {
-        return view('admin.dashboard');
-    }
+   public function dashboard()
+   {
+      return view('admin.dashboard');
+   }
 
 }

@@ -16,10 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+   return view('welcome');
 });
 
 Route::get('/', [GeneralController::class, 'index'])->name('index');
+Route::get('/auth', [GeneralController::class, 'login'])->name('auth');
 
 // Seller
 Route::get('/seller', [SellerController::class, 'index'])->name('seller');
@@ -30,22 +31,23 @@ Route::post('/seller/update', [SellerController::class, 'update'])->name('seller
 Route::post('/seller/delete', [SellerController::class, 'destroy'])->name('seller.delete');
 
 Route::middleware('auth')->group(function () {
-    Route::prefix('admin')->group(function () {
-        Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+   Route::prefix('admin')->group(function () {
+      Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-        // Marketplace
-        Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('admin.marketplace');
-        Route::get('/marketplace/store', [MarketplaceController::class, 'create'])->name('admin.marketplace.create');
-        Route::get('/marketplace/edit/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.edit');
-        Route::post('/marketplace/store', [MarketplaceController::class, 'store'])->name('admin.marketplace.store');
-        Route::post('/marketplace/delete', [MarketplaceController::class, 'destroy'])->name('admin.marketplace.delete');
+      // Marketplace
+      Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('admin.marketplace');
+      Route::get('/marketplace/create', [MarketplaceController::class, 'create'])->name('admin.marketplace.create');
+      Route::post('/marketplace/store', [MarketplaceController::class, 'store'])->name('admin.marketplace.store');
+      Route::get('/marketplace/edit/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.edit');
+      Route::post('/marketplace/update', [MarketplaceController::class, 'update'])->name('admin.marketplace.update');
+      Route::post('/marketplace/delete', [MarketplaceController::class, 'destroy'])->name('admin.marketplace.delete');
 
-        Route::get('/users', [UserController::class, 'users'])->name('admin.users');
+      Route::get('/users', [UserController::class, 'users'])->name('admin.users');
 
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    });
+      Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+      Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+      Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+   });
 });
 
 require __DIR__.'/auth.php';

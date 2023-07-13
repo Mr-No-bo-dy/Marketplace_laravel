@@ -9,74 +9,103 @@ use App\Http\Controllers\Controller;
 
 class MarketplaceController extends Controller
 {
-    /**
-     * Display all Marketplaces
-     */
-    public function index()
-    {
-        $marketplaceModel = new Marketplace();
+   /**
+    * Display all Marketplaces
+    */
+   public function index()
+   {
+      $marketplaceModel = new Marketplace();
 
-        $marketplaces = $marketplaceModel->all();
+      $marketplaces = $marketplaceModel->all();
 
-        return view('admin.marketplaces.index', ['marketplaces' => $marketplaces]);
-    }
-    
-    /**
-     * Display Marketplace creation form
-     */
-    public function create()
-    {
-        return view('admin.marketplaces.create');
-    }
+      return view('admin.marketplaces.index', ['marketplaces' => $marketplaces]);
+   }
+   
+   /**
+    * Display Marketplace creation form
+    */
+   public function create()
+   {
+      return view('admin.marketplaces.create');
+   }
 
-    /**
-     * Display Marketplace update form
-     */
-    public function edit($idMarketplace)
-    {
-        $marketplaceModel = new Marketplace();
+   /**
+    * Create Marketplace
+    * 
+    * @param object \Illuminate\Http\Request $request
+    */
+   public function store(Request $request)
+   {
+      $marketplaceModel = new Marketplace();
 
-        $marketplace = $marketplaceModel->find($idMarketplace);
+      $postData = $request->post();
+      $setMarketplaceData = [
+         'country_code' => strtoupper($postData['country_code']),
+         'country' => ucfirst($postData['country']),
+         'currency' => strtoupper($postData['currency']),
+         'created_at' => date('Y-m-d H:i:s', time()),
+         'updated_at' => date('Y-m-d H:i:s', time()),
+      ];
+      $marketplaceModel->storeMarketplace($setMarketplaceData);
+      /**
+      * Next create method will automaticaly fill 'created_at' & 'updated_at' fields
+      * without need to set them & without model's similar method:
+      */
+      // $marketplaceModel::create($setMarketplaceData);
 
-        return view('admin.marketplaces.update', ['marketplace' => $marketplace]);
-    }
+      return redirect()->route('admin.marketplace');
+   }
 
-    /**
-     * Store (Create or Update) Marketplace
-     * 
-     * @param object \Illuminate\Http\Request $request
-     */
-    public function store(Request $request)
-    {
-        $marketplaceModel = new Marketplace();
+   /**
+    * Display Marketplace update form
+    */
+   public function edit($idMarketplace)
+   {
+      $marketplaceModel = new Marketplace();
 
-        $postData = $request->post();
-        $setMarketplaceData = [
-            'country_code' => strtoupper($postData['country_code']),
-            'country' => ucfirst($postData['country']),
-            'currency' => strtoupper($postData['currency']),
-        ];
-        
-        $idMarketplace = $request->post('id_marketplace');
-        if (!empty($idMarketplace)) {
-            $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
-        } else {
-            $marketplaceModel->storeMarketplace($setMarketplaceData);
-        }
+      $marketplace = $marketplaceModel->find($idMarketplace);
 
-        return redirect()->route('admin.marketplace');
-    }
+      return view('admin.marketplaces.update', ['marketplace' => $marketplace]);
+   }
 
-    /**
-     * Delete Marketplace
-     */
-    public function destroy(Request $request)
-    {
-        $marketplaceModel = new Marketplace();
+   /**
+    * Update Marketplace
+    * 
+    * @param object \Illuminate\Http\Request $request
+    */
+   public function update(Request $request)
+   {
+      $marketplaceModel = new Marketplace();
 
-        $idMarketplace = $request->post('id_marketplace');
-        $marketplaceModel->deleteMarketplace($idMarketplace);
+      $postData = $request->post();
+      $setMarketplaceData = [
+         'country_code' => strtoupper($postData['country_code']),
+         'country' => ucfirst($postData['country']),
+         'currency' => strtoupper($postData['currency']),
+         'updated_at' => date('Y-m-d H:i:s', time()),
+      ];
+      $idMarketplace = $request->post('id_marketplace');
+      $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
+      /**
+      * Next update methods will automaticaly fill 'updated_at' field
+      * without need to set them & without model's similar method:
+      */
+      // $marketplaceModel::where('id_marketplace', $idMarketplace)
+      //                     ->update($setMarketplaceData);
 
-        return redirect()->route('admin.marketplace');
-    }
+      return redirect()->route('admin.marketplace');
+   }
+
+   /**
+    * Delete Marketplace
+    */
+   public function destroy(Request $request)
+   {
+      $marketplaceModel = new Marketplace();
+
+      $idMarketplace = $request->post('id_marketplace');
+      $marketplaceModel->deleteMarketplace($idMarketplace);
+
+      return redirect()->route('admin.marketplace');
+   }
 }

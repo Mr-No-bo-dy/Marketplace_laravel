@@ -67,7 +67,7 @@
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt="">
                   </button> --}}
-                  <a href="{{ route('auth') }}">Profile</a>
+                  <a class="text-gray-400" href="{{ route('auth') }}">Profile</a>
                </div>
 
                   <!--

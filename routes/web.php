@@ -19,8 +19,17 @@ Route::get('/', function () {
    return view('welcome');
 });
 
+// Get CSRF Token:
+use Illuminate\Http\Request;
+Route::get('/token', function (Request $request) {
+   $token = $request->session()->token();
+   $token = csrf_token();
+   dd($token);
+});
+
 Route::get('/', [GeneralController::class, 'index'])->name('index');
 Route::get('/auth', [GeneralController::class, 'login'])->name('auth');
+Route::post('/auth', [GeneralController::class, 'login'])->name('auth');
 
 // Seller
 Route::get('/seller', [SellerController::class, 'index'])->name('seller');
@@ -43,7 +52,6 @@ Route::middleware('auth')->group(function () {
       Route::post('/marketplace/delete', [MarketplaceController::class, 'destroy'])->name('admin.marketplace.delete');
 
       Route::get('/users', [UserController::class, 'users'])->name('admin.users');
-
       Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
       Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
       Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

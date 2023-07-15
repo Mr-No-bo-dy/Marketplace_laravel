@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Seller;
 
 class GeneralController extends Controller
 {
@@ -17,9 +20,34 @@ class GeneralController extends Controller
       return $request->session();
    }
 
-   public function login(Request $request)
+   public function login(Request $request, Session $session)
    {
-      dd($this->auth($request));
-      return view('seller.login');
+      $seller = new Seller();
+
+      $postData = $request->post();
+      if (!empty($postData)) {
+         $data = [
+            'login' => $postData['login'],
+            'password' => $postData['password'],
+         ];
+         $oneSeller = $seller->authSeller($data);
+   
+         $is = $request->session()->isStarted();
+         
+         if (!empty($oneSeller)) {
+            $request->session()->put('name', $oneSeller->name);
+            // $session->put('name', $oneSeller->name);
+         }
+         // $name = $request->session()->forget('name');
+         $all = $request->session()->all();
+         dd($all);
+         
+         // qfaM4J8zKlvmyQYa8ktIUDNTHoIpgMvlVRJJT3qW
+
+      }
+      
+      // $seller = Auth::user();
+
+      return view('authentificate.login');
    }
 }

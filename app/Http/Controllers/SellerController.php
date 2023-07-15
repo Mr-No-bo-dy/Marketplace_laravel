@@ -22,14 +22,6 @@ class SellerController extends Controller
    }
 
    /**
-    * Display the specified Seller.
-    */
-   public function show(Seller $seller)
-   {
-      //
-   }
-
-   /**
     * Show the form for creating a new Seller.
     */
    public function create()
@@ -57,6 +49,8 @@ class SellerController extends Controller
          'surname' => $postData['surname'],
          'email' => $postData['email'],
          'phone' => $postData['tel'],
+         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       
       $idNewSeller = $sellerModel->storeSeller($setSellerData);
@@ -110,6 +104,7 @@ class SellerController extends Controller
          'surname' => $postData['surname'],
          'email' => $postData['email'],
          'phone' => $postData['tel'],
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       
       $idSeller = $request->post('id_seller');

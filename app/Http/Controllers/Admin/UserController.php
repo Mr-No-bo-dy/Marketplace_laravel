@@ -11,6 +11,7 @@ class UserController extends Controller
    public function users()
    {
       $userModel = new User();
+      
       $users = $userModel->getUsers();
 
       return view('admin.users.users', ['users' => $users]);

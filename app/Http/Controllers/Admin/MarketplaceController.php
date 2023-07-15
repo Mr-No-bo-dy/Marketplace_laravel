@@ -43,15 +43,10 @@ class MarketplaceController extends Controller
          'country_code' => strtoupper($postData['country_code']),
          'country' => ucfirst($postData['country']),
          'currency' => strtoupper($postData['currency']),
-         'created_at' => date('Y-m-d H:i:s', time()),
-         'updated_at' => date('Y-m-d H:i:s', time()),
+         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       $marketplaceModel->storeMarketplace($setMarketplaceData);
-      /**
-      * Next create method will automaticaly fill 'created_at' & 'updated_at' fields
-      * without need to set them & without model's similar method:
-      */
-      // $marketplaceModel::create($setMarketplaceData);
 
       return redirect()->route('admin.marketplace');
    }
@@ -82,16 +77,10 @@ class MarketplaceController extends Controller
          'country_code' => strtoupper($postData['country_code']),
          'country' => ucfirst($postData['country']),
          'currency' => strtoupper($postData['currency']),
-         'updated_at' => date('Y-m-d H:i:s', time()),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       $idMarketplace = $request->post('id_marketplace');
       $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
-      /**
-      * Next update methods will automaticaly fill 'updated_at' field
-      * without need to set them & without model's similar method:
-      */
-      // $marketplaceModel::where('id_marketplace', $idMarketplace)
-      //                     ->update($setMarketplaceData);
 
       return redirect()->route('admin.marketplace');
    }

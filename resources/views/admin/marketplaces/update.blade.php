@@ -11,28 +11,28 @@
 
                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div class="sm:col-span-2">
-                     <label for="first-name" class="block text-sm font-medium leading-6 text-gray-900">Country
+                     <label for="country_code" class="block text-sm font-medium leading-6 text-gray-900">Country
                         Code</label>
                      <div class="mt-2">
                         <input type="text" name="country_code" value="{{ $marketplace->country_code }}"
-                           id="first-name" autocomplete="given-name"
+                           id="country_code" autocomplete="given-name"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
                   <div class="sm:col-span-2">
-                     <label for="first-name"
+                     <label for="country"
                         class="block text-sm font-medium leading-6 text-gray-900">Country</label>
                      <div class="mt-2">
-                        <input type="text" name="country" value="{{ $marketplace->country }}" id="first-name"
+                        <input type="text" name="country" value="{{ $marketplace->country }}" id="country"
                            autocomplete="given-name"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
                   <div class="sm:col-span-2">
-                     <label for="first-name"
+                     <label for="currency"
                         class="block text-sm font-medium leading-6 text-gray-900">Currency</label>
                      <div class="mt-2">
-                        <input type="text" name="currency" value="{{ $marketplace->currency }}" id="first-name"
+                        <input type="text" name="currency" value="{{ $marketplace->currency }}" id="currency"
                            autocomplete="given-name"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>

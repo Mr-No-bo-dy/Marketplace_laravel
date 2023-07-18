@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Models\Admin\Marketplace;
 use App\Http\Controllers\Controller;
 // use App\Http\Requests\MarketplaceRequest;
+use Illuminate\Http\Request;
 
 class MarketplaceController extends Controller
 {

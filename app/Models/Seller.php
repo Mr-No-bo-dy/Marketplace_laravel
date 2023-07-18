@@ -110,8 +110,6 @@ class Seller extends Model
       }
    }
 
-
-
    /**
     * Insert entity into DB table Sellers
     * 

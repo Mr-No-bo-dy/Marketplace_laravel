@@ -2,52 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Session\Session;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Seller;
+use App\Models\Admin\Marketplace;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class GeneralController extends Controller
 {
+   /**
+    * Display site's Home page.
+    */
    public function index()
    {
       return view('index');
    }
 
-   public function auth(Request $request)
+   /**
+    * Show the form for Registrating a new Seller.
+    */
+   public function register()
    {
-      // session('key');
-      return $request->session();
+      $marketplaceModel = new Marketplace();
+
+      $marketplaces = $marketplaceModel->all();
+
+      $content = [
+         'marketplaces' => $marketplaces,
+      ];
+      
+      return view('authentificate.register', $content);
    }
 
-   public function login(Request $request, Session $session)
+   /**
+   * Store a newly created Seller in storage.
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
+   public function store(Request $request)
    {
-      $seller = new Seller();
+      $sellerModel = new Seller();
 
       $postData = $request->post();
+      $setSellerData = [
+         'id_marketplace' => $postData['id_marketplace'],
+         'name' => $postData['name'],
+         'surname' => $postData['surname'],
+         'email' => $postData['email'],
+         'phone' => $postData['tel'],
+         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+      ];
+      
+      $idNewSeller = $sellerModel->storeSeller($setSellerData);
+      $setSellerPasswordData = [
+         'id_seller' => $idNewSeller,
+         'password' => Hash::make($postData['password']),
+      ];
+      $sellerModel->storeSellerPassword($setSellerPasswordData);
+
+      $seller = $sellerModel->get($idNewSeller);
+      $request->session()->put('seller', $seller);
+
+      return redirect()->route('auth');
+   }
+
+   /**
+   * Login Seller into Personal Page.
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
+   public function auth(Request $request)
+   {
+      $sellerModel = new Seller();
+
+      $postData = $request->post();
+
       if (!empty($postData)) {
          $data = [
             'login' => $postData['login'],
             'password' => $postData['password'],
          ];
-         $oneSeller = $seller->authSeller($data);
-   
-         $is = $request->session()->isStarted();
-         
-         if (!empty($oneSeller)) {
-            $request->session()->put('name', $oneSeller->name);
-            // $session->put('name', $oneSeller->name);
-         }
-         // $name = $request->session()->forget('name');
-         $all = $request->session()->all();
-         dd($all);
-         
-         // qfaM4J8zKlvmyQYa8ktIUDNTHoIpgMvlVRJJT3qW
 
+         $oneSeller = $sellerModel->authSeller($data);
+
+         if (!empty($oneSeller)) {
+            $request->session()->put('seller', $oneSeller);
+            
+            return redirect()->route('personal');
+         }
       }
       
-      // $seller = Auth::user();
-
       return view('authentificate.login');
    }
+
+
 }

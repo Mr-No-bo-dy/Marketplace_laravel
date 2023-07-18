@@ -21,6 +21,15 @@
                <x-nav-link :href="route('admin.marketplace')" :active="request()->routeIs('admin.marketplace')">
                   {{ __('Marketplaces') }}
                </x-nav-link>
+               <x-nav-link :href="route('admin.producer')" :active="request()->routeIs('admin.producer')">
+                  {{ __('Producers') }}
+               </x-nav-link>
+               <x-nav-link :href="route('admin.category')" :active="request()->routeIs('admin.category')">
+                  {{ __('Categories') }}
+               </x-nav-link>
+               <x-nav-link :href="route('admin.subcategory')" :active="request()->routeIs('admin.subcategory')">
+                  {{ __('Subcategories') }}
+               </x-nav-link>
             </div>
          </div>
 

@@ -9,6 +9,24 @@ use Illuminate\Support\Facades\Hash;
 
 class SellerController extends Controller
 {
+
+   /**
+    * Show one Seller's personal page.
+   */
+   public function show()
+   {
+      // $sellerModel = new Seller();
+      
+      // $oneSeller = $sellerModel->getOneSeller($idSeller);
+      // $seller = [];
+      // foreach ($oneSeller as $row) {
+      //    $seller = $row;
+      // }
+      
+      // return view('seller.show', ['seller' => $seller]);
+      return view('seller.show');
+   }
+
    /**
     * Display a listing of the Sellers.
     */
@@ -57,6 +75,8 @@ class SellerController extends Controller
       $setSellerPasswordData = [
          'id_seller' => $idNewSeller,
          'password' => Hash::make($postData['password']),
+         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       $sellerModel->storeSellerPassword($setSellerPasswordData);
       
@@ -111,6 +131,7 @@ class SellerController extends Controller
       $sellerModel->updateSeller($idSeller, $setSellerData);
       $setSellerPasswordData = [
          'password' => Hash::make($postData['password']),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       $sellerModel->updateSellerPassword($idSeller, $setSellerPasswordData);
          

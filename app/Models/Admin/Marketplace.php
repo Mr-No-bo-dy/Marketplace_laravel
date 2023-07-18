@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class Marketplace extends Model
 // class Marketplace extends Base
 {
-      /**
+   /**
     * The table associated with the model.
     *
     * @var string

@@ -48,6 +48,8 @@
                      aria-current="page">Admin</a>
                   <a href="{{ route('seller') }}"
                      class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Sellers</a>
+                  <a href="{{ route('product') }}"
+                     class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Products</a>
                </div>
             </div>
          </div>
@@ -73,6 +75,15 @@
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt="">
                   </button> --}}
+                  
+                  {{-- Тут має бути перевірка, чи залогінений Продавець: --}}
+                  {{-- @if(isset())
+                     <a class="text-gray-400" href="{{ route('auth') }}">Profile</a>
+                  @else
+                     <a class="text-gray-400" href="{{ route('registration') }}">Register</a>
+                     <a class="text-gray-400" href="{{ route('auth') }}">Login</a>
+                  @endif --}}
+
                   <a class="text-gray-400" href="{{ route('auth') }}">Profile</a>
                </div>
 
@@ -111,6 +122,8 @@
             aria-current="page">Admin</a>
          <a href="{{ route('seller') }}"
             class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Sellers</a>
+         <a href="{{ route('product') }}"
+            class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Products</a>
       </div>
    </div>
 </nav>

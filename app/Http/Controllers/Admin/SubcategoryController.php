@@ -28,7 +28,7 @@ class SubcategoryController extends Controller
    {
       $categoryModel = new Category();
       
-      $allCategories = $categoryModel->all();
+      $allCategories = $categoryModel->all(['id_category', 'name']);
 
       return view('admin.subcategories.create', ['categories' => $allCategories]);
    }
@@ -63,7 +63,7 @@ class SubcategoryController extends Controller
       $categoryModel = new Category();
       $subcategoryModel = new Subcategory();
       
-      $allCategories = $categoryModel->all();
+      $allCategories = $categoryModel->all(['id_category', 'name']);
       $subcategory = $subcategoryModel->find($idSubcategory);
       $setSubcategoryData = [
          'categories' => $allCategories,

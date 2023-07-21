@@ -1,14 +1,15 @@
 <?php
 
+use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\MarketplaceController;
 use App\Http\Controllers\Admin\ProducerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\GeneralController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SellerController;
+use App\Http\Controllers\Site\ProductController;
+use App\Http\Controllers\Site\SellerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,21 +24,32 @@ use Illuminate\Support\Facades\Route;
 // });
 
 // Site
-Route::get('/', [GeneralController::class, 'index'])->name('index');
-Route::get('/registration', [GeneralController::class, 'register'])->name('registration');
-Route::post('/registration', [GeneralController::class, 'store'])->name('registration');
-Route::get('/auth', [GeneralController::class, 'auth'])->name('auth');
-Route::post('/auth', [GeneralController::class, 'auth'])->name('auth');
+Route::controller(GeneralController::class)->group(function () {
+   Route::get('/', 'index')->name('index');
+   Route::get('/registration', 'register')->name('registration');
+   Route::post('/registration', 'store')->name('registration');
+   Route::get('/auth', 'auth')->name('auth');
+   Route::post('/auth', 'auth')->name('auth');
+   Route::post('/log_out', 'logout')->name('log_out');
+});
 
-// Seller
-Route::middleware('sellerAuth')->group(function () {
-   Route::get('/seller', [SellerController::class, 'index'])->name('seller');
-   Route::get('/seller/registration', [SellerController::class, 'create'])->name('seller.create');
-   Route::post('/seller/store', [SellerController::class, 'store'])->name('seller.store');
-   Route::get('/seller/edit/{id_seller}', [SellerController::class, 'edit'])->name('seller.edit');
-   Route::post('/seller/update', [SellerController::class, 'update'])->name('seller.update');
-   Route::post('/seller/delete', [SellerController::class, 'destroy'])->name('seller.delete');
-
+Route::middleware('authSeller')->group(function () {
+   Route::controller(SellerController::class)->group(function () {
+      Route::get('/seller', 'index')->name('seller');
+      Route::get('/seller/registration', 'create')->name('seller.create');
+      Route::post('/seller/store', 'store')->name('seller.store');
+      Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
+      Route::post('/seller/update', 'update')->name('seller.update');
+      Route::post('/seller/delete', 'destroy')->name('seller.delete');
+   });
+   Route::controller(ProductController::class)->group(function () {
+      Route::get('/product', 'index')->name('product');
+      Route::get('/product/create', 'create')->name('product.create');
+      Route::post('/product/store', 'store')->name('product.store');
+      Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
+      Route::post('/product/update', 'update')->name('product.update');
+      Route::post('/product/delete', 'destroy')->name('product.delete');
+   });
    Route::get('/personal', [SellerController::class, 'show'])->name('personal');
 });
 
@@ -50,38 +62,38 @@ Route::middleware('auth')->group(function () {
    Route::prefix('admin')->group(function () {
       Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-      // Marketplace
-      Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('admin.marketplace');
-      Route::get('/marketplace/create', [MarketplaceController::class, 'create'])->name('admin.marketplace.create');
-      Route::post('/marketplace/store', [MarketplaceController::class, 'store'])->name('admin.marketplace.store');
-      Route::get('/marketplace/edit/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.edit');
-      Route::post('/marketplace/update', [MarketplaceController::class, 'update'])->name('admin.marketplace.update');
-      Route::post('/marketplace/delete', [MarketplaceController::class, 'destroy'])->name('admin.marketplace.delete');
-
-      // Producer
-      Route::get('/producer', [ProducerController::class, 'index'])->name('admin.producer');
-      Route::get('/producer/create', [ProducerController::class, 'create'])->name('admin.producer.create');
-      Route::post('/producer/store', [ProducerController::class, 'store'])->name('admin.producer.store');
-      Route::get('/producer/edit/{id_producer}', [ProducerController::class, 'edit'])->name('admin.producer.edit');
-      Route::post('/producer/update', [ProducerController::class, 'update'])->name('admin.producer.update');
-      Route::post('/producer/delete', [ProducerController::class, 'destroy'])->name('admin.producer.delete');
-      
-      // Category
-      Route::get('/category', [CategoryController::class, 'index'])->name('admin.category');
-      Route::get('/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
-      Route::post('/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
-      Route::get('/category/edit/{id_category}', [CategoryController::class, 'edit'])->name('admin.category.edit');
-      Route::post('/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
-      Route::post('/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.delete');
-
-      // Subcategory
-      Route::get('/subcategory', [SubcategoryController::class, 'index'])->name('admin.subcategory');
-      Route::get('/subcategory/create', [SubcategoryController::class, 'create'])->name('admin.subcategory.create');
-      Route::post('/subcategory/store', [SubcategoryController::class, 'store'])->name('admin.subcategory.store');
-      Route::get('/subcategory/edit/{id_subcategory}', [SubcategoryController::class, 'edit'])->name('admin.subcategory.edit');
-      Route::post('/subcategory/update', [SubcategoryController::class, 'update'])->name('admin.subcategory.update');
-      Route::post('/subcategory/delete', [SubcategoryController::class, 'destroy'])->name('admin.subcategory.delete');
-
+      Route::controller(MarketplaceController::class)->group(function () {
+         Route::get('/marketplace', 'index')->name('admin.marketplace');
+         Route::get('/marketplace/create', 'create')->name('admin.marketplace.create');
+         Route::post('/marketplace/store', 'store')->name('admin.marketplace.store');
+         Route::get('/marketplace/edit/{id_marketplace}', 'edit')->name('admin.marketplace.edit');
+         Route::post('/marketplace/update', 'update')->name('admin.marketplace.update');
+         Route::post('/marketplace/delete', 'destroy')->name('admin.marketplace.delete');
+      });
+      Route::controller(ProducerController::class)->group(function () {
+         Route::get('/producer', 'index')->name('admin.producer');
+         Route::get('/producer/create', 'create')->name('admin.producer.create');
+         Route::post('/producer/store', 'store')->name('admin.producer.store');
+         Route::get('/producer/edit/{id_producer}', 'edit')->name('admin.producer.edit');
+         Route::post('/producer/update', 'update')->name('admin.producer.update');
+         Route::post('/producer/delete', 'destroy')->name('admin.producer.delete');
+      });
+      Route::controller(CategoryController::class)->group(function () {
+         Route::get('/category', 'index')->name('admin.category');
+         Route::get('/category/create', 'create')->name('admin.category.create');
+         Route::post('/category/store', 'store')->name('admin.category.store');
+         Route::get('/category/edit/{id_category}', 'edit')->name('admin.category.edit');
+         Route::post('/category/update', 'update')->name('admin.category.update');
+         Route::post('/category/delete', 'destroy')->name('admin.category.delete');
+      });
+      Route::controller(SubcategoryController::class)->group(function () {
+         Route::get('/subcategory', 'index')->name('admin.subcategory');
+         Route::get('/subcategory/create', 'create')->name('admin.subcategory.create');
+         Route::post('/subcategory/store', 'store')->name('admin.subcategory.store');
+         Route::get('/subcategory/edit/{id_subcategory}', 'edit')->name('admin.subcategory.edit');
+         Route::post('/subcategory/update', 'update')->name('admin.subcategory.update');
+         Route::post('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
+      });
       Route::get('/users', [UserController::class, 'users'])->name('admin.users');
    });
 });

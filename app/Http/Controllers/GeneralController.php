@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Seller;
 use App\Models\Admin\Marketplace;
+use App\Models\Site\Seller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,7 +24,7 @@ class GeneralController extends Controller
    {
       $marketplaceModel = new Marketplace();
 
-      $marketplaces = $marketplaceModel->all();
+      $marketplaces = $marketplaceModel->all(['id_marketplace', 'country']);
 
       $content = [
          'marketplaces' => $marketplaces,
@@ -61,7 +61,7 @@ class GeneralController extends Controller
       $sellerModel->storeSellerPassword($setSellerPasswordData);
 
       $seller = $sellerModel->get($idNewSeller);
-      $request->session()->put('seller', $seller);
+      $request->session()->put('id_seller', $seller);
 
       return redirect()->route('auth');
    }
@@ -75,18 +75,20 @@ class GeneralController extends Controller
    {
       $sellerModel = new Seller();
 
-      $postData = $request->post();
+      if ($request->session()->has('id_seller')) {
+         return redirect()->route('personal');
+      }
 
+      $postData = $request->post();
       if (!empty($postData)) {
          $data = [
             'login' => $postData['login'],
             'password' => $postData['password'],
          ];
+         $idAuthSeller = $sellerModel->authSeller($data);
 
-         $oneSeller = $sellerModel->authSeller($data);
-
-         if (!empty($oneSeller)) {
-            $request->session()->put('seller', $oneSeller);
+         if (!empty($idAuthSeller)) {
+            $request->session()->put('id_seller', $idAuthSeller);
             
             return redirect()->route('personal');
          }
@@ -95,5 +97,16 @@ class GeneralController extends Controller
       return view('authentificate.login');
    }
 
+   /**
+   * Logout Seller from Site.
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
+   public function logout(Request $request)
+   {
+      $request->session()->forget('id_seller');
+
+      return redirect()->route('index');
+   }
 
 }

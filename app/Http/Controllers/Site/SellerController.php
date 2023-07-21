@@ -1,32 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Site;
 
-use App\Models\Seller;
+use App\Http\Controllers\Controller;
 use App\Models\Admin\Marketplace;
+use App\Models\Site\Seller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class SellerController extends Controller
 {
-
-   /**
-    * Show one Seller's personal page.
-   */
-   public function show()
-   {
-      // $sellerModel = new Seller();
-      
-      // $oneSeller = $sellerModel->getOneSeller($idSeller);
-      // $seller = [];
-      // foreach ($oneSeller as $row) {
-      //    $seller = $row;
-      // }
-      
-      // return view('seller.show', ['seller' => $seller]);
-      return view('seller.show');
-   }
-
    /**
     * Display a listing of the Sellers.
     */
@@ -36,7 +19,7 @@ class SellerController extends Controller
 
       $sellers = $sellerModel->getAllSellers();
 
-      return view('seller.index', ['sellers' => $sellers]);
+      return view('site.seller.index', ['sellers' => $sellers]);
    }
 
    /**
@@ -46,9 +29,9 @@ class SellerController extends Controller
    {
       $marketplaceModel = new Marketplace();
 
-      $marketplaces = $marketplaceModel->all();
+      $marketplaces = $marketplaceModel->all(['id_marketplace', 'country']);
 
-      return view('seller.create', ['marketplaces' => $marketplaces]);
+      return view('site.seller.create', ['marketplaces' => $marketplaces]);
    }
 
    /**
@@ -94,7 +77,7 @@ class SellerController extends Controller
       $marketplaceModel = new Marketplace();
       $sellerModel = new Seller();
       
-      $marketplaces = $marketplaceModel->all();
+      $marketplaces = $marketplaceModel->all(['id_marketplace', 'country']);
       $oneSeller = $sellerModel->getOneSeller($idSeller);
       $seller = [];
       foreach ($oneSeller as $row) {
@@ -105,7 +88,7 @@ class SellerController extends Controller
          'marketplaces' => $marketplaces,
       ];
       
-      return view('seller.update', $setSellerData);
+      return view('site.seller.update', $setSellerData);
    }
 
    /**
@@ -151,5 +134,22 @@ class SellerController extends Controller
       $sellerModel->deleteSeller($idSeller);
 
       return redirect()->route('seller');
+   }
+   
+   /**
+    * Show one Seller's personal page.
+   */
+   public function show(Request $request)
+   {
+      $sellerModel = new Seller();
+      
+      $idSeller = $request->session()->get('id_seller');
+      $oneSeller = $sellerModel->getOneSeller($idSeller);
+      $seller = [];
+      foreach ($oneSeller as $row) {
+         $seller = $row;
+      }
+      
+      return view('site.seller.show', ['seller' => $seller]);
    }
 }

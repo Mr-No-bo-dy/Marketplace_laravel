@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Site;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,17 +32,6 @@ class Seller extends Model
       'phone',
    ];
 
-   // /**
-   //  * Implode $this->fillable for this DB table
-   //  * 
-   //  * @return string
-   //  */
-   // public function tableFields(string $alias)
-   // {
-   //     return implode(', ', array_map(fn($field) =>  $alias . "." . $field, $this->fillable));
-   //     return implode(', ', array_map(fn($field) =>  "`" . $alias . "`.`" . $field . "`", $this->fillable));
-   // }
-
    /**
     * Get all entities from DB table Sellers
     * 
@@ -53,7 +42,6 @@ class Seller extends Model
       $sellers = DB::table($this->table, 's')
                      ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
                      ->select('marketplaces.country', 's.*')
-                     // ->select('marketplaces.country', $this->tableFields('s'))
                      ->get();
 
       return $sellers;
@@ -72,14 +60,18 @@ class Seller extends Model
                      ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
                      ->leftJoin('sellers_passwords', 'sellers_passwords.'.$this->primaryKey, '=', 's.'.$this->primaryKey)
                      ->select('marketplaces.country', 'sellers_passwords.password', 's.*')
-                     // ->select('marketplaces.country', $this->tableFields('s'))
                      ->get();
-
-      // $this->hasOne(Marketplace::class, 'id_marketplace');
 
       return $sellers;
    }
 
+   /**
+    * Check if loggining user exists in DB table Sellers
+    * 
+    * @param array $data
+    * 
+    * @return int $seller->id_seller
+    */
    public function authSeller(array $data)
    {
       $checkData = [
@@ -104,7 +96,7 @@ class Seller extends Model
                         ->get();
          foreach ($builder as $row) {
             if (Hash::check($data['password'], $row->password)) {
-               return $seller;
+               return $seller->id_seller;
             }
          }
       }

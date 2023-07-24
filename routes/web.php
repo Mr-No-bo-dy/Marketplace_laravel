@@ -35,22 +35,23 @@ Route::controller(GeneralController::class)->group(function () {
 
 Route::middleware('authSeller')->group(function () {
    Route::controller(SellerController::class)->group(function () {
-      Route::get('/seller', 'index')->name('seller');
-      Route::get('/seller/registration', 'create')->name('seller.create');
-      Route::post('/seller/store', 'store')->name('seller.store');
+      // Route::get('/seller', 'index')->name('seller');
+      // Route::get('/seller/registration', 'create')->name('seller.create');
+      // Route::post('/seller/store', 'store')->name('seller.store');
+      Route::get('/personal', 'show')->name('personal');
       Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
       Route::post('/seller/update', 'update')->name('seller.update');
       Route::post('/seller/delete', 'destroy')->name('seller.delete');
    });
    Route::controller(ProductController::class)->group(function () {
       Route::get('/product', 'index')->name('product');
+      Route::get('/my_products', 'sellerProducts')->name('my_products');
       Route::get('/product/create', 'create')->name('product.create');
       Route::post('/product/store', 'store')->name('product.store');
       Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
       Route::post('/product/update', 'update')->name('product.update');
       Route::post('/product/delete', 'destroy')->name('product.delete');
    });
-   Route::get('/personal', [SellerController::class, 'show'])->name('personal');
 });
 
 // Admin Panel

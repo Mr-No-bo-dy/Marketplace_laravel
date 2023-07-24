@@ -54,13 +54,15 @@ class Seller extends Model
     * 
     * @return array $sellers
     */
-   public function getOneSeller(int $idSeller, array $filters = [])
+   public function getOneSeller(int $idSeller)
    {
       $sellers = DB::table($this->table, 's')
                      ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
-                     ->leftJoin('sellers_passwords', 'sellers_passwords.'.$this->primaryKey, '=', 's.'.$this->primaryKey)
-                     ->select('marketplaces.country', 'sellers_passwords.password', 's.*')
-                     ->get();
+                     // ->leftJoin('sellers_passwords', 'sellers_passwords.'.$this->primaryKey, '=', 's.'.$this->primaryKey)
+                     // ->select('marketplaces.country', 'sellers_passwords.password', 's.*')
+                     ->select('marketplaces.country', 's.*')
+                     ->where('s.'.$this->primaryKey, $idSeller)
+                     ->first();
 
       return $sellers;
    }

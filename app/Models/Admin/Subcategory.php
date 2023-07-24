@@ -53,7 +53,8 @@ class Subcategory extends Model
       $subcategories = DB::table($this->table, 'sc')
                      ->leftJoin('categories as c', 'c.id_category', '=', 'sc.id_category')
                      ->select('c.name as category', 'sc.*')
-                     ->get();
+                     ->where('sc.'.$this->primaryKey, $idSubcategory)
+                     ->first();
 
       return $subcategories;
    }

@@ -12,9 +12,16 @@ class GeneralController extends Controller
    /**
     * Display site's Home page.
     */
-   public function index()
+   public function index(Request $request)
    {
-      return view('index');
+      $sellerModel = new Seller();
+
+      $seller = "";
+      if ($idSeller = $request->session()->get('id_seller')) {
+         $seller = $sellerModel->getOneSeller($idSeller);
+      }
+      
+      return view('index', ['seller' => $seller]);
    }
 
    /**
@@ -25,12 +32,8 @@ class GeneralController extends Controller
       $marketplaceModel = new Marketplace();
 
       $marketplaces = $marketplaceModel->all(['id_marketplace', 'country']);
-
-      $content = [
-         'marketplaces' => $marketplaces,
-      ];
       
-      return view('authentificate.register', $content);
+      return view('authentificate.register', ['marketplaces' => $marketplaces]);
    }
 
    /**
@@ -57,11 +60,12 @@ class GeneralController extends Controller
       $setSellerPasswordData = [
          'id_seller' => $idNewSeller,
          'password' => Hash::make($postData['password']),
+         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
       $sellerModel->storeSellerPassword($setSellerPasswordData);
 
-      $seller = $sellerModel->get($idNewSeller);
-      $request->session()->put('id_seller', $seller);
+      $request->session()->put('id_seller', $idNewSeller);
 
       return redirect()->route('auth');
    }

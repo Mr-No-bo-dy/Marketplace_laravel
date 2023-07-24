@@ -4,7 +4,6 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-// use App\Models\Config\Base;
 
 class Marketplace extends Model
 // class Marketplace extends Base

@@ -2,11 +2,15 @@
 
 namespace App\Models\Site;
 
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
+   use InteractsWithMedia;
+
    /**
     * The table associated with the model.
     *
@@ -46,6 +50,23 @@ class Product extends Model
       return $idProduct;
    }
  
+   /**
+    * Get all entities from DB table Products from given Seller
+    * 
+    * @param int $idSeller
+    * 
+    * @return array $sellerProducts
+    */
+   public function getSellerProducts(int $idSeller = null)
+   {
+      $sellerProducts = DB::table($this->table)
+                     ->select()
+                     ->where('id_seller', $idSeller)
+                     ->get();
+
+      return $sellerProducts;
+   }
+   
    /**
     * Update entity into DB table Products
     * 

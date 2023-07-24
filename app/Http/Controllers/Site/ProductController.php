@@ -29,6 +29,19 @@ class ProductController extends Controller
 
       return view('site.product.index', ['products' => $products]);
    }
+
+   /**
+    * Display a listing of the Products from given Seller.
+    */
+   public function sellerProducts(Request $request)
+   {
+      $productModel = new Product();
+
+      $idSeller = $request->session()->get('id_seller');
+      $sellerProducts = $productModel->getSellerProducts($idSeller);
+
+      return view('site.product.index', ['products' => $sellerProducts]);
+   }
    
    /**
     * Display Product creation form
@@ -62,6 +75,10 @@ class ProductController extends Controller
       $productModel = new Product();
 
       $postData = $request->post();
+      $image = $request->file();
+      // dd($productModel);
+      // $productModel->addMedia($image['image'])->toMediaCollection('products')->save();
+
       $setProductData = [
          'id_producer' => $postData['id_producer'],
          'id_category' => $postData['id_category'],
@@ -74,7 +91,11 @@ class ProductController extends Controller
          'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
          'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
-      $productModel->storeProduct($setProductData);
+      // $productModel->storeProduct($setProductData);
+
+      $idNewProduct = $productModel->storeProduct($setProductData);
+      $product = $productModel::find($idNewProduct);
+      $product->addMedia($image['image'])->toMediaCollection('products')->save();
 
       return redirect()->route('product');
    }

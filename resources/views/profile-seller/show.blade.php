@@ -19,7 +19,7 @@
                   <p><b>Marketplace:</b> {{ $seller->country }}</p>
                   <p><b>Email:</b> {{ $seller->email }}</p>
                   <p><b>Phone:</b> {{ $seller->phone }}</p>
-                  <a class="inline-block rounded-md bg-green-400 my-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400" href="{{ 'my_products' }}">My Products</a>
+                  <a class="inline-block rounded-md bg-green-500 my-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500" href="{{ 'my_products' }}">My Products</a>
                </div>
                <div class="sm:col-span-1 justify-self-end self-center">
                   <a class="inline-block rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400"

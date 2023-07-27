@@ -7,7 +7,10 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
+use App\Models\Site\Seller;
 use Illuminate\Http\Request;
+
+// use Illuminate\Database\Eloquent\Collection;
 
 class ProductController extends Controller
 {
@@ -23,11 +26,29 @@ class ProductController extends Controller
     */
    public function index()
    {
-      $productModel = new Product();
+      $products = Product::all();
 
-      $products = $productModel->all();
+      // $images = $productModel->getMedia();
 
-      return view('site.product.index', ['products' => $products]);
+      // $imgs = [];
+      // foreach ($products as $product) {
+      //    $imgs[] = $product->getMedia('products');
+      // }
+      // $path = $imgs[5][0]->getPath();
+      // // dd($path);
+      
+      // $images = $productModel::last()->getMedia('products');
+
+      // $all = [];
+      // Product::chunk(10, function(Collection $products) {
+      //    foreach ($products as $product) {
+      //       $all[] = $product;
+      //       dump($product);
+      //    }
+      // });
+      // dd($all);
+
+      return view('site.product.index', compact('products'));
    }
 
    /**
@@ -36,33 +57,28 @@ class ProductController extends Controller
    public function sellerProducts(Request $request)
    {
       $productModel = new Product();
+      $sellerModel = new Seller();
 
       $idSeller = $request->session()->get('id_seller');
-      $sellerProducts = $productModel->getSellerProducts($idSeller);
+      $seller = $sellerModel->getOneSeller($idSeller);
+      $products = $productModel->getSellerProducts($idSeller);
+      // $products = $productModel::withMedia('products')->where('id_seller', $idSeller)->get();
+      // $media = $productModel::all();
+      // dd($media);
 
-      return view('site.product.index', ['products' => $sellerProducts]);
+      return view('site.product.index', compact('seller', 'products'));
    }
    
    /**
     * Display Product creation form
     */
-   public function create(Request $request)
+   public function create()
    {
-      $producerModel = new Producer();
-      $categoryModel = new Category();
-      $subcategoryModel = new Subcategory();
+      $producers = Producer::all(['id_producer', 'name']);
+      $categories = Category::all(['id_category', 'name']);
+      $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
-      $allProducers = $producerModel->all(['id_producer', 'name']);
-      $allCategories = $categoryModel->all(['id_category', 'name']);
-      $allSubcategories = $subcategoryModel->all(['id_subcategory', 'name']);
-
-      $content = [
-         'producers' => $allProducers,
-         'categories' => $allCategories,
-         'subcategories' => $allSubcategories,
-      ];
-
-      return view('site.product.create', $content);
+      return view('site.product.create', compact('producers', 'categories', 'subcategories'));
    }
 
    /**
@@ -76,8 +92,6 @@ class ProductController extends Controller
 
       $postData = $request->post();
       $image = $request->file();
-      // dd($productModel);
-      // $productModel->addMedia($image['image'])->toMediaCollection('products')->save();
 
       $setProductData = [
          'id_producer' => $postData['id_producer'],
@@ -91,11 +105,12 @@ class ProductController extends Controller
          'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
          'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
-      // $productModel->storeProduct($setProductData);
 
       $idNewProduct = $productModel->storeProduct($setProductData);
-      $product = $productModel::find($idNewProduct);
-      $product->addMedia($image['image'])->toMediaCollection('products')->save();
+      $product = $productModel->find($idNewProduct);
+      $product->addMedia($image['image'])
+               ->toMediaCollection('products')
+               ->save();
 
       return redirect()->route('product');
    }
@@ -103,26 +118,14 @@ class ProductController extends Controller
    /**
     * Display Product update form
     */
-   public function edit($idProduct, Request $request)
+   public function edit($idProduct)
    {
-      $productModel = new Product();
-      $producerModel = new Producer();
-      $categoryModel = new Category();
-      $subcategoryModel = new Subcategory();
+      $product = Product::find($idProduct);
+      $producers = Producer::all(['id_producer', 'name']);
+      $categories = Category::all(['id_category', 'name']);
+      $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
-      $product = $productModel->find($idProduct);
-      $allProducers = $producerModel->all(['id_producer', 'name']);
-      $allCategories = $categoryModel->all(['id_category', 'name']);
-      $allSubcategories = $subcategoryModel->all(['id_subcategory', 'name']);
-
-      $content = [
-         'product' => $product,
-         'producers' => $allProducers,
-         'categories' => $allCategories,
-         'subcategories' => $allSubcategories,
-      ];
-
-      return view('site.product.update', $content);
+      return view('site.product.update', compact('product', 'producers', 'categories', 'subcategories'));
    }
 
    /**

@@ -18,7 +18,7 @@ class SubcategoryController extends Controller
       
       $subcategories = $subcategoryModel->getAllSubcategories();
 
-      return view('admin.subcategories.index', ['subcategories' => $subcategories]);
+      return view('admin.subcategories.index', compact('subcategories'));
    }
    
    /**
@@ -26,11 +26,9 @@ class SubcategoryController extends Controller
     */
    public function create()
    {
-      $categoryModel = new Category();
-      
-      $allCategories = $categoryModel->all(['id_category', 'name']);
+      $categories = Subcategory::all(['id_category', 'name']);
 
-      return view('admin.subcategories.create', ['categories' => $allCategories]);
+      return view('admin.subcategories.create', compact('categories'));
    }
 
    /**
@@ -60,17 +58,10 @@ class SubcategoryController extends Controller
     */
    public function edit($idSubcategory)
    {
-      $categoryModel = new Category();
-      $subcategoryModel = new Subcategory();
-      
-      $allCategories = $categoryModel->all(['id_category', 'name']);
-      $subcategory = $subcategoryModel->find($idSubcategory);
-      $setSubcategoryData = [
-         'categories' => $allCategories,
-         'subcategory' => $subcategory,
-      ];
+      $categories = Category::all(['id_category', 'name']);
+      $subcategory = Subcategory::find($idSubcategory);
 
-      return view('admin.subcategories.update', $setSubcategoryData);
+      return view('admin.subcategories.update', compact('categories', 'subcategory'));
    }
 
    /**

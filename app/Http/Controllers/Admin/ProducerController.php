@@ -13,11 +13,9 @@ class ProducerController extends Controller
     */
    public function index()
    {
-      $producerModel = new Producer();
+      $producers = Producer::all();
 
-      $producers = $producerModel->all();
-
-      return view('admin.producers.index', ['producers' => $producers]);
+      return view('admin.producers.index', compact('producers'));
    }
    
    /**
@@ -55,11 +53,9 @@ class ProducerController extends Controller
     */
    public function edit($idProducer)
    {
-      $producerModel = new Producer();
+      $producer = Producer::find($idProducer);
 
-      $producer = $producerModel->find($idProducer);
-
-      return view('admin.producers.update', ['producer' => $producer]);
+      return view('admin.producers.update', compact('producer'));
    }
 
    /**

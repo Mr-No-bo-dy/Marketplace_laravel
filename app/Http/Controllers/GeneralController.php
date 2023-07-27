@@ -21,7 +21,7 @@ class GeneralController extends Controller
          $seller = $sellerModel->getOneSeller($idSeller);
       }
       
-      return view('index', ['seller' => $seller]);
+      return view('index', compact('seller'));
    }
 
    /**
@@ -29,11 +29,9 @@ class GeneralController extends Controller
     */
    public function register()
    {
-      $marketplaceModel = new Marketplace();
-
-      $marketplaces = $marketplaceModel->all(['id_marketplace', 'country']);
+      $marketplaces = Marketplace::all(['id_marketplace', 'country']);
       
-      return view('authentificate.register', ['marketplaces' => $marketplaces]);
+      return view('authentificate.register', compact('marketplaces'));
    }
 
    /**

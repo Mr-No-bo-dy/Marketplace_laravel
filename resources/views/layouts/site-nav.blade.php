@@ -42,12 +42,12 @@
             <div class="hidden sm:ml-6 sm:block">
                <div class="flex space-x-4">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                  <a href="{{ route('index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                  <a href="{{ route('index') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                      aria-current="page">Home</a>
-                  <a href="{{ route('admin.dashboard') }}" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"
+                  <a href="{{ route('admin.dashboard') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                      aria-current="page">Admin</a>
-                  {{-- <a href="{{ route('product') }}"
-                     class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Products</a> --}}
+                  <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                     aria-current="page">Products</a>
                </div>
             </div>
          </div>
@@ -101,12 +101,12 @@
    <div class="sm:hidden" id="mobile-menu">
       <div class="space-y-1 px-2 pb-3 pt-2">
          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-         <a href="{{ route('index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-         aria-current="page">Home</a>
-         <a href="{{ route('admin.dashboard') }}" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
+         <a href="{{ route('index') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+            aria-current="page">Home</a>
+         <a href="{{ route('admin.dashboard') }}" class="bg-gray-900 block rounded-md px-3 py-2 text-base font-medium"
             aria-current="page">Admin</a>
-         {{-- <a href="{{ route('product') }}"
-            class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Products</a> --}}
+         <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" 
+            aria-current="page">Products</a>
       </div>
    </div>
 </nav>

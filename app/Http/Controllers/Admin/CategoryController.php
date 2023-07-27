@@ -13,11 +13,9 @@ class CategoryController extends Controller
     */
    public function index()
    {
-      $categoryModel = new Category();
+      $categories = Category::all();
 
-      $categories = $categoryModel->all();
-
-      return view('admin.categories.index', ['categories' => $categories]);
+      return view('admin.categories.index', compact('categories'));
    }
    
    /**
@@ -54,11 +52,9 @@ class CategoryController extends Controller
     */
    public function edit($idCategory)
    {
-      $categoryModel = new Category();
+      $category = Category::find($idCategory);
 
-      $category = $categoryModel->find($idCategory);
-
-      return view('admin.categories.update', ['category' => $category]);
+      return view('admin.categories.update', compact('category'));
    }
 
    /**

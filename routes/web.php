@@ -32,12 +32,10 @@ Route::controller(GeneralController::class)->group(function () {
    Route::post('/auth', 'auth')->name('auth');
    Route::post('/log_out', 'logout')->name('log_out');
 });
+Route::get('/product', [ProductController::class, 'index'])->name('product');
 
 Route::middleware('authSeller')->group(function () {
    Route::controller(SellerController::class)->group(function () {
-      // Route::get('/seller', 'index')->name('seller');
-      // Route::get('/seller/registration', 'create')->name('seller.create');
-      // Route::post('/seller/store', 'store')->name('seller.store');
       Route::get('/personal', 'show')->name('personal');
       Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
       Route::post('/seller/update', 'update')->name('seller.update');
@@ -95,6 +93,12 @@ Route::middleware('auth')->group(function () {
          Route::post('/subcategory/update', 'update')->name('admin.subcategory.update');
          Route::post('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
       });
+      // Route::controller(SellerController::class)->group(function () {
+      //    Route::get('/seller', 'index')->name('admin.seller');
+      //    Route::get('/seller/edit/{id_seller}', 'edit')->name('admin.seller.edit');
+      //    Route::post('/seller/update', 'update')->name('admin.seller.update');
+      //    Route::post('/seller/delete', 'destroy')->name('admin.seller.delete');
+      // });
       Route::get('/users', [UserController::class, 'users'])->name('admin.users');
    });
 });

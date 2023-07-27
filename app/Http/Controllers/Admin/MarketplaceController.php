@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Marketplace;
 use App\Http\Controllers\Controller;
-// use App\Http\Requests\MarketplaceRequest;
 use Illuminate\Http\Request;
 
 class MarketplaceController extends Controller
@@ -14,11 +13,9 @@ class MarketplaceController extends Controller
     */
    public function index()
    {
-      $marketplaceModel = new Marketplace();
+      $marketplaces = Marketplace::all();
 
-      $marketplaces = $marketplaceModel->all();
-
-      return view('admin.marketplaces.index', ['marketplaces' => $marketplaces]);
+      return view('admin.marketplaces.index', compact('marketplaces'));
    }
    
    /**
@@ -56,11 +53,9 @@ class MarketplaceController extends Controller
     */
    public function edit($idMarketplace)
    {
-      $marketplaceModel = new Marketplace();
+      $marketplace = Marketplace::find($idMarketplace);
 
-      $marketplace = $marketplaceModel->find($idMarketplace);
-
-      return view('admin.marketplaces.update', ['marketplace' => $marketplace]);
+      return view('admin.marketplaces.update', compact('marketplace'));
    }
 
    /**

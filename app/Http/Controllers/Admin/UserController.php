@@ -14,6 +14,6 @@ class UserController extends Controller
       
       $users = $userModel->getUsers();
 
-      return view('admin.users.users', ['users' => $users]);
+      return view('admin.users.users', compact('users'));
    }
 }

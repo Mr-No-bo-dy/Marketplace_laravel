@@ -21,6 +21,7 @@
                      <p><b>Description:</b> {{ $product->description }}</p>
                      <p><b>Price:</b> {{ $product->price }}</p>
                      <p><b>Amount:</b> {{ $product->amount }}</p>
+                     {{-- <p><img src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}"></p> --}}
                   </div>
                   <div class="sm:col-span-1 justify-self-end self-center">
                      <a class="inline-block rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400"

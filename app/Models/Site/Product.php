@@ -4,6 +4,7 @@ namespace App\Models\Site;
 
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+// use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -49,6 +50,11 @@ class Product extends Model implements HasMedia
 
       return $idProduct;
    }
+
+   // public static function last()
+   // {
+   //    return static::all()->last();
+   // }
  
    /**
     * Get all entities from DB table Products from given Seller
@@ -57,7 +63,7 @@ class Product extends Model implements HasMedia
     * 
     * @return array $sellerProducts
     */
-   public function getSellerProducts(int $idSeller = null)
+   public function getSellerProducts(int $idSeller)
    {
       $sellerProducts = DB::table($this->table)
                      ->select()

@@ -2,27 +2,31 @@
 
 namespace App\Models\Site;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Site\Product;
+use App\Models\Admin\Marketplace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Seller extends Model
 {
    use HasFactory;
 
    /**
-    * The table associated with the model.
-    *
-    * @var string
-    */
+   * The table associated with the model.
+   *
+   * @var string
+   */
    protected $table = 'sellers';
 
    /**
-    * The attributes that are mass assignable.
-    *
-    * @var array<int, string>
-    */
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
    protected $primaryKey = 'id_seller';
    protected $fillable = [
       'id_marketplace',
@@ -33,47 +37,61 @@ class Seller extends Model
    ];
 
    /**
-    * Get all entities from DB table Sellers
-    * 
-    * @return array $sellers
-    */
-   public function getAllSellers()
+   * Setting relationship with DB table Marketplace.
+   */
+   public function marketplace(): BelongsTo
    {
-      $sellers = DB::table($this->table, 's')
-                     ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
-                     ->select('marketplaces.country', 's.*')
-                     ->get();
-
-      return $sellers;
+      return $this->belongsTo(Marketplace::class, 'id_marketplace', 'id_marketplace');
    }
 
    /**
-    * Get one entity from DB table Sellers
-    * 
-    * @param int $idSeller
-    * 
-    * @return array $sellers
-    */
-   public function getOneSeller(int $idSeller)
+   * Setting relationship with DB table Products.
+   */
+   public function products(): HasMany
    {
-      $sellers = DB::table($this->table, 's')
-                     ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
-                     // ->leftJoin('sellers_passwords', 'sellers_passwords.'.$this->primaryKey, '=', 's.'.$this->primaryKey)
-                     // ->select('marketplaces.country', 'sellers_passwords.password', 's.*')
-                     ->select('marketplaces.country', 's.*')
-                     ->where('s.'.$this->primaryKey, $idSeller)
-                     ->first();
-
-      return $sellers;
+      return $this->hasMany(Product::class, 'id_seller', 'id_seller');
    }
 
+   // /**
+   // * Get all entities from DB table Sellers
+   // * 
+   // * @return array $sellers
+   // */
+   // public function getAllSellers()
+   // {
+   //    $sellers = DB::table($this->table, 's')
+   //                   ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
+   //                   ->select('marketplaces.country', 's.*')
+   //                   ->get();
+
+   //    return $sellers;
+   // }
+
+   // /**
+   //  * Get one entity from DB table Sellers
+   //  * 
+   //  * @param int $idSeller
+   //  * 
+   //  * @return array $sellers
+   //  */
+   // public function getOneSeller(int $idSeller)
+   // {
+   //    $sellers = DB::table($this->table, 's')
+   //                   ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
+   //                   ->select('marketplaces.country', 's.*')
+   //                   ->where('s.'.$this->primaryKey, $idSeller)
+   //                   ->first();
+
+   //    return $sellers;
+   // }
+
    /**
-    * Check if loggining user exists in DB table Sellers
-    * 
-    * @param array $data
-    * 
-    * @return int $seller->id_seller
-    */
+   * Check if loggining user exists in DB table Sellers
+   * 
+   * @param array $data
+   * 
+   * @return int $seller->id_seller
+   */
    public function authSeller(array $data)
    {
       $checkData = [
@@ -105,12 +123,12 @@ class Seller extends Model
    }
 
    /**
-    * Insert entity into DB table Sellers
-    * 
-    * @param array $data
-    * 
-    * @return int $idNewSeller
-    */
+   * Insert entity into DB table Sellers
+   * 
+   * @param array $data
+   * 
+   * @return int $idNewSeller
+   */
    public function storeSeller(array $data)
    {
       $idNewSeller = DB::table($this->table)
@@ -120,10 +138,10 @@ class Seller extends Model
    }
 
    /**
-    * Insert Seller's password into DB table 'sellers_passwords'
-    * 
-    * @param array $data
-    */
+   * Insert Seller's password into DB table 'sellers_passwords'
+   * 
+   * @param array $data
+   */
    public function storeSellerPassword(array $data)
    {
       DB::table('sellers_passwords')
@@ -131,11 +149,11 @@ class Seller extends Model
    }
 
    /**
-    * Update entity into DB table Sellers
-    * 
-    * @param int $idSeller
-    * @param array $data
-    */
+   * Update entity into DB table Sellers
+   * 
+   * @param int $idSeller
+   * @param array $data
+   */
    public function updateSeller(int $idSeller, array $data)
    {
       DB::table($this->table)
@@ -144,11 +162,11 @@ class Seller extends Model
    }
 
    /**
-    * Update Seller's password into DB table 'sellers_passwords'
-    * 
-    * @param int $idSeller
-    * @param array $data
-    */
+   * Update Seller's password into DB table 'sellers_passwords'
+   * 
+   * @param int $idSeller
+   * @param array $data
+   */
    public function updateSellerPassword(int $idSeller, array $data)
    {
       DB::table('sellers_passwords')
@@ -157,10 +175,10 @@ class Seller extends Model
    }
 
    /**
-    * Delete entity from DB table Sellers
-    * 
-    * @param int $idSeller
-    */
+   * Delete entity from DB table Sellers
+   * 
+   * @param int $idSeller
+   */
    public function deleteSeller(int $idSeller)
    {
       DB::table('sellers_passwords')

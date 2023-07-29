@@ -37,13 +37,12 @@ Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::middleware('authSeller')->group(function () {
    Route::controller(SellerController::class)->group(function () {
       Route::get('/personal', 'show')->name('personal');
+      Route::get('/my_products', 'sellerProducts')->name('my_products');
       Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
       Route::post('/seller/update', 'update')->name('seller.update');
       Route::post('/seller/delete', 'destroy')->name('seller.delete');
    });
    Route::controller(ProductController::class)->group(function () {
-      Route::get('/product', 'index')->name('product');
-      Route::get('/my_products', 'sellerProducts')->name('my_products');
       Route::get('/product/create', 'create')->name('product.create');
       Route::post('/product/store', 'store')->name('product.store');
       Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
@@ -93,12 +92,12 @@ Route::middleware('auth')->group(function () {
          Route::post('/subcategory/update', 'update')->name('admin.subcategory.update');
          Route::post('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
       });
-      // Route::controller(SellerController::class)->group(function () {
-      //    Route::get('/seller', 'index')->name('admin.seller');
-      //    Route::get('/seller/edit/{id_seller}', 'edit')->name('admin.seller.edit');
-      //    Route::post('/seller/update', 'update')->name('admin.seller.update');
-      //    Route::post('/seller/delete', 'destroy')->name('admin.seller.delete');
-      // });
+      Route::controller(SellerController::class)->group(function () {
+         Route::get('/seller', 'index')->name('admin.seller');
+         // Route::get('/seller/edit/{id_seller}', 'edit')->name('admin.seller.edit');
+         // Route::post('/seller/update', 'update')->name('admin.seller.update');
+         // Route::post('/seller/delete', 'destroy')->name('admin.seller.delete');
+      });
       Route::get('/users', [UserController::class, 'users'])->name('admin.users');
    });
 });

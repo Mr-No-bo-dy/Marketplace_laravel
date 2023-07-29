@@ -7,10 +7,9 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
-use App\Models\Site\Seller;
 use Illuminate\Http\Request;
 
-// use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductController extends Controller
 {
@@ -28,45 +27,7 @@ class ProductController extends Controller
    {
       $products = Product::all();
 
-      // $images = $productModel->getMedia();
-
-      // $imgs = [];
-      // foreach ($products as $product) {
-      //    $imgs[] = $product->getMedia('products');
-      // }
-      // $path = $imgs[5][0]->getPath();
-      // // dd($path);
-      
-      // $images = $productModel::last()->getMedia('products');
-
-      // $all = [];
-      // Product::chunk(10, function(Collection $products) {
-      //    foreach ($products as $product) {
-      //       $all[] = $product;
-      //       dump($product);
-      //    }
-      // });
-      // dd($all);
-
       return view('site.product.index', compact('products'));
-   }
-
-   /**
-    * Display a listing of the Products from given Seller.
-    */
-   public function sellerProducts(Request $request)
-   {
-      $productModel = new Product();
-      $sellerModel = new Seller();
-
-      $idSeller = $request->session()->get('id_seller');
-      $seller = $sellerModel->getOneSeller($idSeller);
-      $products = $productModel->getSellerProducts($idSeller);
-      // $products = $productModel::withMedia('products')->where('id_seller', $idSeller)->get();
-      // $media = $productModel::all();
-      // dd($media);
-
-      return view('site.product.index', compact('seller', 'products'));
    }
    
    /**
@@ -91,8 +52,6 @@ class ProductController extends Controller
       $productModel = new Product();
 
       $postData = $request->post();
-      $image = $request->file();
-
       $setProductData = [
          'id_producer' => $postData['id_producer'],
          'id_category' => $postData['id_category'],
@@ -105,8 +64,9 @@ class ProductController extends Controller
          'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
          'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
       ];
-
       $idNewProduct = $productModel->storeProduct($setProductData);
+
+      $image = $request->file();
       $product = $productModel->find($idNewProduct);
       $product->addMedia($image['image'])
                ->toMediaCollection('products')
@@ -151,7 +111,13 @@ class ProductController extends Controller
       $idProduct = $request->post('id_product');
       $productModel->updateProduct($idProduct, $setProductData);
 
-      return redirect()->route('product');
+      $image = $request->file();
+      $product = $productModel->find($idProduct);
+      $product->addMedia($image['image'])
+               ->toMediaCollection('products')
+               ->save();
+
+      return redirect()->route('my_products');
    }
 
    /**
@@ -164,6 +130,6 @@ class ProductController extends Controller
       $idProduct = $request->post('id_product');
       $productModel->deleteProduct($idProduct);
 
-      return redirect()->route('product');
+      return redirect()->route('my_products');
    }
 }

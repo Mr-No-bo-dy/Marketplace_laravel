@@ -10,23 +10,21 @@ use Illuminate\Support\Facades\Hash;
 class GeneralController extends Controller
 {
    /**
-    * Display site's Home page.
-    */
+   * Display site's Home page.
+   */
    public function index(Request $request)
    {
-      $sellerModel = new Seller();
-
       $seller = "";
       if ($idSeller = $request->session()->get('id_seller')) {
-         $seller = $sellerModel->getOneSeller($idSeller);
+         $seller = Seller::find($idSeller);
       }
       
       return view('index', compact('seller'));
    }
 
    /**
-    * Show the form for Registrating a new Seller.
-    */
+   * Show the form for Registrating a new Seller.
+   */
    public function register()
    {
       $marketplaces = Marketplace::all(['id_marketplace', 'country']);

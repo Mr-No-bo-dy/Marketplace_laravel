@@ -6,7 +6,7 @@
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
          <div class="p-6 text-gray-900">
             <h1>Update Product</h1>
-            <form action="{{ route('product.update') }}" method="post">
+            <form action="{{ route('product.update') }}" method="post" enctype="multipart/form-data">
                @csrf
 
                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
@@ -75,6 +75,12 @@
                            <option value="{{ $subcategory->id_subcategory }}" {{ $subcategory->id_subcategory !== $product->id_subcategory ?: 'selected' }}>{{ $subcategory->name }}</option>
                            @endforeach
                         </select>
+                     </div>
+                  </div>
+                  <div class="sm:col-span-2">
+                     <label for="image" class="block text-sm font-medium leading-6 text-gray-900">Image</label>
+                     <div class="mt-2">
+                        <input type="file" name="image">
                      </div>
                   </div>
                </div>

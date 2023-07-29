@@ -30,9 +30,9 @@
                <x-nav-link :href="route('admin.subcategory')" :active="request()->routeIs('admin.subcategory')">
                   {{ __('Subcategories') }}
                </x-nav-link>
-               {{-- <x-nav-link :href="route('admin.seller')" :active="request()->routeIs('admin.seller')">
+               <x-nav-link :href="route('admin.seller')" :active="request()->routeIs('admin.seller')">
                   {{ __('Sellers') }}
-               </x-nav-link> --}}
+               </x-nav-link>
             </div>
          </div>
 

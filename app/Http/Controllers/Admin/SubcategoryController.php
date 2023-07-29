@@ -10,23 +10,34 @@ use Illuminate\Http\Request;
 class SubcategoryController extends Controller
 {
    /**
-    * Display a listing of the Subcategories.
-    */
+   * Display a listing of the Subcategories.
+   */
    public function index()
    {
-      $subcategoryModel = new Subcategory();
-      
-      $subcategories = $subcategoryModel->getAllSubcategories();
+      // $subcategoryModel = new Subcategory();
+
+      // $subcategories = $subcategoryModel->getAllSubcategories();
+
+      $subcategories = Subcategory::all();
+      $categories = Category::all();
+
+      foreach ($subcategories as $subcategory) {
+         foreach ($categories as $category) {
+            if ($subcategory['id_category'] === $category['id_category']) {
+               $subcategory['category'] = $category['name'];
+            }
+         }
+      }
 
       return view('admin.subcategories.index', compact('subcategories'));
    }
-   
+
    /**
     * Display Subcategory creation form
     */
    public function create()
    {
-      $categories = Subcategory::all(['id_category', 'name']);
+      $categories = Category::all(['id_category', 'name']);
 
       return view('admin.subcategories.create', compact('categories'));
    }
@@ -87,8 +98,8 @@ class SubcategoryController extends Controller
    }
 
    /**
-    * Delete Subcategory
-    */
+   * Delete Subcategory
+   */
    public function destroy(Request $request)
    {
       $subcategoryModel = new Subcategory();

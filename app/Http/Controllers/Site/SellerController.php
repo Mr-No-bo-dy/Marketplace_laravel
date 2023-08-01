@@ -11,39 +11,27 @@ use Illuminate\Support\Facades\Hash;
 class SellerController extends Controller
 {
    /**
-    * Display a listing of the Sellers.
-    */
+   * Display a listing of the Sellers.
+   */
    public function index()
    {
-      // $sellerModel = new Seller();
-
-      // $sellers = $sellerModel->getAllSellers();
-
-      $sellers = Seller::all();
-      $marketplaces = Marketplace::all();
-
-      foreach ($sellers as $seller) {
-         foreach ($marketplaces as $marketplace) {
-            if ($seller['id_marketplace'] === $marketplace['id_marketplace']) {
-               $seller['country'] = $marketplace['country'];
-            }
-         }
-      }
+      // $sellers = Seller::all();
+      // dd($sellers);
+      $sellers = Seller::withTrashed()->get();
 
       return view('admin.sellers.index', compact('sellers'));
    }
 
    /**
-    * Show one Seller's personal page.
+   * Show one Seller's personal page.
    */
    public function show(Request $request)
    {
       $idSeller = $request->session()->get('id_seller');
       
       $seller = Seller::find($idSeller);
-      $country = $seller->marketplace->country;
       
-      return view('profile-seller.show', compact('seller', 'country'));
+      return view('profile-seller.show', compact('seller'));
    }
    
    /**
@@ -60,10 +48,10 @@ class SellerController extends Controller
    }
    
    /**
-    * Show the form for editing the specified Seller.
-    * 
-    * @param int $idSeller
-    */
+   * Show the form for editing the specified Seller.
+   * 
+   * @param int $idSeller
+   */
    public function edit($idSeller)
    {
       $marketplaces = Marketplace::all(['id_marketplace', 'country']);
@@ -73,10 +61,10 @@ class SellerController extends Controller
    }
 
    /**
-    * Update the specified Seller in storage.
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Update the specified Seller in storage.
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function update(Request $request)
    {        
       $sellerModel = new Seller();
@@ -88,31 +76,61 @@ class SellerController extends Controller
          'surname' => $postData['surname'],
          'email' => $postData['email'],
          'phone' => $postData['tel'],
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       
       $idSeller = $request->post('id_seller');
       $sellerModel->updateSeller($idSeller, $setSellerData);
       $setSellerPasswordData = [
          'password' => Hash::make($postData['password']),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $sellerModel->updateSellerPassword($idSeller, $setSellerPasswordData);
          
-      return redirect()->route('personal');
+      return redirect()->route('seller.personal');
    }
 
    /**
-    * Remove the specified resource from storage.
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Block the specified Seller (soft delete).
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
+   public function block(Request $request)
+   {
+      $idSeller = $request->post('id_seller');
+      $seller = Seller::find($idSeller);
+      $seller->delete();
+
+      return redirect()->route('admin.seller');
+   }
+
+   /**
+   * UnBlock the specified Seller (soft delete).
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
+   public function unblock(Request $request)
+   {
+      $idSeller = $request->post('id_seller');
+      $seller = Seller::find($idSeller);
+      $seller->restore();
+
+      return redirect()->route('admin.seller');
+   }
+
+   /**
+   * Remove the specified Seller from storage.
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function destroy(Request $request)
    {
       $sellerModel = new Seller();
 
       $idSeller = $request->post('id_seller');
       $sellerModel->deleteSeller($idSeller);
+
+      $request->session()->forget('id_seller');
 
       return redirect()->route('index');
    }

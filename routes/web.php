@@ -1,16 +1,17 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\MarketplaceController;
-use App\Http\Controllers\Admin\ProducerController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Site\ProductController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Site\ClientController;
 use App\Http\Controllers\Site\SellerController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Site\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProducerController;
+use App\Http\Controllers\Admin\MarketplaceController;
+use App\Http\Controllers\Admin\SubcategoryController;
 
 /*
 | Web Routes:
@@ -27,17 +28,34 @@ use Illuminate\Support\Facades\Route;
 Route::controller(GeneralController::class)->group(function () {
    Route::get('/', 'index')->name('index');
    Route::get('/registration', 'register')->name('registration');
-   Route::post('/registration', 'store')->name('registration');
+   Route::post('/registration', 'storeDefine')->name('registration');
    Route::get('/auth', 'auth')->name('auth');
    Route::post('/auth', 'auth')->name('auth');
    Route::post('/log_out', 'logout')->name('log_out');
+
+   Route::get('/registrationClient', 'registerClient')->name('registrationClient');
+   Route::post('/registrationClient', 'storeClient')->name('registrationClient');
+   // Route::get('/authClient', 'authClient')->name('authClient');
+   // Route::post('/authClient', 'authClient')->name('authClient');
 });
 Route::get('/product', [ProductController::class, 'index'])->name('product');
+Route::get('/product/show/{id_product}', [ProductController::class, 'show'])->name('product.show');
+// Route::get('/cart', [GeneralController::class, 'show'])->name('product.cart');
+Route::post('/cart', [GeneralController::class, 'addToCart'])->name('product.cart');
+
+Route::middleware('authClient')->group(function () {
+   Route::controller(ClientController::class)->group(function () {
+      Route::get('/client/personal', 'show')->name('client.personal');
+      Route::get('/client/edit/{id_client}', 'edit')->name('client.edit');
+      Route::post('/client/update', 'update')->name('client.update');
+      Route::post('/client/delete', 'destroy')->name('client.delete');
+   });
+});
 
 Route::middleware('authSeller')->group(function () {
    Route::controller(SellerController::class)->group(function () {
-      Route::get('/personal', 'show')->name('personal');
-      Route::get('/my_products', 'sellerProducts')->name('my_products');
+      Route::get('/seller/personal', 'show')->name('seller.personal');
+      Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
       Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
       Route::post('/seller/update', 'update')->name('seller.update');
       Route::post('/seller/delete', 'destroy')->name('seller.delete');
@@ -94,9 +112,8 @@ Route::middleware('auth')->group(function () {
       });
       Route::controller(SellerController::class)->group(function () {
          Route::get('/seller', 'index')->name('admin.seller');
-         // Route::get('/seller/edit/{id_seller}', 'edit')->name('admin.seller.edit');
-         // Route::post('/seller/update', 'update')->name('admin.seller.update');
-         // Route::post('/seller/delete', 'destroy')->name('admin.seller.delete');
+         Route::post('/seller/block', 'block')->name('admin.seller.block');
+         Route::post('/seller/unblock', 'unblock')->name('admin.seller.unblock');
       });
       Route::get('/users', [UserController::class, 'users'])->name('admin.users');
    });

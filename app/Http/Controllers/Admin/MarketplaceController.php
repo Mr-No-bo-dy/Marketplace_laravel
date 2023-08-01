@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 class MarketplaceController extends Controller
 {
    /**
-    * Display all Marketplaces
-    */
+   * Display all Marketplaces
+   */
    public function index()
    {
       $marketplaces = Marketplace::all();
@@ -19,18 +19,18 @@ class MarketplaceController extends Controller
    }
    
    /**
-    * Display Marketplace creation form
-    */
+   * Display Marketplace creation form
+   */
    public function create()
    {
       return view('admin.marketplaces.create');
    }
 
    /**
-    * Create Marketplace
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Create Marketplace
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function store(Request $request)
    {
       $marketplaceModel = new Marketplace();
@@ -40,8 +40,8 @@ class MarketplaceController extends Controller
          'country_code' => strtoupper($postData['country_code']),
          'country' => ucfirst($postData['country']),
          'currency' => strtoupper($postData['currency']),
-         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'created_at' => date('Y-m-d H:i:s'),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $marketplaceModel->storeMarketplace($setMarketplaceData);
 
@@ -49,8 +49,8 @@ class MarketplaceController extends Controller
    }
 
    /**
-    * Display Marketplace update form
-    */
+   * Display Marketplace update form
+   */
    public function edit($idMarketplace)
    {
       $marketplace = Marketplace::find($idMarketplace);
@@ -59,10 +59,10 @@ class MarketplaceController extends Controller
    }
 
    /**
-    * Update Marketplace
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Update Marketplace
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function update(Request $request)
    {
       $marketplaceModel = new Marketplace();
@@ -72,7 +72,7 @@ class MarketplaceController extends Controller
          'country_code' => strtoupper($postData['country_code']),
          'country' => ucfirst($postData['country']),
          'currency' => strtoupper($postData['currency']),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idMarketplace = $request->post('id_marketplace');
       $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
@@ -81,8 +81,8 @@ class MarketplaceController extends Controller
    }
 
    /**
-    * Delete Marketplace
-    */
+   * Delete Marketplace
+   */
    public function destroy(Request $request)
    {
       $marketplaceModel = new Marketplace();

@@ -12,17 +12,17 @@ class Product extends Model implements HasMedia
    use InteractsWithMedia;
 
    /**
-    * The table associated with the model.
-    *
-    * @var string
-    */
+   * The table associated with the model.
+   *
+   * @var string
+   */
    protected $table = 'products';
 
    /**
-    * The attributes that are mass assignable.
-    *
-    * @var array<int, string>
-    */
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
    protected $primaryKey = 'id_product';
    protected $fillable = [
       'id_producer',
@@ -36,12 +36,12 @@ class Product extends Model implements HasMedia
    ];
 
    /**
-    * Insert entity into DB table Products
-    * 
-    * @param array $data
-    * 
-    * @return int $idProduct
-    */
+   * Insert entity into DB table Products
+   * 
+   * @param array $data
+   * 
+   * @return int $idProduct
+   */
    public function storeProduct(array $data)
    {
       $idProduct = DB::table($this->table)
@@ -49,30 +49,13 @@ class Product extends Model implements HasMedia
 
       return $idProduct;
    }
- 
-   /**
-    * Get all entities from DB table Products from given Seller
-    * 
-    * @param int $idSeller
-    * 
-    * @return array $sellerProducts
-    */
-   public function getSellerProducts(int $idSeller)
-   {
-      $sellerProducts = DB::table($this->table)
-                           ->select()
-                           ->where('id_seller', $idSeller)
-                           ->get();
 
-      return $sellerProducts;
-   }
-   
    /**
-    * Update entity into DB table Products
-    * 
-    * @param int $idProduct
-    * @param array $data
-    */
+   * Update entity into DB table Products
+   * 
+   * @param int $idProduct
+   * @param array $data
+   */
    public function updateProduct(int $idProduct, array $data)
    {
       DB::table($this->table)
@@ -81,10 +64,10 @@ class Product extends Model implements HasMedia
    }
 
    /**
-    * Delete entity from DB table Products
-    * 
-    * @param int $idProduct
-    */
+   * Delete entity from DB table Products
+   * 
+   * @param int $idProduct
+   */
    public function deleteProduct(int $idProduct)
    {         
       DB::table($this->table)

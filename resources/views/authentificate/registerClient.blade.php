@@ -5,15 +5,36 @@
    <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
          <div class="p-6 text-gray-900">
-            <h1 class="text-xl">Login</h1>
-            <form action="{{ route('auth') }}" method="post">
+            <h1 class="text-xl">Registration</h1>
+            <form action="{{ route('registrationClient') }}" method="post">
                @csrf
 
                <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div class="sm:col-span-2">
-                     <label for="login" class="block text-sm font-medium leading-6 text-gray-900">Email or Phone</label>
+                  <div class="sm:col-span-3">
+                     <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
                      <div class="mt-2">
-                        <input type="text" name="login" id="login" autocomplete="given-name"
+                        <input type="text" name="name" id="name" autocomplete="given-name"
+                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                     </div>
+                  </div>
+                  <div class="sm:col-span-3">
+                     <label for="surname" class="block text-sm font-medium leading-6 text-gray-900">Surname</label>
+                     <div class="mt-2">
+                        <input type="text" name="surname" id="surname" autocomplete="given-name"
+                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                     </div>
+                  </div>
+                  <div class="sm:col-span-2">
+                     <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+                     <div class="mt-2">
+                        <input type="text" name="email" id="email" autocomplete="given-name"
+                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                     </div>
+                  </div>
+                  <div class="sm:col-span-2">
+                     <label for="tel" class="block text-sm font-medium leading-6 text-gray-900">Phone</label>
+                     <div class="mt-2">
+                        <input type="text" name="tel" id="tel" autocomplete="given-name"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
@@ -25,13 +46,9 @@
                      </div>
                   </div>
                </div>
-               {{-- <div class="role mt-3">
-                  <input id="role" class="me-2 rounded-sm" type="checkbox" name="isSeller" value="1">
-                  <label for="role" class="check">Login as Seller</label>
-               </div> --}}
                <button type="submit"
                   class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                  Login
+                  Register
                </button>
                <span class="inline-block my-3">
                   <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
@@ -39,11 +56,7 @@
                </span>
                <span class="inline-block my-3 ms-12">
                   <a class="inline-block rounded-md bg-green-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                     href="{{ route('registration') }}">Register as Seller</a>
-               </span>
-               <span class="inline-block my-3 ms-3">
-                  <a class="inline-block rounded-md bg-green-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                     href="{{ route('registrationClient') }}">Register as Client</a>
+                     href="{{ route('auth') }}">Login</a>
                </span>
             </form>
          </div>

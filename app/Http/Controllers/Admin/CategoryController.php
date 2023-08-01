@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
    /**
-    * Display a listing of the Categories.
-    */
+   * Display a listing of the Categories.
+   */
    public function index()
    {
       $categories = Category::all();
@@ -19,18 +19,18 @@ class CategoryController extends Controller
    }
    
    /**
-    * Display Category creation form
-    */
+   * Display Category creation form
+   */
    public function create()
    {
       return view('admin.categories.create');
    }
 
    /**
-    * Create Category
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Create Category
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function store(Request $request)
    {
       $categoryModel = new Category();
@@ -39,8 +39,8 @@ class CategoryController extends Controller
       $setCategoryData = [
          'name' => ucfirst($postData['name']),
          'description' => $postData['description'],
-         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'created_at' => date('Y-m-d H:i:s'),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $categoryModel->storeCategory($setCategoryData);
 
@@ -48,8 +48,8 @@ class CategoryController extends Controller
    }
 
    /**
-    * Display Category update form
-    */
+   * Display Category update form
+   */
    public function edit($idCategory)
    {
       $category = Category::find($idCategory);
@@ -58,10 +58,10 @@ class CategoryController extends Controller
    }
 
    /**
-    * Update Category
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Update Category
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function update(Request $request)
    {
       $categoryModel = new Category();
@@ -70,7 +70,7 @@ class CategoryController extends Controller
       $setCategoryData = [
          'name' => ucfirst($postData['name']),
          'description' => $postData['description'],
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idCategory = $request->post('id_category');
       $categoryModel->updateCategory($idCategory, $setCategoryData);
@@ -79,8 +79,8 @@ class CategoryController extends Controller
    }
 
    /**
-    * Delete Category
-    */
+   * Delete Category
+   */
    public function destroy(Request $request)
    {
       $categoryModel = new Category();

@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 class ProducerController extends Controller
 {
    /**
-    * Display a listing of the Producers
-    */
+   * Display a listing of the Producers
+   */
    public function index()
    {
       $producers = Producer::all();
@@ -19,18 +19,18 @@ class ProducerController extends Controller
    }
    
    /**
-    * Display Producer creation form
-    */
+   * Display Producer creation form
+   */
    public function create()
    {
       return view('admin.producers.create');
    }
 
    /**
-    * Create Producer
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Create Producer
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function store(Request $request)
    {
       $producerModel = new Producer();
@@ -40,8 +40,8 @@ class ProducerController extends Controller
          'name' => ucfirst($postData['name']),
          'address' => ucfirst($postData['address']),
          'contacts' => $postData['contacts'],
-         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'created_at' => date('Y-m-d H:i:s'),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $producerModel->storeProducer($setProducerData);
 
@@ -49,8 +49,8 @@ class ProducerController extends Controller
    }
 
    /**
-    * Display Producer update form
-    */
+   * Display Producer update form
+   */
    public function edit($idProducer)
    {
       $producer = Producer::find($idProducer);
@@ -59,10 +59,10 @@ class ProducerController extends Controller
    }
 
    /**
-    * Update Producer
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Update Producer
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function update(Request $request)
    {
       $producerModel = new Producer();
@@ -72,7 +72,7 @@ class ProducerController extends Controller
          'name' => ucfirst($postData['name']),
          'address' => ucfirst($postData['address']),
          'contacts' => $postData['contacts'],
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idProducer = $request->post('id_producer');
       $producerModel->updateProducer($idProducer, $setProducerData);
@@ -81,8 +81,8 @@ class ProducerController extends Controller
    }
 
    /**
-    * Delete Producer
-    */
+   * Delete Producer
+   */
    public function destroy(Request $request)
    {
       $producerModel = new Producer();

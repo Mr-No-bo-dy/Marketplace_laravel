@@ -9,7 +9,6 @@ use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
 use Illuminate\Http\Request;
 
-use Illuminate\Database\Eloquent\Collection;
 
 class ProductController extends Controller
 {
@@ -21,18 +20,28 @@ class ProductController extends Controller
    protected $idSeller;
 
    /**
-    * Display a listing of the Products.
-    */
+   * Display a listing of the Products.
+   */
    public function index()
    {
       $products = Product::all();
 
       return view('site.product.index', compact('products'));
    }
+
+   /**
+   * Display one chosen Product.
+   */
+   public function show($idProduct)
+   {
+      $product = Product::find($idProduct);
+
+      return view('site.product.show', compact('product'));
+   }
    
    /**
-    * Display Product creation form
-    */
+   * Display Product creation form
+   */
    public function create()
    {
       $producers = Producer::all(['id_producer', 'name']);
@@ -43,10 +52,10 @@ class ProductController extends Controller
    }
 
    /**
-    * Create Product
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Create Product
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function store(Request $request)
    {
       $productModel = new Product();
@@ -61,8 +70,8 @@ class ProductController extends Controller
          'description' => ucfirst($postData['description']),
          'price' => $postData['price'],
          'amount' => $postData['amount'],
-         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'created_at' => date('Y-m-d H:i:s'),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idNewProduct = $productModel->storeProduct($setProductData);
 
@@ -76,8 +85,8 @@ class ProductController extends Controller
    }
 
    /**
-    * Display Product update form
-    */
+   * Display Product update form
+   */
    public function edit($idProduct)
    {
       $product = Product::find($idProduct);
@@ -89,10 +98,10 @@ class ProductController extends Controller
    }
 
    /**
-    * Update Product
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Update Product
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function update(Request $request)
    {
       $productModel = new Product();
@@ -106,7 +115,7 @@ class ProductController extends Controller
          'description' => ucfirst($postData['description']),
          'price' => $postData['price'],
          'amount' => $postData['amount'],
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idProduct = $request->post('id_product');
       $productModel->updateProduct($idProduct, $setProductData);
@@ -117,12 +126,12 @@ class ProductController extends Controller
                ->toMediaCollection('products')
                ->save();
 
-      return redirect()->route('my_products');
+      return redirect()->route('seller.my_products');
    }
 
    /**
-    * Delete Product
-    */
+   * Delete Product
+   */
    public function destroy(Request $request)
    {
       $productModel = new Product();
@@ -130,6 +139,6 @@ class ProductController extends Controller
       $idProduct = $request->post('id_product');
       $productModel->deleteProduct($idProduct);
 
-      return redirect()->route('my_products');
+      return redirect()->route('seller.my_products');
    }
 }

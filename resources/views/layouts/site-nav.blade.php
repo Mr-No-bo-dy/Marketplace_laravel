@@ -93,7 +93,7 @@
                </div>
             </div> --}}
          </div>
-         <a class="text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller->name ?? 'Profile' }}</a>
+         <a class="text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller->name ?? $client->name ?? 'Profile' }}</a>
       </div>
    </div>
 

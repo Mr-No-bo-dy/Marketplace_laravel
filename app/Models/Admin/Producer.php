@@ -15,10 +15,10 @@ class Producer extends Model
    protected $table = 'producers';
 
    /**
-    * The attributes that are mass assignable.
-    *
-    * @var array<int, string>
-    */
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
    protected $primaryKey = 'id_producer';
    protected $fillable = [
       'name',
@@ -27,7 +27,7 @@ class Producer extends Model
    ];
 
    /**
-    * Insert entity into DB table Producers
+   * Insert entity into DB table Producers
    * 
    * @param array $data
    */
@@ -38,7 +38,7 @@ class Producer extends Model
    }
 
    /**
-    * Insert entity into DB table Producers
+   * Insert entity into DB table Producers
    * 
    * @param int $idProducer
    * @param array $data
@@ -51,7 +51,7 @@ class Producer extends Model
    }
 
    /**
-    * Delete entity from DB table Producers
+   * Delete entity from DB table Producers
    * 
    * @param int $idProducer
    */

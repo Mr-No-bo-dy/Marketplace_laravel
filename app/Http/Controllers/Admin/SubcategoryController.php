@@ -14,27 +14,14 @@ class SubcategoryController extends Controller
    */
    public function index()
    {
-      // $subcategoryModel = new Subcategory();
-
-      // $subcategories = $subcategoryModel->getAllSubcategories();
-
       $subcategories = Subcategory::all();
-      $categories = Category::all();
-
-      foreach ($subcategories as $subcategory) {
-         foreach ($categories as $category) {
-            if ($subcategory['id_category'] === $category['id_category']) {
-               $subcategory['category'] = $category['name'];
-            }
-         }
-      }
 
       return view('admin.subcategories.index', compact('subcategories'));
    }
 
    /**
-    * Display Subcategory creation form
-    */
+   * Display Subcategory creation form
+   */
    public function create()
    {
       $categories = Category::all(['id_category', 'name']);
@@ -43,10 +30,10 @@ class SubcategoryController extends Controller
    }
 
    /**
-    * Create Subcategory
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Create Subcategory
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function store(Request $request)
    {
       $subcategoryModel = new Subcategory();
@@ -56,8 +43,8 @@ class SubcategoryController extends Controller
          'id_category' => $postData['id_category'],
          'name' => ucfirst($postData['name']),
          'description' => $postData['description'],
-         'created_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'created_at' => date('Y-m-d H:i:s'),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $subcategoryModel->storeSubcategory($setSubcategoryData);
 
@@ -65,8 +52,8 @@ class SubcategoryController extends Controller
    }
 
    /**
-    * Display Subcategory update form
-    */
+   * Display Subcategory update form
+   */
    public function edit($idSubcategory)
    {
       $categories = Category::all(['id_category', 'name']);
@@ -76,10 +63,10 @@ class SubcategoryController extends Controller
    }
 
    /**
-    * Update Subcategory
-    * 
-    * @param object \Illuminate\Http\Request $request
-    */
+   * Update Subcategory
+   * 
+   * @param object \Illuminate\Http\Request $request
+   */
    public function update(Request $request)
    {
       $subcategoryModel = new Subcategory();
@@ -89,7 +76,7 @@ class SubcategoryController extends Controller
          'id_category' => $postData['id_category'],
          'name' => ucfirst($postData['name']),
          'description' => $postData['description'],
-         'updated_at' => date('y.m.d H:i:s', strtotime('+3 hour')),
+         'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idSubcategory = $request->post('id_subcategory');
       $subcategoryModel->updateSubCategory($idSubcategory, $setCategoryData);

@@ -18,7 +18,7 @@
                   <div class="sm:col-span-6">
                      <img src="{person.imageUrl}" alt="" />
                      <b class="text-xl">{{ $subcategory->name }}</b>
-                     <p><b>Category:</b> {{ $subcategory->category }}</p>
+                     <p><b>Category:</b> {{ $subcategory->category->name }}</p>
                      <p><b>Description:</b> {{ $subcategory->description }}</p>
                   </div>
                   <div class="sm:col-span-1 justify-self-end self-center">

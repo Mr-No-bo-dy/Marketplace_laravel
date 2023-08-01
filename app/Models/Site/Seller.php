@@ -7,6 +7,7 @@ use App\Models\Admin\Marketplace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Seller extends Model
 {
    use HasFactory;
+   use SoftDeletes;
 
    /**
    * The table associated with the model.
@@ -37,6 +39,17 @@ class Seller extends Model
    ];
 
    /**
+   * The attributes that are NOT assignable.
+   *
+   * @var array<int, string>
+   */
+   protected $dates = [
+      'created_at',
+      'updated_at',
+      'deleted_at',
+   ];
+
+   /**
    * Setting relationship with DB table Marketplace.
    */
    public function marketplace(): BelongsTo
@@ -51,39 +64,6 @@ class Seller extends Model
    {
       return $this->hasMany(Product::class, 'id_seller', 'id_seller');
    }
-
-   // /**
-   // * Get all entities from DB table Sellers
-   // * 
-   // * @return array $sellers
-   // */
-   // public function getAllSellers()
-   // {
-   //    $sellers = DB::table($this->table, 's')
-   //                   ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
-   //                   ->select('marketplaces.country', 's.*')
-   //                   ->get();
-
-   //    return $sellers;
-   // }
-
-   // /**
-   //  * Get one entity from DB table Sellers
-   //  * 
-   //  * @param int $idSeller
-   //  * 
-   //  * @return array $sellers
-   //  */
-   // public function getOneSeller(int $idSeller)
-   // {
-   //    $sellers = DB::table($this->table, 's')
-   //                   ->leftJoin('marketplaces', 'marketplaces.id_marketplace', '=', 's.id_marketplace')
-   //                   ->select('marketplaces.country', 's.*')
-   //                   ->where('s.'.$this->primaryKey, $idSeller)
-   //                   ->first();
-
-   //    return $sellers;
-   // }
 
    /**
    * Check if loggining user exists in DB table Sellers
@@ -132,7 +112,7 @@ class Seller extends Model
    public function storeSeller(array $data)
    {
       $idNewSeller = DB::table($this->table)
-                           ->insertGetId($data);
+                        ->insertGetId($data);
 
       return $idNewSeller;
    }
@@ -183,7 +163,9 @@ class Seller extends Model
    {
       DB::table('sellers_passwords')
          ->where($this->primaryKey, $idSeller)
-         ->delete();
+         // ->delete();
+         ->update(['deleted_at' => date('Y-m-d H:i:s')]);
+         
          
       DB::table($this->table)
          ->where($this->primaryKey, $idSeller)

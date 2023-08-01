@@ -35,39 +35,6 @@ class Subcategory extends Model
    {
       return $this->belongsTo(Category::class, 'id_category', 'id_category');
    }
-
-   // /**
-   // * Get all entities from DB table Subcategories
-   // * 
-   // * @return array $Subcategories
-   // */
-   // public function getAllSubcategories()
-   // {
-   //    $subcategories = DB::table($this->table, 'sc')
-   //                   ->leftJoin('categories as c', 'c.id_category', '=', 'sc.id_category')
-   //                   ->select('c.name as category', 'sc.*')
-   //                   ->get();
-
-   //    return $subcategories;
-   // }
-
-   // /**
-   // * Get one entity from DB table Subcategories
-   // * 
-   // * @param int $idSubcategory
-   // * 
-   // * @return array $subcategories
-   // */
-   // public function getOneSubcategory(int $idSubcategory)
-   // {
-   //    $subcategories = DB::table($this->table, 'sc')
-   //                   ->leftJoin('categories as c', 'c.id_category', '=', 'sc.id_category')
-   //                   ->select('c.name as category', 'sc.*')
-   //                   ->where('sc.'.$this->primaryKey, $idSubcategory)
-   //                   ->first();
-
-   //    return $subcategories;
-   // }
    
    /**
    * Insert entity into DB table Subcategories

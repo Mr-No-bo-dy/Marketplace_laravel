@@ -15,10 +15,10 @@ class Category extends Model
    protected $table = 'categories';
 
    /**
-    * The attributes that are mass assignable.
-    *
-    * @var array<int, string>
-    */
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
    protected $primaryKey = 'id_category';
    protected $fillable = [
       'name',
@@ -26,7 +26,7 @@ class Category extends Model
    ];
 
    /**
-    * Insert entity into DB table Categories
+   * Insert entity into DB table Categories
    * 
    * @param array $data
    */
@@ -37,7 +37,7 @@ class Category extends Model
    }
 
    /**
-    * Insert entity into DB table Categories
+   * Insert entity into DB table Categories
    * 
    * @param int $idCategory
    * @param array $data
@@ -50,7 +50,7 @@ class Category extends Model
    }
 
    /**
-    * Delete entity from DB table Categories
+   * Delete entity from DB table Categories
    * 
    * @param int $idCategory
    */

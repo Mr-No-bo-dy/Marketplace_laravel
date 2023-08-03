@@ -140,8 +140,11 @@ class GeneralController extends Controller
          
          $idAuthUser = $sellerModel->authSeller($data);
          if (!empty($idAuthUser)) {
-            $request->session()->put('id_seller', $idAuthUser);
-            $route = redirect()->route('seller.personal');
+            $seller = Seller::withTrashed()->find($idAuthUser);
+            if (!$seller->trashed()) {
+               $request->session()->put('id_seller', $idAuthUser);
+               $route = redirect()->route('seller.personal');
+            }
 
          } else {
             $idAuthUser = $clientModel->authClient($data);
@@ -151,37 +154,6 @@ class GeneralController extends Controller
       }
       
       return $route;
-   }
-
-   /**
-   * Login Client into Personal Page.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function authClient(Request $request)
-   {
-      $clientModel = new Client();
-
-      if ($request->session()->has('id_client')) {
-         return redirect()->route('client.personal');
-      }
-
-      $postData = $request->post();
-      if (!empty($postData)) {
-         $data = [
-            'login' => $postData['login'],
-            'password' => $postData['password'],
-         ];
-         $idAuthClient = $clientModel->authClient($data);
-
-         if (!empty($idAuthClient)) {
-            $request->session()->put('id_client', $idAuthClient);
-            
-            return redirect()->route('client.personal');
-         }
-      }
-      
-      return view('authentificate.login');
    }
 
    /**
@@ -212,11 +184,31 @@ class GeneralController extends Controller
 
       // $key = 'cart.product.'.$idProduct;
       // $request->session()->put($key, $idProduct);
+
+      // session(['cart.product.'.$idProduct => $idProduct]);
       
-      $request->session()->put('cart.product.'.$idProduct, $idProduct);
+      $request->session()->put('cart.product.'.$idProduct, 1);
 
-      $cart = $request->session()->all();
-      dd($cart);
+      // session_start();
+      // session_destroy();
+      // $_SESSION['cart']['product'][$idProduct] += 1;
 
+      
+      // $cart = $request->session()->get('cart');
+      // if (!isset($cardProduct)) {
+      //    $cardProduct = [];
+      // }
+      // $newProduct = [
+      //    $idProduct => [
+      //       'id' => $idProduct,
+
+      //    ],
+      // ];
+      // $cardProduct = array_merge($newProduct, $cardProduct);
+      // $request->session()->put('cart', $cardProduct);
+
+      // $cart = $request->session()->all();
+      // dump($cart);
+      // return redirect()->route('product');
    }
 }

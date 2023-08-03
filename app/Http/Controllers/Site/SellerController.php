@@ -15,8 +15,6 @@ class SellerController extends Controller
    */
    public function index()
    {
-      // $sellers = Seller::all();
-      // dd($sellers);
       $sellers = Seller::withTrashed()->get();
 
       return view('admin.sellers.index', compact('sellers'));
@@ -31,7 +29,7 @@ class SellerController extends Controller
       
       $seller = Seller::find($idSeller);
       
-      return view('profile-seller.show', compact('seller'));
+      return view('profile.seller-show', compact('seller'));
    }
    
    /**
@@ -57,7 +55,7 @@ class SellerController extends Controller
       $marketplaces = Marketplace::all(['id_marketplace', 'country']);
       $seller = Seller::find($idSeller);
       
-      return view('profile-seller.update', compact('marketplaces', 'seller'));
+      return view('profile.seller-update', compact('marketplaces', 'seller'));
    }
 
    /**
@@ -112,7 +110,7 @@ class SellerController extends Controller
    public function unblock(Request $request)
    {
       $idSeller = $request->post('id_seller');
-      $seller = Seller::find($idSeller);
+      $seller = Seller::onlyTrashed()->find($idSeller);
       $seller->restore();
 
       return redirect()->route('admin.seller');

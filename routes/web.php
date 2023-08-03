@@ -29,14 +29,12 @@ Route::controller(GeneralController::class)->group(function () {
    Route::get('/', 'index')->name('index');
    Route::get('/registration', 'register')->name('registration');
    Route::post('/registration', 'storeDefine')->name('registration');
+   Route::get('/registrationClient', 'registerClient')->name('registrationClient');
+   Route::post('/registrationClient', 'storeClient')->name('registrationClient');
    Route::get('/auth', 'auth')->name('auth');
    Route::post('/auth', 'auth')->name('auth');
    Route::post('/log_out', 'logout')->name('log_out');
 
-   Route::get('/registrationClient', 'registerClient')->name('registrationClient');
-   Route::post('/registrationClient', 'storeClient')->name('registrationClient');
-   // Route::get('/authClient', 'authClient')->name('authClient');
-   // Route::post('/authClient', 'authClient')->name('authClient');
 });
 Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::get('/product/show/{id_product}', [ProductController::class, 'show'])->name('product.show');

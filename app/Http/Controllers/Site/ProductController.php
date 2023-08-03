@@ -13,13 +13,6 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
    /**
-   * The attributes that are mass assignable.
-   *
-   * @var array<int, string>
-   */
-   protected $idSeller;
-
-   /**
    * Display a listing of the Products.
    */
    public function index()

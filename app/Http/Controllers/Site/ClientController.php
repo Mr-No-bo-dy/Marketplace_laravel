@@ -28,7 +28,7 @@ class ClientController extends Controller
       
       $client = Client::find($idClient);
       
-      return view('profile-client.show', compact('client'));
+      return view('profile.client-show', compact('client'));
    }
    
    /**
@@ -40,7 +40,7 @@ class ClientController extends Controller
    {
       $client = Client::find($idClient);
       
-      return view('profile-client.update', compact('client'));
+      return view('profile.client-update', compact('client'));
    }
 
    /**

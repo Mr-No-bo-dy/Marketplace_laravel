@@ -39,7 +39,7 @@ class Seller extends Model
    ];
 
    /**
-   * The attributes that are NOT assignable.
+   * The attributes that are assigning automaticaly.
    *
    * @var array<int, string>
    */
@@ -163,9 +163,7 @@ class Seller extends Model
    {
       DB::table('sellers_passwords')
          ->where($this->primaryKey, $idSeller)
-         // ->delete();
-         ->update(['deleted_at' => date('Y-m-d H:i:s')]);
-         
+         ->delete();
          
       DB::table($this->table)
          ->where($this->primaryKey, $idSeller)

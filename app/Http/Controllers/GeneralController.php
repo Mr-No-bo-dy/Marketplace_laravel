@@ -169,46 +169,44 @@ class GeneralController extends Controller
    }
 
    /**
-   * Adding to cart Products.
+   * Adding Products to Cart.
    * 
    * @param object \Illuminate\Http\Request $request
    */
    public function addToCart(Request $request)
    {
-      $idProduct = $request->post('id_product');
-      // $cart = $request->session()->forget('cart');
+      if ($request->post('addToCart')) {
+         $idProduct = $request->post('id_product');
+         $price = $request->post('price');
+         $product = $request->session()->get('cart.product.' . $idProduct);
+   
+         $quantity = 1;
+         $productTotal = $price;
+         if (isset($product['id_product']) && $product['id_product'] == $idProduct) {
+            $quantity = $product['quantity'] + 1;
+            $productTotal = $quantity * $price;
+         }
+         $request->session()->put('cart.product.' . $idProduct, [
+            'id_product' => $idProduct,
+            'quantity' => $quantity,
+            'price' => $price,
+            'total' => $productTotal,
+         ]);
+   
+         $cart = $request->session()->get('cart.product');
+         if (!isset($cartTotal['quantity']) && !isset($cartTotal['total'])) {
+            $cartTotal = [
+               'quantity' => 0,
+               'total' => 0,
+            ];
+         }
+         foreach ($cart as $p) {
+            $cartTotal['quantity'] += $p['quantity'];
+            $cartTotal['total'] += $p['total'];
+         }
+         $product = $request->session()->put('cart.total', $cartTotal);
+      }
 
-      // $cart = $request->session()->get('cart', []);
-      // $cart[$idProduct] = $idProduct;
-      // $request->session()->put('cart', $idProduct);
-
-      // $key = 'cart.product.'.$idProduct;
-      // $request->session()->put($key, $idProduct);
-
-      // session(['cart.product.'.$idProduct => $idProduct]);
-      
-      $request->session()->put('cart.product.'.$idProduct, 1);
-
-      // session_start();
-      // session_destroy();
-      // $_SESSION['cart']['product'][$idProduct] += 1;
-
-      
-      // $cart = $request->session()->get('cart');
-      // if (!isset($cardProduct)) {
-      //    $cardProduct = [];
-      // }
-      // $newProduct = [
-      //    $idProduct => [
-      //       'id' => $idProduct,
-
-      //    ],
-      // ];
-      // $cardProduct = array_merge($newProduct, $cardProduct);
-      // $request->session()->put('cart', $cardProduct);
-
-      // $cart = $request->session()->all();
-      // dump($cart);
-      // return redirect()->route('product');
+      return redirect()->route('product');
    }
 }

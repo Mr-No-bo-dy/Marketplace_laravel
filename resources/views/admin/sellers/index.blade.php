@@ -35,6 +35,13 @@
                         </button>
                      </form>
                   @endif
+                  {{-- <form class="sm:col-span-1 justify-self-end self-center" action="@if (is_null($seller->deleted_at)) {{ route('admin.seller.block') }} @else {{ route('admin.seller.unblock') }} @endif" method="post">
+                     @csrf
+                     <button type="submit" name="id_seller" value="{{ $seller->id_seller }}"
+                        class="rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">
+                        @if (is_null($seller->deleted_at)) Block @else Unblock @endif
+                     </button>
+                  </form> --}}
                </li>
                @endforeach
             </ul>

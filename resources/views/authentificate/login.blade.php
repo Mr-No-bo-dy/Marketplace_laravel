@@ -13,20 +13,20 @@
                   <div class="sm:col-span-2">
                      <label for="login" class="block text-sm font-medium leading-6 text-gray-900">Email or Phone</label>
                      <div class="mt-2">
-                        <input type="text" name="login" id="login" autocomplete="given-name"
+                        <input type="text" name="login" id="login" autocomplete="given-name" required
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
                   <div class="sm:col-span-2">
                      <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
                      <div class="mt-2">
-                        <input type="password" name="password" id="password"
+                        <input type="password" name="password" id="password" required
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
                </div>
                {{-- <div class="role mt-3">
-                  <input id="role" class="me-2 rounded-sm" type="checkbox" name="isSeller" value="1">
+                  <input id="role" class="me-2 rounded-sm" type="checkbox" name="isSeller" value="1" required>
                   <label for="role" class="check">Login as Seller</label>
                </div> --}}
                <button type="submit"
@@ -38,11 +38,11 @@
                      href="{{ route('index') }}">Cancel</a>
                </span>
                <span class="inline-block my-3 ms-12">
-                  <a class="inline-block rounded-md bg-green-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                  <a class="inline-block rounded-md bg-green-600 m-2 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                      href="{{ route('registration') }}">Register as Seller</a>
                </span>
-               <span class="inline-block my-3 ms-3">
-                  <a class="inline-block rounded-md bg-green-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+               <span class="inline-block my-3">
+                  <a class="inline-block rounded-md bg-green-600 m-2 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                      href="{{ route('registrationClient') }}">Register as Client</a>
                </span>
             </form>

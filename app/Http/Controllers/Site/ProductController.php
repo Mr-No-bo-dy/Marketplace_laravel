@@ -15,11 +15,11 @@ class ProductController extends Controller
    /**
    * Display a listing of the Products.
    */
-   public function index()
+   public function index(Request $request)
    {
       $products = Product::all();
 
-      return view('site.product.index', compact('products'));
+      return view('site.products.index', compact('products'));
    }
 
    /**
@@ -29,7 +29,7 @@ class ProductController extends Controller
    {
       $product = Product::find($idProduct);
 
-      return view('site.product.show', compact('product'));
+      return view('site.products.show', compact('product'));
    }
    
    /**
@@ -41,7 +41,7 @@ class ProductController extends Controller
       $categories = Category::all(['id_category', 'name']);
       $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
-      return view('site.product.create', compact('producers', 'categories', 'subcategories'));
+      return view('site.products.create', compact('producers', 'categories', 'subcategories'));
    }
 
    /**
@@ -87,7 +87,7 @@ class ProductController extends Controller
       $categories = Category::all(['id_category', 'name']);
       $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
-      return view('site.product.update', compact('product', 'producers', 'categories', 'subcategories'));
+      return view('site.products.update', compact('product', 'producers', 'categories', 'subcategories'));
    }
 
    /**

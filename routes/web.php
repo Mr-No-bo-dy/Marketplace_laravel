@@ -3,15 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Site\ClientController;
-use App\Http\Controllers\Site\SellerController;
-use App\Http\Controllers\Site\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\ProducerController;
 use App\Http\Controllers\Admin\MarketplaceController;
+use App\Http\Controllers\Admin\ProducerController;
 use App\Http\Controllers\Admin\SubcategoryController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Site\CartController;
+use App\Http\Controllers\Site\ClientController;
+use App\Http\Controllers\Site\ProductController;
+use App\Http\Controllers\Site\SellerController;
 
 /*
 | Web Routes:
@@ -27,6 +28,7 @@ use App\Http\Controllers\Admin\SubcategoryController;
 // Site
 Route::controller(GeneralController::class)->group(function () {
    Route::get('/', 'index')->name('index');
+   Route::post('/product/cart', 'addToCart')->name('product.cart');
    Route::get('/registration', 'register')->name('registration');
    Route::post('/registration', 'storeDefine')->name('registration');
    Route::get('/registrationClient', 'registerClient')->name('registrationClient');
@@ -34,12 +36,15 @@ Route::controller(GeneralController::class)->group(function () {
    Route::get('/auth', 'auth')->name('auth');
    Route::post('/auth', 'auth')->name('auth');
    Route::post('/log_out', 'logout')->name('log_out');
-
 });
-Route::get('/product', [ProductController::class, 'index'])->name('product');
-Route::get('/product/show/{id_product}', [ProductController::class, 'show'])->name('product.show');
-// Route::get('/cart', [GeneralController::class, 'show'])->name('product.cart');
-Route::post('/cart', [GeneralController::class, 'addToCart'])->name('product.cart');
+Route::controller(ProductController::class)->group(function () {
+   Route::get('/product', 'index')->name('product');
+   Route::get('/product/show/{id_product}', 'show')->name('product.show');
+});
+Route::controller(CartController::class)->group(function () {
+   Route::get('cart', 'index')->name('cart');
+   Route::post('cart', 'index')->name('cart');
+});
 
 Route::middleware('authClient')->group(function () {
    Route::controller(ClientController::class)->group(function () {

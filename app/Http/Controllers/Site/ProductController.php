@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 
 class ProductController extends Controller
@@ -17,9 +20,15 @@ class ProductController extends Controller
    */
    public function index(Request $request)
    {
-      $products = Product::all();
+//      $products = Product::all();
+      $categories = Category::all();
 
-      return view('site.products.index', compact('products'));
+       $filters = [
+           'id_category' => $request->post('id_category'),
+       ];
+       $products = Product::where($filters);
+
+      return view('site.products.index', compact('products', 'categories'));
    }
 
    /**
@@ -31,7 +40,7 @@ class ProductController extends Controller
 
       return view('site.products.show', compact('product'));
    }
-   
+
    /**
    * Display Product creation form
    */
@@ -40,41 +49,34 @@ class ProductController extends Controller
       $producers = Producer::all(['id_producer', 'name']);
       $categories = Category::all(['id_category', 'name']);
       $subcategories = Subcategory::all(['id_subcategory', 'name']);
+      $idSeller = Session::get('id_seller');
 
-      return view('site.products.create', compact('producers', 'categories', 'subcategories'));
+      return view('site.products.create', compact('idSeller', 'producers', 'categories', 'subcategories'));
    }
 
-   /**
-   * Create Product
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function store(Request $request)
+    /**
+     * Create Product
+     *
+     * @param ProductRequest $request
+     * @return RedirectResponse
+     */
+//   public function store(Request $request): RedirectResponse
+    public function store(ProductRequest $request): RedirectResponse
    {
       $productModel = new Product();
 
-      $postData = $request->post();
-      $setProductData = [
-         'id_producer' => $postData['id_producer'],
-         'id_category' => $postData['id_category'],
-         'id_subcategory' => $postData['id_subcategory'],
-         'id_seller' => $request->session()->get('id_seller'),
-         'name' => ucfirst($postData['name']),
-         'description' => ucfirst($postData['description']),
-         'price' => $postData['price'],
-         'amount' => $postData['amount'],
-         'created_at' => date('Y-m-d H:i:s'),
-         'updated_at' => date('Y-m-d H:i:s'),
-      ];
-      $idNewProduct = $productModel->storeProduct($setProductData);
+        $productModel->fill($request->validated());
+      $productModel->save();
 
-      $image = $request->file();
-      $product = $productModel->find($idNewProduct);
-      $product->addMedia($image['image'])
-               ->toMediaCollection('products')
-               ->save();
+      $images = $request->file('images');
 
-      return redirect()->route('product');
+        foreach ($images as $image) {
+            $productModel->addMedia($image)
+                        ->toMediaCollection('products')
+                       ->save();
+      }
+
+      return redirect()->route('seller.my_products');
    }
 
    /**
@@ -90,12 +92,13 @@ class ProductController extends Controller
       return view('site.products.update', compact('product', 'producers', 'categories', 'subcategories'));
    }
 
-   /**
-   * Update Product
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
+    /**
+     * Update Product
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
    {
       $productModel = new Product();
 
@@ -125,7 +128,7 @@ class ProductController extends Controller
    /**
    * Delete Product
    */
-   public function destroy(Request $request)
+   public function destroy(Request $request): RedirectResponse
    {
       $productModel = new Product();
 

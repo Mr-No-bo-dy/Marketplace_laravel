@@ -28,10 +28,10 @@ class Producer extends Model
 
    /**
    * Insert entity into DB table Producers
-   * 
+   *
    * @param array $data
    */
-   public function storeProducer(array $data)
+   public function storeProducer(array $data): void
    {
       DB::table($this->table)
          ->insert($data);
@@ -39,11 +39,11 @@ class Producer extends Model
 
    /**
    * Insert entity into DB table Producers
-   * 
+   *
    * @param int $idProducer
    * @param array $data
    */
-   public function updateProducer(int $idProducer, array $data)
+   public function updateProducer(int $idProducer, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idProducer)
@@ -52,10 +52,10 @@ class Producer extends Model
 
    /**
    * Delete entity from DB table Producers
-   * 
+   *
    * @param int $idProducer
    */
-   public function deleteProducer(int $idProducer)
+   public function deleteProducer(int $idProducer): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idProducer)

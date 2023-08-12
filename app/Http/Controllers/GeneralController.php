@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Site\Client;
 use App\Models\Site\Seller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Admin\Marketplace;
 use Illuminate\Support\Facades\Hash;
@@ -13,19 +15,9 @@ class GeneralController extends Controller
    /**
    * Display site's Home page.
    */
-   public function index(Request $request)
+   public function index()
    {
-      $seller = $client = null;
-      if ($request->session()->has('id_seller')) {
-         $idSeller = $request->session()->get('id_seller');
-         $seller = Seller::find($idSeller);
-         
-      } elseif ($request->session()->has('id_client')) {
-         $idClient = $request->session()->get('id_client');
-         $client = Client::find($idClient);
-      }
-      
-      return view('index', compact('seller', 'client'));
+        return view('index');
    }
 
    /**
@@ -34,8 +26,8 @@ class GeneralController extends Controller
    public function register()
    {
       $marketplaces = Marketplace::all(['id_marketplace', 'country']);
-      
-      return view('authentificate.register', compact('marketplaces'));
+
+      return view('authenticate.register', compact('marketplaces'));
    }
 
    /**
@@ -43,14 +35,15 @@ class GeneralController extends Controller
    */
    public function registerClient()
    {
-      return view('authentificate.registerClient');
+      return view('authenticate.registerClient');
    }
 
-   /**
-   * Store a newly created Seller in storage.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
+    /**
+     * Store a newly created Seller in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
    public function store(Request $request)
    {
       $sellerModel = new Seller();
@@ -66,7 +59,7 @@ class GeneralController extends Controller
          'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idNewSeller = $sellerModel->storeSeller($setSellerData);
-      
+
       $setSellerPasswordData = [
          'id_seller' => $idNewSeller,
          'password' => Hash::make($postData['password']),
@@ -80,11 +73,12 @@ class GeneralController extends Controller
       return redirect()->route('auth');
    }
 
-   /**
-   * Store a newly created Client in storage.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
+    /**
+     * Store a newly created Client in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
    public function storeClient(Request $request)
    {
       $clientModel = new Client();
@@ -99,7 +93,7 @@ class GeneralController extends Controller
          'updated_at' => date('Y-m-d H:i:s'),
       ];
       $idNewClient = $clientModel->storeClient($setClientData);
-      
+
       $setClientPasswordData = [
          'id_client' => $idNewClient,
          'password' => Hash::make($postData['password']),
@@ -113,12 +107,13 @@ class GeneralController extends Controller
       return redirect()->route('auth');
    }
 
-   /**
-   * Login Seller into Personal Page.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function auth(Request $request)
+    /**
+     * Login Seller into Personal Page.
+     *
+     * @param Request $request
+     * @return View|RedirectResponse
+     */
+   public function auth(Request $request): View|RedirectResponse
    {
       $sellerModel = new Seller();
       $clientModel = new Client();
@@ -129,7 +124,7 @@ class GeneralController extends Controller
          return redirect()->route('client.personal');
       }
 
-      $route = view('authentificate.login');
+      $route = view('authenticate.login');
 
       $postData = $request->post();
       if (!empty($postData)) {
@@ -137,7 +132,7 @@ class GeneralController extends Controller
             'login' => $postData['login'],
             'password' => $postData['password'],
          ];
-         
+
          $idAuthUser = $sellerModel->authSeller($data);
          if (!empty($idAuthUser)) {
             $seller = Seller::withTrashed()->find($idAuthUser);
@@ -152,34 +147,36 @@ class GeneralController extends Controller
             $route = redirect()->route('client.personal');
          }
       }
-      
+
       return $route;
    }
 
-   /**
-   * Logout Seller and Client from Site.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function logout(Request $request)
+    /**
+     * Logout Seller and Client from Site.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function logout(Request $request): RedirectResponse
    {
       $request->session()->forget(['id_seller', 'id_client']);
 
       return redirect()->route('index');
    }
 
-   /**
-   * Adding Products to Cart.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function addToCart(Request $request)
+    /**
+     * Adding Products to Cart.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function addToCart(Request $request): RedirectResponse
    {
       if ($request->post('addToCart')) {
          $idProduct = $request->post('id_product');
          $price = $request->post('price');
          $product = $request->session()->get('cart.product.' . $idProduct);
-   
+
          $quantity = 1;
          $productTotal = $price;
          if (isset($product['id_product']) && $product['id_product'] == $idProduct) {
@@ -192,7 +189,7 @@ class GeneralController extends Controller
             'price' => $price,
             'total' => $productTotal,
          ]);
-   
+
          $cart = $request->session()->get('cart.product');
          if (!isset($cartTotal['quantity']) && !isset($cartTotal['total'])) {
             $cartTotal = [
@@ -204,7 +201,7 @@ class GeneralController extends Controller
             $cartTotal['quantity'] += $p['quantity'];
             $cartTotal['total'] += $p['total'];
          }
-         $product = $request->session()->put('cart.total', $cartTotal);
+         $request->session()->put('cart.total', $cartTotal);
       }
 
       return redirect()->route('product');

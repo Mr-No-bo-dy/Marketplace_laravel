@@ -9,7 +9,7 @@
                <span class="sr-only">Open main menu</span>
                <!--
                   Icon when menu is closed.
-      
+
                   Menu open: "hidden", Menu closed: "block"
                -->
                <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -19,7 +19,7 @@
                </svg>
                <!--
                   Icon when menu is open.
-      
+
                   Menu open: "block", Menu closed: "hidden"
                -->
                <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -48,14 +48,13 @@
                      aria-current="page">Admin</a>
                   <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                      aria-current="page">Products</a>
-                  <a href="{{ route('cart') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                     aria-current="page">Cart</a>
                </div>
             </div>
          </div>
 
          <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button type="button"
+             <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('cart') }}">Cart ({{ $cart ?? '0' }})</a>
+             <button type="button"
                class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                <span class="sr-only">View notifications</span>
                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -95,7 +94,7 @@
                </div>
             </div> --}}
          </div>
-         <a class="text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller->name ?? $client->name ?? 'Profile' }}</a>
+          <a class="inline-block text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller ?? $client ?? 'Profile' }}</a>
       </div>
    </div>
 
@@ -107,10 +106,8 @@
             aria-current="page">Home</a>
          <a href="{{ route('admin.dashboard') }}" class="bg-gray-900 block rounded-md px-3 py-2 text-base font-medium"
             aria-current="page">Admin</a>
-         <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" 
+         <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
             aria-current="page">Products</a>
-         <a href="{{ route('cart') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" 
-            aria-current="page">Cart</a>
       </div>
    </div>
 </nav>

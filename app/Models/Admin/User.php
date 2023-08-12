@@ -10,7 +10,7 @@ class User extends Model
 {
    use HasFactory;
 
-   public function getUsers()
+   public function getUsers(): \Illuminate\Support\Collection
    {
       return $users = DB::table('users')
                         ->select()

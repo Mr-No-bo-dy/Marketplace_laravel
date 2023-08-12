@@ -29,10 +29,10 @@ class Marketplace extends Model
 
    /**
    * Insert entity into DB table Marketplaces
-   * 
+   *
    * @param array $data
    */
-   public function storeMarketplace(array $data)
+   public function storeMarketplace(array $data): void
    {
       DB::table($this->table)
          ->insert($data);
@@ -40,11 +40,11 @@ class Marketplace extends Model
 
    /**
    * Insert entity into DB table Marketplaces
-   * 
+   *
    * @param int $idMarketplace
    * @param array $data
    */
-   public function updateMarketplace(int $idMarketplace, array $data)
+   public function updateMarketplace(int $idMarketplace, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idMarketplace)
@@ -53,10 +53,10 @@ class Marketplace extends Model
 
    /**
    * Delete entity from DB table Marketplaces
-   * 
+   *
    * @param int $idMarketplace
    */
-   public function deleteMarketplace(int $idMarketplace)
+   public function deleteMarketplace(int $idMarketplace): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idMarketplace)

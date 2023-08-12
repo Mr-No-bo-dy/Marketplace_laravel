@@ -16,14 +16,11 @@ class CartController extends Controller
         if (!$request->session()->has('cart')) {
             return view('site.cart.index');
         }
-        // $request->session()->forget('cart');
-
-        $cartData = $request->session()->get('cart');
 
         $idProduct = $request->post('id_product');
         $product = $request->session()->get('cart.product.' . $idProduct);
         $total = $request->session()->get('cart.total');
-        
+
         // If form with changes in Cart is sent
         if (!empty($request->post('id_product'))) {
 
@@ -35,13 +32,13 @@ class CartController extends Controller
                     'total' => $product['total'],
                 ];
             }
-            
+
             $newQuantity = null;
             if ($request->post('quantity')) {
                 $newQuantity = $request->post('quantity');
                 $total['quantity'] = $total['quantity'] - $product['quantity'] + $newQuantity;
                 $total['total'] = ($total['total'] - $product['total']) + ($newQuantity * $product['price']);
-            
+
             } elseif ($request->post('plus')) {
                 $newQuantity = $product['quantity'] + 1;
                 $total['quantity'] += 1;
@@ -55,10 +52,12 @@ class CartController extends Controller
                 }
                 $total['quantity'] -= 1;
                 $total['total'] -= $product['price'];
-    
+
             } elseif ($request->post('remove')) {
-                $total['quantity'] = $total['quantity'] - $product['quantity'];
-                $total['total'] = $total['total'] - $product['total'];
+                if (!is_null($product)) {
+                    $total['quantity'] = $total['quantity'] - $product['quantity'];
+                    $total['total'] = $total['total'] - $product['total'];
+                }
                 $request->session()->forget('cart.product.' . $idProduct);
                 unset($idProduct);
             }
@@ -71,11 +70,11 @@ class CartController extends Controller
             }
             $request->session()->put('cart.total', $total);
         }
-        
+
         // Setting data for view
         $idsProduct = $productData = [];
-        $newCartData = $request->session()->get('cart');
-        foreach ($newCartData['product'] as $product) {
+        $cartData = $request->session()->get('cart');
+        foreach ($cartData['product'] as $product) {
             $idsProduct[$product['id_product']] = $product['id_product'];
             $productData[$product['id_product']]['quantity'] = $product['quantity'];
             $productData[$product['id_product']]['total'] = $product['total'];

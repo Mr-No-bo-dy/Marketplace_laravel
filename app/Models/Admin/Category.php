@@ -27,10 +27,10 @@ class Category extends Model
 
    /**
    * Insert entity into DB table Categories
-   * 
+   *
    * @param array $data
    */
-   public function storeCategory(array $data)
+   public function storeCategory(array $data): void
    {
       DB::table($this->table)
          ->insert($data);
@@ -38,11 +38,11 @@ class Category extends Model
 
    /**
    * Insert entity into DB table Categories
-   * 
+   *
    * @param int $idCategory
    * @param array $data
    */
-   public function updateCategory(int $idCategory, array $data)
+   public function updateCategory(int $idCategory, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idCategory)
@@ -51,10 +51,10 @@ class Category extends Model
 
    /**
    * Delete entity from DB table Categories
-   * 
+   *
    * @param int $idCategory
    */
-   public function deleteCategory(int $idCategory)
+   public function deleteCategory(int $idCategory): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idCategory)

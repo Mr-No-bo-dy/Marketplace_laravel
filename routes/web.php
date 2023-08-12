@@ -11,13 +11,14 @@ use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\CartController;
 use App\Http\Controllers\Site\ClientController;
+use App\Http\Controllers\Site\OrderController;
 use App\Http\Controllers\Site\ProductController;
 use App\Http\Controllers\Site\SellerController;
 
 /*
 | Web Routes:
-| Here is where you can register web routes for your application. 
-| These routes are loaded by the RouteServiceProvider 
+| Here is where you can register web routes for your application.
+| These routes are loaded by the RouteServiceProvider
 | and all of them will be assigned to the "web" middleware group.
 */
 
@@ -44,6 +45,10 @@ Route::controller(ProductController::class)->group(function () {
 Route::controller(CartController::class)->group(function () {
    Route::get('cart', 'index')->name('cart');
    Route::post('cart', 'index')->name('cart');
+});
+Route::controller(OrderController::class)->group(function () {
+    Route::get('order', 'index')->name('order');
+    Route::post('make_order', 'order')->name('make_order');
 });
 
 Route::middleware('authClient')->group(function () {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Producer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ProducerController extends Controller
@@ -17,7 +18,7 @@ class ProducerController extends Controller
 
       return view('admin.producers.index', compact('producers'));
    }
-   
+
    /**
    * Display Producer creation form
    */
@@ -26,12 +27,13 @@ class ProducerController extends Controller
       return view('admin.producers.create');
    }
 
-   /**
-   * Create Producer
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function store(Request $request)
+    /**
+     * Create Producer
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function store(Request $request): RedirectResponse
    {
       $producerModel = new Producer();
 
@@ -58,12 +60,13 @@ class ProducerController extends Controller
       return view('admin.producers.update', compact('producer'));
    }
 
-   /**
-   * Update Producer
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
+    /**
+     * Update Producer
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
    {
       $producerModel = new Producer();
 
@@ -83,7 +86,7 @@ class ProducerController extends Controller
    /**
    * Delete Producer
    */
-   public function destroy(Request $request)
+   public function destroy(Request $request): RedirectResponse
    {
       $producerModel = new Producer();
 

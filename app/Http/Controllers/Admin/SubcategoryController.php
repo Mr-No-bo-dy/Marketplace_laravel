@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Category;
 use App\Models\Admin\Subcategory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class SubcategoryController extends Controller
@@ -29,12 +30,13 @@ class SubcategoryController extends Controller
       return view('admin.subcategories.create', compact('categories'));
    }
 
-   /**
-   * Create Subcategory
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function store(Request $request)
+    /**
+     * Create Subcategory
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function store(Request $request): RedirectResponse
    {
       $subcategoryModel = new Subcategory();
 
@@ -62,12 +64,13 @@ class SubcategoryController extends Controller
       return view('admin.subcategories.update', compact('categories', 'subcategory'));
    }
 
-   /**
-   * Update Subcategory
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
+    /**
+     * Update Subcategory
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
    {
       $subcategoryModel = new Subcategory();
 
@@ -87,7 +90,7 @@ class SubcategoryController extends Controller
    /**
    * Delete Subcategory
    */
-   public function destroy(Request $request)
+   public function destroy(Request $request): RedirectResponse
    {
       $subcategoryModel = new Subcategory();
 

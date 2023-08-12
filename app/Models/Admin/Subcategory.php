@@ -35,13 +35,13 @@ class Subcategory extends Model
    {
       return $this->belongsTo(Category::class, 'id_category', 'id_category');
    }
-   
+
    /**
    * Insert entity into DB table Subcategories
-   * 
+   *
    * @param array $data
    */
-   public function storeSubcategory(array $data)
+   public function storeSubcategory(array $data): void
    {
       DB::table($this->table)
          ->insert($data);
@@ -49,11 +49,11 @@ class Subcategory extends Model
 
    /**
    * Insert entity into DB table Subcategories
-   * 
+   *
    * @param int $idSubcategory
    * @param array $data
    */
-   public function updateSubcategory(int $idSubcategory, array $data)
+   public function updateSubcategory(int $idSubcategory, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idSubcategory)
@@ -62,10 +62,10 @@ class Subcategory extends Model
 
    /**
    * Delete entity from DB table Subcategories
-   * 
+   *
    * @param int $idSubcategory
    */
-   public function deleteSubcategory(int $idSubcategory)
+   public function deleteSubcategory(int $idSubcategory): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idSubcategory)

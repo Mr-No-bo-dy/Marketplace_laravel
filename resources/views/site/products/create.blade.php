@@ -9,6 +9,7 @@
             <form action="{{ route('product.store') }}" method="post" enctype="multipart/form-data">
                @csrf
 
+                <input type="hidden" name="id_seller" value="{{ $idSeller }}">
                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
                   <div class="sm:col-span-2">
                      <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
@@ -77,7 +78,7 @@
                   <div class="sm:col-span-2">
                      <label for="image" class="block text-sm font-medium leading-6 text-gray-900">Image</label>
                      <div class="mt-2">
-                        <input type="file" name="image">
+                        <input type="file" name="images[]" multiple>
                      </div>
                   </div>
                </div>

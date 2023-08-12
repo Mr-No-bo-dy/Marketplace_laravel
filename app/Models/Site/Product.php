@@ -37,26 +37,24 @@ class Product extends Model implements HasMedia
 
    /**
    * Insert entity into DB table Products
-   * 
+   *
    * @param array $data
-   * 
+   *
    * @return int $idProduct
    */
-   public function storeProduct(array $data)
+   public function storeProduct(array $data): int
    {
-      $idProduct = DB::table($this->table)
-                     ->insertGetId($data);
-
-      return $idProduct;
+       return DB::table($this->table)
+                      ->insertGetId($data);
    }
 
    /**
    * Update entity into DB table Products
-   * 
+   *
    * @param int $idProduct
    * @param array $data
    */
-   public function updateProduct(int $idProduct, array $data)
+   public function updateProduct(int $idProduct, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idProduct)
@@ -65,11 +63,11 @@ class Product extends Model implements HasMedia
 
    /**
    * Delete entity from DB table Products
-   * 
+   *
    * @param int $idProduct
    */
-   public function deleteProduct(int $idProduct)
-   {         
+   public function deleteProduct(int $idProduct): void
+   {
       DB::table($this->table)
          ->where($this->primaryKey, $idProduct)
          ->delete();

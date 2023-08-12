@@ -33,10 +33,10 @@ class Client extends Model
 
    /**
    * Check if loggining user exists in DB table Clients
-   * 
+   *
    * @param array $data
-   * 
-   * @return int $client->id_client
+   *
+   * @return int|void
    */
    public function authClient(array $data)
    {
@@ -54,7 +54,7 @@ class Client extends Model
             $client = $row;
          }
       }
-      
+
       if (!empty($client)) {
          $builder = DB::table('clients_passwords')
                         ->select()
@@ -70,25 +70,23 @@ class Client extends Model
 
    /**
    * Insert entity into DB table Clients
-   * 
+   *
    * @param array $data
-   * 
+   *
    * @return int $idNewClient
    */
-   public function storeClient(array $data)
+   public function storeClient(array $data): int
    {
-      $idNewClient = DB::table($this->table)
-                        ->insertGetId($data);
-
-      return $idNewClient;
+       return DB::table($this->table)
+                         ->insertGetId($data);
    }
 
    /**
    * Insert Client's password into DB table 'clients_passwords'
-   * 
+   *
    * @param array $data
    */
-   public function storeClientPassword(array $data)
+   public function storeClientPassword(array $data): void
    {
       DB::table('clients_passwords')
          ->insert($data);
@@ -96,11 +94,11 @@ class Client extends Model
 
    /**
    * Update entity into DB table Clients
-   * 
+   *
    * @param int $idClient
    * @param array $data
    */
-   public function updateClient(int $idClient, array $data)
+   public function updateClient(int $idClient, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idClient)
@@ -109,11 +107,11 @@ class Client extends Model
 
    /**
    * Update Client's password into DB table 'clients_passwords'
-   * 
+   *
    * @param int $idClient
    * @param array $data
    */
-   public function updateClientPassword(int $idClient, array $data)
+   public function updateClientPassword(int $idClient, array $data): void
    {
       DB::table('clients_passwords')
          ->where($this->primaryKey, $idClient)
@@ -122,15 +120,15 @@ class Client extends Model
 
    /**
    * Delete entity from DB table Clients
-   * 
+   *
    * @param int $idClient
    */
-   public function deleteClient(int $idClient)
+   public function deleteClient(int $idClient): void
    {
       DB::table('clients_passwords')
          ->where($this->primaryKey, $idClient)
          ->delete();
-         
+
       DB::table($this->table)
          ->where($this->primaryKey, $idClient)
          ->delete();

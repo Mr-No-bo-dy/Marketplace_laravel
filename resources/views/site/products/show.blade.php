@@ -14,20 +14,24 @@
             </div>
             <div class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 ...">
                <div class="sm:col-span-1">
-                  <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}">
+                   @foreach($product->getMedia('products') as $item)
+                       <img class="h-24 w-24 object-contain" src="{{ $item->getUrl() }}" alt="{{ $product->name . '-pic' }}">
+                   @endforeach
                </div>
                <div class="sm:col-span-6">
                   <p><b>Description:</b> {{ $product->description }}</p>
                   <p><b>Price:</b> {{ $product->price }}</p>
                   <p><b>Amount:</b> {{ $product->amount }}</p>
                </div>
-               <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
-                  @csrf
-                  <button type="submit" name="id_product" value="{{ $product->id_product }}"
-                     class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
-                     Add to Cart
-                  </button>
-               </form>
+                <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="id_product" value="{{ $product->id_product }}">
+                    <input type="hidden" name="price" value="{{ $product->price }}">
+                    <button type="submit" name="addToCart" value="1"
+                            class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                        Add to Cart
+                    </button>
+                </form>
             </div>
          </div>
       </div>

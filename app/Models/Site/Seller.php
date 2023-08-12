@@ -2,7 +2,6 @@
 
 namespace App\Models\Site;
 
-use App\Models\Site\Product;
 use App\Models\Admin\Marketplace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -43,7 +42,7 @@ class Seller extends Model
    *
    * @var array<int, string>
    */
-   protected $dates = [
+   protected array $dates = [
       'created_at',
       'updated_at',
       'deleted_at',
@@ -65,13 +64,13 @@ class Seller extends Model
       return $this->hasMany(Product::class, 'id_seller', 'id_seller');
    }
 
-   /**
-   * Check if loggining user exists in DB table Sellers
-   * 
-   * @param array $data
-   * 
-   * @return int $seller->id_seller
-   */
+    /**
+     * Check if loggining user exists in DB table Sellers
+     *
+     * @param array $data
+     *
+     * @return int|void
+     */
    public function authSeller(array $data)
    {
       $checkData = [
@@ -88,7 +87,7 @@ class Seller extends Model
             $seller = $row;
          }
       }
-      
+
       if (!empty($seller)) {
          $builder = DB::table('sellers_passwords')
                         ->select()
@@ -104,25 +103,23 @@ class Seller extends Model
 
    /**
    * Insert entity into DB table Sellers
-   * 
+   *
    * @param array $data
-   * 
+   *
    * @return int $idNewSeller
    */
-   public function storeSeller(array $data)
+   public function storeSeller(array $data): int
    {
-      $idNewSeller = DB::table($this->table)
-                        ->insertGetId($data);
-
-      return $idNewSeller;
+       return DB::table($this->table)
+                         ->insertGetId($data);
    }
 
    /**
    * Insert Seller's password into DB table 'sellers_passwords'
-   * 
+   *
    * @param array $data
    */
-   public function storeSellerPassword(array $data)
+   public function storeSellerPassword(array $data): void
    {
       DB::table('sellers_passwords')
          ->insert($data);
@@ -130,11 +127,11 @@ class Seller extends Model
 
    /**
    * Update entity into DB table Sellers
-   * 
+   *
    * @param int $idSeller
    * @param array $data
    */
-   public function updateSeller(int $idSeller, array $data)
+   public function updateSeller(int $idSeller, array $data): void
    {
       DB::table($this->table)
          ->where($this->primaryKey, $idSeller)
@@ -143,11 +140,11 @@ class Seller extends Model
 
    /**
    * Update Seller's password into DB table 'sellers_passwords'
-   * 
+   *
    * @param int $idSeller
    * @param array $data
    */
-   public function updateSellerPassword(int $idSeller, array $data)
+   public function updateSellerPassword(int $idSeller, array $data): void
    {
       DB::table('sellers_passwords')
          ->where($this->primaryKey, $idSeller)
@@ -156,15 +153,15 @@ class Seller extends Model
 
    /**
    * Delete entity from DB table Sellers
-   * 
+   *
    * @param int $idSeller
    */
-   public function deleteSeller(int $idSeller)
+   public function deleteSeller(int $idSeller): void
    {
       DB::table('sellers_passwords')
          ->where($this->primaryKey, $idSeller)
          ->delete();
-         
+
       DB::table($this->table)
          ->where($this->primaryKey, $idSeller)
          ->delete();

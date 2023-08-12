@@ -55,8 +55,13 @@
                   </li>
                   @endforeach
                </ul>
-               <p class="mt-3 ms-3 text-lg"><b>Total Quantity:</b> {{ $total['quantity'] }}</p>
-               <p class="ms-3 text-lg"><b>Total Price:</b> {{ $total['total'] }}</p>
+                 <div class="flex justify-between py-3 px-7 text-right">
+                     <div>
+                         <p class="text-lg"><b>Total Quantity:</b> {{ $total['quantity'] }}</p>
+                         <p class="text-lg"><b>Total Price:</b> {{ $total['total'] }}</p>
+                     </div>
+                     <a class="inline-block px-5 py-3 rounded-md text-xl font-semibold text-white bg-blue-600 shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" href="{{ route('order') }}">Order</a>
+                 </div>
             @endif
          </div>
       </div>

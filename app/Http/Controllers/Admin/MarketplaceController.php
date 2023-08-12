@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Marketplace;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class MarketplaceController extends Controller
@@ -17,7 +18,7 @@ class MarketplaceController extends Controller
 
       return view('admin.marketplaces.index', compact('marketplaces'));
    }
-   
+
    /**
    * Display Marketplace creation form
    */
@@ -26,12 +27,13 @@ class MarketplaceController extends Controller
       return view('admin.marketplaces.create');
    }
 
-   /**
-   * Create Marketplace
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function store(Request $request)
+    /**
+     * Create Marketplace
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function store(Request $request): RedirectResponse
    {
       $marketplaceModel = new Marketplace();
 
@@ -58,12 +60,13 @@ class MarketplaceController extends Controller
       return view('admin.marketplaces.update', compact('marketplace'));
    }
 
-   /**
-   * Update Marketplace
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
+    /**
+     * Update Marketplace
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
    {
       $marketplaceModel = new Marketplace();
 
@@ -83,7 +86,7 @@ class MarketplaceController extends Controller
    /**
    * Delete Marketplace
    */
-   public function destroy(Request $request)
+   public function destroy(Request $request): RedirectResponse
    {
       $marketplaceModel = new Marketplace();
 

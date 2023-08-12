@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Site;
 
 use App\Models\Site\Client;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -25,31 +26,32 @@ class ClientController extends Controller
    public function show(Request $request)
    {
       $idClient = $request->session()->get('id_client');
-      
+
       $client = Client::find($idClient);
-      
+
       return view('profile.client-show', compact('client'));
    }
-   
+
    /**
    * Show the form for editing the specified Client.
-   * 
+   *
    * @param int $idClient
    */
    public function edit($idClient)
    {
       $client = Client::find($idClient);
-      
+
       return view('profile.client-update', compact('client'));
    }
 
-   /**
-   * Update the specified Client in storage.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
-   {        
+    /**
+     * Update the specified Client in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
+   {
       $clientModel = new Client();
 
       $postData = $request->post();
@@ -60,7 +62,7 @@ class ClientController extends Controller
          'phone' => $postData['tel'],
          'updated_at' => date('Y-m-d H:i:s'),
       ];
-      
+
       $idClient = $request->post('id_client');
       $clientModel->updateClient($idClient, $setClientData);
       $setClientPasswordData = [
@@ -68,16 +70,17 @@ class ClientController extends Controller
          'updated_at' => date('Y-m-d H:i:s'),
       ];
       $clientModel->updateClientPassword($idClient, $setClientPasswordData);
-         
+
       return redirect()->route('client.personal');
    }
 
-   /**
-   * Remove the specified resource from storage.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function destroy(Request $request)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function destroy(Request $request): RedirectResponse
    {
       $clientModel = new Client();
 

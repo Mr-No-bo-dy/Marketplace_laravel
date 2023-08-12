@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Category;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -17,7 +18,7 @@ class CategoryController extends Controller
 
       return view('admin.categories.index', compact('categories'));
    }
-   
+
    /**
    * Display Category creation form
    */
@@ -26,12 +27,13 @@ class CategoryController extends Controller
       return view('admin.categories.create');
    }
 
-   /**
-   * Create Category
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function store(Request $request)
+    /**
+     * Create Category
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function store(Request $request): RedirectResponse
    {
       $categoryModel = new Category();
 
@@ -57,12 +59,13 @@ class CategoryController extends Controller
       return view('admin.categories.update', compact('category'));
    }
 
-   /**
-   * Update Category
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
+    /**
+     * Update Category
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
    {
       $categoryModel = new Category();
 
@@ -81,7 +84,7 @@ class CategoryController extends Controller
    /**
    * Delete Category
    */
-   public function destroy(Request $request)
+   public function destroy(Request $request): RedirectResponse
    {
       $categoryModel = new Category();
 

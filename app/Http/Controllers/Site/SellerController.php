@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Marketplace;
 use App\Models\Site\Seller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class SellerController extends Controller
 {
    /**
-   * Display a listing of the Sellers.
+   * Display a listing of the Sellers.b
    */
    public function index()
    {
@@ -26,12 +27,12 @@ class SellerController extends Controller
    public function show(Request $request)
    {
       $idSeller = $request->session()->get('id_seller');
-      
+
       $seller = Seller::find($idSeller);
-      
+
       return view('profile.seller-show', compact('seller'));
    }
-   
+
    /**
    * Display a listing of the Products from given Seller.
    */
@@ -44,27 +45,28 @@ class SellerController extends Controller
 
       return view('site.seller.products', compact('seller', 'products'));
    }
-   
+
    /**
    * Show the form for editing the specified Seller.
-   * 
+   *
    * @param int $idSeller
    */
    public function edit($idSeller)
    {
       $marketplaces = Marketplace::all(['id_marketplace', 'country']);
       $seller = Seller::find($idSeller);
-      
+
       return view('profile.seller-update', compact('marketplaces', 'seller'));
    }
 
-   /**
-   * Update the specified Seller in storage.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function update(Request $request)
-   {        
+    /**
+     * Update the specified Seller in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function update(Request $request): RedirectResponse
+   {
       $sellerModel = new Seller();
 
       $postData = $request->post();
@@ -76,7 +78,7 @@ class SellerController extends Controller
          'phone' => $postData['tel'],
          'updated_at' => date('Y-m-d H:i:s'),
       ];
-      
+
       $idSeller = $request->post('id_seller');
       $sellerModel->updateSeller($idSeller, $setSellerData);
       $setSellerPasswordData = [
@@ -84,16 +86,17 @@ class SellerController extends Controller
          'updated_at' => date('Y-m-d H:i:s'),
       ];
       $sellerModel->updateSellerPassword($idSeller, $setSellerPasswordData);
-         
+
       return redirect()->route('seller.personal');
    }
 
-   /**
-   * Block the specified Seller (soft delete).
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function block(Request $request)
+    /**
+     * Block the specified Seller (soft delete).
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function block(Request $request): RedirectResponse
    {
       $idSeller = $request->post('id_seller');
       $seller = Seller::find($idSeller);
@@ -102,12 +105,13 @@ class SellerController extends Controller
       return redirect()->route('admin.seller');
    }
 
-   /**
-   * UnBlock the specified Seller (soft delete).
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function unblock(Request $request)
+    /**
+     * UnBlock the specified Seller (soft delete).
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function unblock(Request $request): RedirectResponse
    {
       $idSeller = $request->post('id_seller');
       $seller = Seller::onlyTrashed()->find($idSeller);
@@ -116,12 +120,13 @@ class SellerController extends Controller
       return redirect()->route('admin.seller');
    }
 
-   /**
-   * Remove the specified Seller from storage.
-   * 
-   * @param object \Illuminate\Http\Request $request
-   */
-   public function destroy(Request $request)
+    /**
+     * Remove the specified Seller from storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+   public function destroy(Request $request): RedirectResponse
    {
       $sellerModel = new Seller();
 

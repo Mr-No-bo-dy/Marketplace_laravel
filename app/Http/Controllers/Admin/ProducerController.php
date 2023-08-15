@@ -9,23 +9,23 @@ use Illuminate\Http\Request;
 
 class ProducerController extends Controller
 {
-   /**
-   * Display a listing of the Producers
-   */
-   public function index()
-   {
-      $producers = Producer::all();
+    /**
+     * Display a listing of the Producers
+     */
+    public function index()
+    {
+        $producers = Producer::all();
 
-      return view('admin.producers.index', compact('producers'));
-   }
+        return view('admin.producers.index', compact('producers'));
+    }
 
-   /**
-   * Display Producer creation form
-   */
-   public function create()
-   {
-      return view('admin.producers.create');
-   }
+    /**
+     * Display Producer creation form
+     */
+    public function create()
+    {
+        return view('admin.producers.create');
+    }
 
     /**
      * Create Producer
@@ -33,32 +33,32 @@ class ProducerController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-   public function store(Request $request): RedirectResponse
-   {
-      $producerModel = new Producer();
+    public function store(Request $request): RedirectResponse
+    {
+        $producerModel = new Producer();
 
-      $postData = $request->post();
-      $setProducerData = [
-         'name' => ucfirst($postData['name']),
-         'address' => ucfirst($postData['address']),
-         'contacts' => $postData['contacts'],
-         'created_at' => date('Y-m-d H:i:s'),
-         'updated_at' => date('Y-m-d H:i:s'),
-      ];
-      $producerModel->storeProducer($setProducerData);
+        $postData = $request->post();
+        $setProducerData = [
+            'name' => ucfirst($postData['name']),
+            'address' => ucfirst($postData['address']),
+            'contacts' => $postData['contacts'],
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+        $producerModel->storeProducer($setProducerData);
 
-      return redirect()->route('admin.producer');
-   }
+        return redirect()->route('admin.producer');
+    }
 
-   /**
-   * Display Producer update form
-   */
-   public function edit($idProducer)
-   {
-      $producer = Producer::find($idProducer);
+    /**
+     * Display Producer update form
+     */
+    public function edit($idProducer)
+    {
+        $producer = Producer::find($idProducer);
 
-      return view('admin.producers.update', compact('producer'));
-   }
+        return view('admin.producers.update', compact('producer'));
+    }
 
     /**
      * Update Producer
@@ -66,33 +66,33 @@ class ProducerController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-   public function update(Request $request): RedirectResponse
-   {
-      $producerModel = new Producer();
+    public function update(Request $request): RedirectResponse
+    {
+        $producerModel = new Producer();
 
-      $postData = $request->post();
-      $setProducerData = [
-         'name' => ucfirst($postData['name']),
-         'address' => ucfirst($postData['address']),
-         'contacts' => $postData['contacts'],
-         'updated_at' => date('Y-m-d H:i:s'),
-      ];
-      $idProducer = $request->post('id_producer');
-      $producerModel->updateProducer($idProducer, $setProducerData);
+        $postData = $request->post();
+        $setProducerData = [
+            'name' => ucfirst($postData['name']),
+            'address' => ucfirst($postData['address']),
+            'contacts' => $postData['contacts'],
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+        $idProducer = $request->post('id_producer');
+        $producerModel->updateProducer($idProducer, $setProducerData);
 
-      return redirect()->route('admin.producer');
-   }
+        return redirect()->route('admin.producer');
+    }
 
-   /**
-   * Delete Producer
-   */
-   public function destroy(Request $request): RedirectResponse
-   {
-      $producerModel = new Producer();
+    /**
+     * Delete Producer
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        $producerModel = new Producer();
 
-      $idProducer = $request->post('id_producer');
-      $producerModel->deleteProducer($idProducer);
+        $idProducer = $request->post('id_producer');
+        $producerModel->deleteProducer($idProducer);
 
-      return redirect()->route('admin.producer');
-   }
+        return redirect()->route('admin.producer');
+    }
 }

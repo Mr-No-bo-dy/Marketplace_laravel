@@ -25,16 +25,16 @@ class HeaderProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('layouts.site-nav', function ($view) {
-//            $userName = null;
-//            if (Session::get('id_seller')) {
-//                $idUser = Session::get('id_seller');
-//                $userName = Seller::find($idUser)->name;
-//            } elseif (Session::get('id_client')) {
-//                $idUser = Session::get('id_client');
-//                $userName = Client::find($idUser)->name;
-//            }
-//            $view->with('user', $userName);
-//            $view->with('cart', Session::get('cart.total.quantity'));
+            // $userName = null;
+            // if (Session::get('id_seller')) {
+            //     $idUser = Session::get('id_seller');
+            //     $userName = Seller::find($idUser)->name;
+            // } elseif (Session::get('id_client')) {
+            //     $idUser = Session::get('id_client');
+            //     $userName = Client::find($idUser)->name;
+            // }
+            // $view->with('user', $userName);
+            // $view->with('cart', Session::get('cart.total.quantity'));
 
             if (Session::get('id_seller')) {
                 $idSeller = Session::get('id_seller');
@@ -46,7 +46,7 @@ class HeaderProvider extends ServiceProvider
                 $view->with('client', $clientName);
             }
 
-            $view->with('cart', Session::get('cart.total.quantity'));
+            $view->with('cart_num', Session::get('cart.total.quantity'));
         });
     }
 }

@@ -38,12 +38,10 @@ class CartController extends Controller
                 $newQuantity = $request->post('quantity');
                 $total['quantity'] = $total['quantity'] - $product['quantity'] + $newQuantity;
                 $total['total'] = ($total['total'] - $product['total']) + ($newQuantity * $product['price']);
-
             } elseif ($request->post('plus')) {
                 $newQuantity = $product['quantity'] + 1;
                 $total['quantity'] += 1;
                 $total['total'] += $product['price'];
-
             } elseif ($request->post('minus')) {
                 $newQuantity = $product['quantity'] - 1;
                 if ($newQuantity <= 0) {
@@ -52,7 +50,6 @@ class CartController extends Controller
                 }
                 $total['quantity'] -= 1;
                 $total['total'] -= $product['price'];
-
             } elseif ($request->post('remove')) {
                 if (!is_null($product)) {
                     $total['quantity'] = $total['quantity'] - $product['quantity'];
@@ -79,7 +76,7 @@ class CartController extends Controller
             $productData[$product['id_product']]['quantity'] = $product['quantity'];
             $productData[$product['id_product']]['total'] = $product['total'];
         }
-        $total =  !empty($request->session()->get('cart.product')) ? request()->session()->get('cart.total') : [] ;
+        $total =  !empty($request->session()->get('cart.product')) ? request()->session()->get('cart.total') : [];
 
         $products = !empty($request->session()->get('cart.product')) ? Product::whereIn('id_product', $idsProduct)->get() : [];
 

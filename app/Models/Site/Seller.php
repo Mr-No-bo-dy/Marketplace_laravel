@@ -13,56 +13,64 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Seller extends Model
 {
-   use HasFactory;
-   use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
-   /**
-   * The table associated with the model.
-   *
-   * @var string
-   */
-   protected $table = 'sellers';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'sellers';
 
-   /**
-   * The attributes that are mass assignable.
-   *
-   * @var array<int, string>
-   */
-   protected $primaryKey = 'id_seller';
-   protected $fillable = [
-      'id_marketplace',
-      'name',
-      'surname',
-      'email',
-      'phone',
-   ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $primaryKey = 'id_seller';
+    protected $fillable = [
+        'id_marketplace',
+        'name',
+        'surname',
+        'email',
+        'phone',
+    ];
 
-   /**
-   * The attributes that are assigning automaticaly.
-   *
-   * @var array<int, string>
-   */
-   protected array $dates = [
-      'created_at',
-      'updated_at',
-      'deleted_at',
-   ];
+    /**
+     * The attributes that are assigning automatically.
+     *
+     * @var array<int, string>
+     */
+    protected array $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 
-   /**
-   * Setting relationship with DB table Marketplace.
-   */
-   public function marketplace(): BelongsTo
-   {
-      return $this->belongsTo(Marketplace::class, 'id_marketplace', 'id_marketplace');
-   }
+    /**
+     * Setting relationship with DB table Marketplace.
+     */
+    public function marketplace(): BelongsTo
+    {
+        return $this->belongsTo(Marketplace::class, 'id_marketplace', 'id_marketplace');
+    }
 
-   /**
-   * Setting relationship with DB table Products.
-   */
-   public function products(): HasMany
-   {
-      return $this->hasMany(Product::class, 'id_seller', 'id_seller');
-   }
+    /**
+     * Setting relationship with DB table Products.
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class, 'id_seller', 'id_seller');
+    }
+
+    /**
+     * Setting relationship with DB table Orders.
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'id_seller', 'id_seller');
+    }
 
     /**
      * Check if loggining user exists in DB table Sellers
@@ -71,99 +79,99 @@ class Seller extends Model
      *
      * @return int|void
      */
-   public function authSeller(array $data)
-   {
-      $checkData = [
-         'phone',
-         'email',
-      ];
-      $seller = [];
-      foreach ($checkData as $field) {
-         $builder = DB::table($this->table)
-                     ->select(['id_seller', 'id_marketplace', 'name', 'surname', 'email', 'phone'])
-                     ->where($field, $data['login'])
-                     ->get();
-         foreach ($builder as $row) {
-            $seller = $row;
-         }
-      }
+    public function authSeller(array $data)
+    {
+        $checkData = [
+            'phone',
+            'email',
+        ];
+        $seller = [];
+        foreach ($checkData as $field) {
+            $builder = DB::table($this->table)
+                        ->select(['id_seller', 'id_marketplace', 'name', 'surname', 'email', 'phone'])
+                        ->where($field, $data['login'])
+                        ->get();
+            foreach ($builder as $row) {
+                $seller = $row;
+            }
+        }
 
-      if (!empty($seller)) {
-         $builder = DB::table('sellers_passwords')
+        if (!empty($seller)) {
+            $builder = DB::table('sellers_passwords')
                         ->select()
                         ->where('id_seller', $seller->id_seller)
                         ->get();
-         foreach ($builder as $row) {
-            if (Hash::check($data['password'], $row->password)) {
-               return $seller->id_seller;
+            foreach ($builder as $row) {
+                if (Hash::check($data['password'], $row->password)) {
+                    return $seller->id_seller;
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
-   /**
-   * Insert entity into DB table Sellers
-   *
-   * @param array $data
-   *
-   * @return int $idNewSeller
-   */
-   public function storeSeller(array $data): int
-   {
-       return DB::table($this->table)
-                         ->insertGetId($data);
-   }
+    /**
+     * Insert entity into DB table Sellers
+     *
+     * @param array $data
+     *
+     * @return int $idNewSeller
+     */
+    public function storeSeller(array $data): int
+    {
+        return DB::table($this->table)
+            ->insertGetId($data);
+    }
 
-   /**
-   * Insert Seller's password into DB table 'sellers_passwords'
-   *
-   * @param array $data
-   */
-   public function storeSellerPassword(array $data): void
-   {
-      DB::table('sellers_passwords')
-         ->insert($data);
-   }
+    /**
+     * Insert Seller's password into DB table 'sellers_passwords'
+     *
+     * @param array $data
+     */
+    public function storeSellerPassword(array $data): void
+    {
+        DB::table('sellers_passwords')
+            ->insert($data);
+    }
 
-   /**
-   * Update entity into DB table Sellers
-   *
-   * @param int $idSeller
-   * @param array $data
-   */
-   public function updateSeller(int $idSeller, array $data): void
-   {
-      DB::table($this->table)
-         ->where($this->primaryKey, $idSeller)
-         ->update($data);
-   }
+    /**
+     * Update entity into DB table Sellers
+     *
+     * @param int $idSeller
+     * @param array $data
+     */
+    public function updateSeller(int $idSeller, array $data): void
+    {
+        DB::table($this->table)
+            ->where($this->primaryKey, $idSeller)
+            ->update($data);
+    }
 
-   /**
-   * Update Seller's password into DB table 'sellers_passwords'
-   *
-   * @param int $idSeller
-   * @param array $data
-   */
-   public function updateSellerPassword(int $idSeller, array $data): void
-   {
-      DB::table('sellers_passwords')
-         ->where($this->primaryKey, $idSeller)
-         ->update($data);
-   }
+    /**
+     * Update Seller's password into DB table 'sellers_passwords'
+     *
+     * @param int $idSeller
+     * @param array $data
+     */
+    public function updateSellerPassword(int $idSeller, array $data): void
+    {
+        DB::table('sellers_passwords')
+            ->where($this->primaryKey, $idSeller)
+            ->update($data);
+    }
 
-   /**
-   * Delete entity from DB table Sellers
-   *
-   * @param int $idSeller
-   */
-   public function deleteSeller(int $idSeller): void
-   {
-      DB::table('sellers_passwords')
-         ->where($this->primaryKey, $idSeller)
-         ->delete();
+    /**
+     * Delete entity from DB table Sellers
+     *
+     * @param int $idSeller
+     */
+    public function deleteSeller(int $idSeller): void
+    {
+        DB::table('sellers_passwords')
+            ->where($this->primaryKey, $idSeller)
+            ->delete();
 
-      DB::table($this->table)
-         ->where($this->primaryKey, $idSeller)
-         ->delete();
-   }
+        DB::table($this->table)
+            ->where($this->primaryKey, $idSeller)
+            ->delete();
+    }
 }

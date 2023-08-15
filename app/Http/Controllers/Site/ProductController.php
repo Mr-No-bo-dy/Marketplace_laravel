@@ -15,44 +15,44 @@ use Illuminate\Support\Facades\Session;
 
 class ProductController extends Controller
 {
-   /**
-   * Display a listing of the Products.
-   */
-   public function index(Request $request)
-   {
-//      $products = Product::all();
-      $categories = Category::all();
+    /**
+     * Display a listing of the Products.
+     */
+    public function index(Request $request)
+    {
+        $products = Product::all();
+        $categories = Category::all();
 
-       $filters = [
-           'id_category' => $request->post('id_category'),
-       ];
-       $products = Product::where($filters);
+        //       $filters = [
+        //           'id_category' => $request->post('id_category'),
+        //       ];
+        //       $products = Product::where($filters);
 
-      return view('site.products.index', compact('products', 'categories'));
-   }
+        return view('site.products.index', compact('products', 'categories'));
+    }
 
-   /**
-   * Display one chosen Product.
-   */
-   public function show($idProduct)
-   {
-      $product = Product::find($idProduct);
+    /**
+     * Display one chosen Product.
+     */
+    public function show($idProduct)
+    {
+        $product = Product::find($idProduct);
 
-      return view('site.products.show', compact('product'));
-   }
+        return view('site.products.show', compact('product'));
+    }
 
-   /**
-   * Display Product creation form
-   */
-   public function create()
-   {
-      $producers = Producer::all(['id_producer', 'name']);
-      $categories = Category::all(['id_category', 'name']);
-      $subcategories = Subcategory::all(['id_subcategory', 'name']);
-      $idSeller = Session::get('id_seller');
+    /**
+     * Display Product creation form
+     */
+    public function create()
+    {
+        $producers = Producer::all(['id_producer', 'name']);
+        $categories = Category::all(['id_category', 'name']);
+        $subcategories = Subcategory::all(['id_subcategory', 'name']);
+        $idSeller = Session::get('id_seller');
 
-      return view('site.products.create', compact('idSeller', 'producers', 'categories', 'subcategories'));
-   }
+        return view('site.products.create', compact('idSeller', 'producers', 'categories', 'subcategories'));
+    }
 
     /**
      * Create Product
@@ -60,81 +60,98 @@ class ProductController extends Controller
      * @param ProductRequest $request
      * @return RedirectResponse
      */
-//   public function store(Request $request): RedirectResponse
     public function store(ProductRequest $request): RedirectResponse
-   {
-      $productModel = new Product();
+    {
+        $productModel = new Product();
 
         $productModel->fill($request->validated());
-      $productModel->save();
 
-      $images = $request->file('images');
+		if ($request->hasFile('images')) {
+			$images = $request->file('images');
+			foreach ($images as $image) {
+				$productModel->addMedia($image)
+					->toMediaCollection('products');
+			}
+		}
+	    $productModel->save();
 
-        foreach ($images as $image) {
-            $productModel->addMedia($image)
-                        ->toMediaCollection('products')
-                       ->save();
-      }
+        return redirect()->route('seller.my_products');
+    }
 
-      return redirect()->route('seller.my_products');
-   }
+    /**
+     * Display Product update form
+     */
+    public function edit($idProduct)
+    {
+        $product = Product::find($idProduct);
+        $producers = Producer::all(['id_producer', 'name']);
+        $categories = Category::all(['id_category', 'name']);
+        $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
-   /**
-   * Display Product update form
-   */
-   public function edit($idProduct)
-   {
-      $product = Product::find($idProduct);
-      $producers = Producer::all(['id_producer', 'name']);
-      $categories = Category::all(['id_category', 'name']);
-      $subcategories = Subcategory::all(['id_subcategory', 'name']);
-
-      return view('site.products.update', compact('product', 'producers', 'categories', 'subcategories'));
-   }
+        return view('site.products.update', compact('product', 'producers', 'categories', 'subcategories'));
+    }
 
     /**
      * Update Product
      *
-     * @param Request $request
+     * @param ProductRequest $request
      * @return RedirectResponse
      */
-   public function update(Request $request): RedirectResponse
-   {
-      $productModel = new Product();
+    public function update(ProductRequest $request): RedirectResponse
+    {
+        $productModel = new Product();
 
-      $postData = $request->post();
-      $setProductData = [
-         'id_producer' => $postData['id_producer'],
-         'id_category' => $postData['id_category'],
-         'id_subcategory' => $postData['id_subcategory'],
-         'name' => ucfirst($postData['name']),
-         'description' => ucfirst($postData['description']),
-         'price' => $postData['price'],
-         'amount' => $postData['amount'],
-         'updated_at' => date('Y-m-d H:i:s'),
-      ];
-      $idProduct = $request->post('id_product');
-      $productModel->updateProduct($idProduct, $setProductData);
+        $idProduct = $request->post('id_product');
+        $postData = $request->post();
+        unset($postData['_token'], $postData['delete_media']);
+//	    $setProductData = [
+//            'id_producer' => $postData['id_producer'],
+//            'id_category' => $postData['id_category'],
+//            'id_subcategory' => $postData['id_subcategory'],
+//            'name' => ucfirst($postData['name']),
+//            'description' => ucfirst($postData['description']),
+//            'price' => $postData['price'],
+//            'amount' => $postData['amount'],
+//        ];
+	    $productModel->fill($request->validated());
+	    $productModel->where('id_product', $idProduct)->update($postData);
 
-      $image = $request->file();
-      $product = $productModel->find($idProduct);
-      $product->addMedia($image['image'])
-               ->toMediaCollection('products')
-               ->save();
+	    if ($request->hasFile('images')) {
+		    $product = $productModel->find($idProduct);
+		    // Optional Delete old media
+			if ($request->post('delete_media')) {
+				$medias = $product->media;
+				foreach ($medias as $media) {
+					$media->delete($media->id);
+				}
+			}
 
-      return redirect()->route('seller.my_products');
-   }
+			// Save new Media
+		    $images = $request->file('images');
+		    foreach ($images as $image) {
+			    $product->addMedia($image)
+				    ->toMediaCollection('products');
+		    }
+	    }
 
-   /**
-   * Delete Product
-   */
-   public function destroy(Request $request): RedirectResponse
-   {
-      $productModel = new Product();
+        return redirect()->route('seller.my_products');
+    }
 
-      $idProduct = $request->post('id_product');
-      $productModel->deleteProduct($idProduct);
+    /**
+     * Delete Product
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        $productModel = new Product();
 
-      return redirect()->route('seller.my_products');
-   }
+        $idProduct = $request->post('id_product');
+	    $product = $productModel->find($idProduct);
+	    $medias = $product->media;
+	    foreach ($medias as $media) {
+		    $media->delete($media->id);
+        }
+	    $productModel->deleteProduct($idProduct);
+
+        return redirect()->route('seller.my_products');
+    }
 }

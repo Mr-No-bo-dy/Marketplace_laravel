@@ -7,12 +7,12 @@ use App\Models\Admin\User;
 
 class UserController extends Controller
 {
-   public function users()
-   {
-      $userModel = new User();
+    public function users()
+    {
+        $userModel = new User();
 
-      $users = $userModel->getUsers();
+        $users = $userModel->getUsers();
 
-      return view('admin.users.users', compact('users'));
-   }
+        return view('admin.users.users', compact('users'));
+    }
 }

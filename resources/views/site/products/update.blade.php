@@ -43,7 +43,7 @@
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
-                  
+
                   <div class="sm:col-span-2">
                      <label for="producer" class="block text-sm font-medium leading-6 text-gray-900">Producer</label>
                      <div class="mt-2">
@@ -78,10 +78,14 @@
                      </div>
                   </div>
                   <div class="sm:col-span-2">
-                     <label for="image" class="block text-sm font-medium leading-6 text-gray-900">Image</label>
+                     <label for="image" class="inline-block text-sm font-medium leading-6 text-gray-900">Image</label>
                      <div class="mt-2">
-                        <input type="file" name="image">
+                        <input type="file" name="images[]" multiple>
                      </div>
+                      <div class="mt-2">
+                          <input id="delImgs" class="rounded-sm" type="checkbox" name="delete_media" value="1">
+                          <label for="delImgs" class="inline-block text-sm font-medium leading-6 text-gray-900">Delete old Media?</label>
+                      </div>
                   </div>
                </div>
                <button type="submit" name="id_product" value="{{ $product->id_product }}"

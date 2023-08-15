@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class User extends Model
 {
-   use HasFactory;
+    use HasFactory;
 
-   public function getUsers(): \Illuminate\Support\Collection
-   {
-      return $users = DB::table('users')
-                        ->select()
-                        ->where('email', '!=', null)
-                        ->get();
-   }
+    public function getUsers(): \Illuminate\Support\Collection
+    {
+        return DB::table('users')
+                ->select()
+                ->where('email', '!=', null)
+                ->get();
+    }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientRequest;
+use App\Models\Site\Client;
 use App\Models\Site\Order;
 use App\Models\Site\Product;
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ class OrderController extends Controller
             $productData[$product['id_product']]['quantity'] = $product['quantity'];
             $productData[$product['id_product']]['total'] = $product['total'];
         }
-        $total =  !empty($request->session()->get('cart.product')) ? request()->session()->get('cart.total') : [] ;
+        $total =  !empty($request->session()->get('cart.product')) ? request()->session()->get('cart.total') : [];
 
         $products = !empty($request->session()->get('cart.product')) ? Product::whereIn('id_product', $idsProduct)->get() : [];
 
@@ -31,18 +33,38 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(ClientRequest $request)
     {
         $orderModel = new Order();
+        $clientModel = new Client();
 
-        $data = [
-            'id_product' => $request->post('id_product'),
-            // 'id_client' => $request->session()->get('id_client') ?: "(create new client)",
-            'name' => $request->post('name'),
-            'price' => $request->post('price'),
-        ];
+        $clientModel->fill($request->validated())
+            ->save();
+        $idNewClient = Client::latest()->first()->id_client;
 
-        $orderModel->storeOrder($data);
+        $cartData = $request->session()->get('cart');
+        foreach ($cartData['product'] as $product) {
+            $orderData = [
+                'id_client' => $idNewClient,
+                'id_seller' => $product['id_seller'],
+                'status' => 1,
+                'date' => date('Y-m-d H:i:s'),
+                // 'id_client' => $request->session()->get('id_client') ?: "(create new client)",
+            ];
+            //            dd($orderData);
+            $orderModel->fill($orderData)
+                ->save();
+            $idNewOrder = Order::latest()->first()->id_order;
+            $orderDetails = [
+                'id_order' => $idNewOrder,
+                'id_product' => $product['id_product'],
+                'count' => $product['total'],
+            ];
+            $orderModel->storeOrderDetails($orderDetails);
+            //            $orderModel->orderDetails->fill($orderDetails)->save();
+
+        }
+        //        $orderModel->storeOrder($data);
     }
 
     /**

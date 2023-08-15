@@ -2,9 +2,13 @@
 
 namespace App\Models\Site;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Site\Client;
+use App\Models\Site\Seller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -30,15 +34,33 @@ class Order extends Model
         'date',
     ];
 
-    public function storeOrder(array $order, $orderDetails)
+    /**
+     * Setting relationship with DB table Seller.
+     */
+    public function seller(): BelongsTo
     {
-        $idOrder = DB::table($this->table)
-            ->insertGetId($order);
+        return $this->belongsTo(Seller::class, 'id_seller', 'id_seller');
+    }
 
+    /**
+     * Setting relationship with DB table Client.
+     */
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class, 'id_client', 'id_client');
+    }
+
+    /**
+     * Setting relationship with DB table OrderDetails.
+     */
+    public function orderDetails(): HasMany
+    {
+        return $this->hasMany(OrderDetails::class, 'id_order', 'id_order');
+    }
+
+    public function storeOrderDetails(array $orderDetails)
+    {
         DB::table('order_details')
-            ->where($this->primaryKey, $idOrder)
             ->insert($orderDetails);
-
-        return $idOrder;
     }
 }

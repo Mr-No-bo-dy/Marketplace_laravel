@@ -19,9 +19,11 @@
                    @endforeach
                </div>
                <div class="sm:col-span-6">
-                  <p><b>Description:</b> {{ $product->description }}</p>
-                  <p><b>Price:</b> {{ $product->price }}</p>
-                  <p><b>Amount:</b> {{ $product->amount }}</p>
+                   <p><b>Category:</b> {{ $product->category->name }}</p>
+                   <p><b>Subcategory:</b> {{ $product->subcategory->name }}</p>
+                   <p><b>Description:</b> {{ $product->description }}</p>
+                   <p><b>Seller:</b> {{ $product->seller->name }} {{ $product->seller->surname }}</p>
+                   <p><b>Price:</b> {{ $product->price }}</p>
                </div>
                 <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
                     @csrf

@@ -3,7 +3,9 @@
 namespace App\Models\Site;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
+use App\Models\Site\Seller;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
@@ -40,6 +42,14 @@ class Product extends Model implements HasMedia
     ];
 
     /**
+     * Setting relationship with DB table Producer.
+     */
+    public function producer(): BelongsTo
+    {
+        return $this->belongsTo(Producer::class, 'id_producer', 'id_producer');
+    }
+
+    /**
      * Setting relationship with DB table Category.
      */
     public function category(): BelongsTo
@@ -53,6 +63,14 @@ class Product extends Model implements HasMedia
     public function subcategory(): BelongsTo
     {
         return $this->belongsTo(Subcategory::class, 'id_subcategory', 'id_subcategory');
+    }
+
+    /**
+     * Setting relationship with DB table Seller.
+     */
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(Seller::class, 'id_seller', 'id_seller');
     }
 
     /**

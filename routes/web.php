@@ -31,7 +31,7 @@ Route::controller(GeneralController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::post('/product/cart', 'addToCart')->name('product.cart');
     Route::get('/registration', 'register')->name('registration');
-    Route::post('/registration', 'storeDefine')->name('registration');
+    Route::post('/registration', 'store')->name('registration');
     Route::get('/registrationClient', 'registerClient')->name('registrationClient');
     Route::post('/registrationClient', 'storeClient')->name('registrationClient');
     Route::get('/auth', 'auth')->name('auth');
@@ -40,6 +40,7 @@ Route::controller(GeneralController::class)->group(function () {
 });
 Route::controller(ProductController::class)->group(function () {
     Route::get('/product', 'index')->name('product');
+    Route::post('/product', 'index')->name('product');
     Route::get('/product/show/{id_product}', 'show')->name('product.show');
 });
 Route::controller(CartController::class)->group(function () {

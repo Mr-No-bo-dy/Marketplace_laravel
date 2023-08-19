@@ -4,31 +4,44 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use App\Http\Resource\Traits\Components;
+use App\Http\Resource\Traits\Products;
 use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
+use App\Models\Site\Seller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\HtmlString;
 
 class ProductController extends Controller
 {
+    use Components, Products;
+
     /**
-     * Display a listing of the Products.
-     */
+    * Display a listing of the Products.
+    */
     public function index(Request $request)
     {
-        $products = Product::all();
+        $producers = Producer::all();
         $categories = Category::all();
+        $subcategories = Subcategory::all();
+        $sellers = Seller::all();
 
-        //       $filters = [
-        //           'id_category' => $request->post('id_category'),
-        //       ];
-        //       $products = Product::where($filters);
+        // Forming the filters for Products
+        $filters = $this->getFilters($request);
 
-        return view('site.products.index', compact('products', 'categories'));
+        // Getting Products based on filters
+        $products = $this->getProducts($request, 3);
+
+        $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
+        $categoriesSelect = new HtmlString($this->customSelectData($categories, 'category', $filters));
+        $subcategoriesSelect = new HtmlString($this->customSelectData($subcategories, 'subcategory', $filters));
+        $sellersSelect = new HtmlString($this->customSelectData($sellers, 'seller', $filters));
+
+        return view('site.products.index', compact('products', 'producersSelect', 'categoriesSelect', 'subcategoriesSelect', 'sellersSelect', 'filters'));
     }
 
     /**

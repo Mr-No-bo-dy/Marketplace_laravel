@@ -16,7 +16,7 @@
 {{--                                    <img class="h-24 w-24 object-contain" src="{{ $order->getFirstMediaUrl('products') }}" alt="{{ $order->name . '-pic' }}">--}}
 {{--                                </div>--}}
                                 <div class="sm:col-span-5">
-                                    <p><b>Client:</b> {{ $order->client['name'] }}</p>
+                                    <p><b>Client:</b> {{ $order->client_surname . ' ' . $order->client_name }}</p>
                                     <p><b>Status:</b> {{ $order->status }}</p>
                                     <p><b>Date:</b> {{ $order->date }}</p>
                                 </div>

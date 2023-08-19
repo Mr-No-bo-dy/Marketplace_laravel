@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
-use App\Models\Site\Product;
 use Illuminate\Http\Request;
+use App\Http\Resource\Traits\Cart;
 
 class CartController extends Controller
 {
+    use Cart;
+
     /**
      * Display a listing of the resource.
      */
@@ -69,16 +71,7 @@ class CartController extends Controller
         }
 
         // Setting data for view
-        $idsProduct = $productData = [];
-        $cartData = $request->session()->get('cart');
-        foreach ($cartData['product'] as $product) {
-            $idsProduct[$product['id_product']] = $product['id_product'];
-            $productData[$product['id_product']]['quantity'] = $product['quantity'];
-            $productData[$product['id_product']]['total'] = $product['total'];
-        }
-        $total =  !empty($request->session()->get('cart.product')) ? request()->session()->get('cart.total') : [];
-
-        $products = !empty($request->session()->get('cart.product')) ? Product::whereIn('id_product', $idsProduct)->get() : [];
+        extract($this->getCartData($request));
 
         return view('site.cart.index', compact('products', 'productData', 'total'));
     }

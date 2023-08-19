@@ -11,7 +11,7 @@
             @else
                <ul role="list">
                   @foreach ($products as $product)
-                  <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 ...">
+                  <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 items-center py-4 sm:px-4 lg:px-8 hover:bg-slate-100 ...">
                      <div class="sm:col-span-1">
                         <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}">
                      </div>
@@ -32,7 +32,8 @@
                         <form class="inline-block" action="{{ route('cart') }}" method="post">
                            @csrf
                            <input type="hidden" name="id_product" value="{{ $product->id_product }}">
-                           <input type="number" name="quantity" value="{{ $productData[$product->id_product]['quantity'] }}" id="quantity" required
+                            <label for="quantity" class="block mb-1 font-semibold">Quantity</label>
+                            <input type="number" name="quantity" value="{{ $productData[$product->id_product]['quantity'] }}" id="quantity" required
                               class="inline-block text-right w-20 rounded-md font-bold border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </form>
                         <form class="inline-block" action="{{ route('cart') }}" method="post">
@@ -44,7 +45,7 @@
                            </button>
                         </form>
                      </div>
-                     <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('cart') }}" method="post">
+                     <form class="sm:col-span-1 pt-7 justify-self-end self-center" action="{{ route('cart') }}" method="post">
                         @csrf
                         <input type="hidden" name="id_product" value="{{ $product->id_product }}">
                         <button type="submit" name="remove" value="1"

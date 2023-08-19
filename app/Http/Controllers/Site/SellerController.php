@@ -20,10 +20,6 @@ class SellerController extends Controller
     public function index()
     {
         $sellers = Seller::withTrashed()->get();
-//        $clean = Seller::all();
-//        $trashedSellers = Seller::onlyTrashed()->get();
-//        $sellers = $clean->merge($trashedSellers);
-//        dd($clean);
 
         return view('admin.sellers.index', compact('sellers'));
     }
@@ -63,20 +59,15 @@ class SellerController extends Controller
         $seller = Seller::find($idSeller);
         $orders = $seller->orders;
 
-        $client = '';
         foreach ($orders as $order) {
             $idClient = $order->id_client;
             $client = Client::find($idClient);
-//            $order->client = $client;
-            $oneClient = $client->toArray();
-            $order->client = $oneClient;
-//            $order->client_name = $client->name;
-//            $order->client_surname = $client->surname;
-//            $order->client_email = $client->email;
-//            $order->client_phone = $client->phone;
+
+            $order->client_name = $client->name;
+            $order->client_surname = $client->surname;
+            $order->client_email = $client->email;
+            $order->client_phone = $client->phone;
         }
-//        $preparedOrders = $orders->merge($client->keyBy('id_client'));
-//        dd($orders);
 
         return view('site.seller.orders', compact('seller', 'orders'));
     }

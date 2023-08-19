@@ -6,26 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientRequest;
 use App\Models\Site\Client;
 use App\Models\Site\Order;
-use App\Models\Site\Product;
 use Illuminate\Http\Request;
+use App\Http\Resource\Traits\Cart;
 
 class OrderController extends Controller
 {
+    use Cart;
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $idsProduct = $productData = [];
-        $cartData = $request->session()->get('cart');
-        foreach ($cartData['product'] as $product) {
-            $idsProduct[$product['id_product']] = $product['id_product'];
-            $productData[$product['id_product']]['quantity'] = $product['quantity'];
-            $productData[$product['id_product']]['total'] = $product['total'];
-        }
-        $total =  !empty($request->session()->get('cart.product')) ? request()->session()->get('cart.total') : [];
-
-        $products = !empty($request->session()->get('cart.product')) ? Product::whereIn('id_product', $idsProduct)->get() : [];
+        extract($this->getCartData($request));
 
         return view('site.order.index', compact('products', 'productData', 'total'));
     }
@@ -39,7 +32,7 @@ class OrderController extends Controller
         $clientModel = new Client();
 
         $clientModel->fill($request->validated())
-            ->save();
+                    ->save();
         $idNewClient = Client::latest()->first()->id_client;
 
         $cartData = $request->session()->get('cart');
@@ -53,7 +46,7 @@ class OrderController extends Controller
             ];
             //            dd($orderData);
             $orderModel->fill($orderData)
-                ->save();
+                        ->save();
             $idNewOrder = Order::latest()->first()->id_order;
             $orderDetails = [
                 'id_order' => $idNewOrder,

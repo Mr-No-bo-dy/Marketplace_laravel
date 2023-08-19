@@ -39,11 +39,11 @@ class HeaderProvider extends ServiceProvider
             if (Session::get('id_seller')) {
                 $idSeller = Session::get('id_seller');
                 $sellerName = Seller::find($idSeller)->name;
-                $view->with('seller', $sellerName);
+                $view->with('seller_name', $sellerName);
             } elseif (Session::get('id_client')) {
                 $idClient = Session::get('id_client');
                 $clientName = Client::find($idClient)->name;
-                $view->with('client', $clientName);
+                $view->with('client_name', $clientName);
             }
 
             $view->with('cart_num', Session::get('cart.total.quantity'));

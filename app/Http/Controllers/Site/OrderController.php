@@ -14,56 +14,115 @@ class OrderController extends Controller
     use Cart;
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
-        extract($this->getCartData($request));
-
-        return view('site.order.index', compact('products', 'productData', 'total'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new Order.
      */
     public function create(ClientRequest $request)
     {
-        $orderModel = new Order();
-        $clientModel = new Client();
+        extract($this->getCartData($request));
 
-        $clientModel->fill($request->validated())
-                    ->save();
-        $idNewClient = Client::latest()->first()->id_client;
+        $client = Client::find($request->session()->get('id_client'));
 
-        $cartData = $request->session()->get('cart');
-        foreach ($cartData['product'] as $product) {
-            $orderData = [
-                'id_client' => $idNewClient,
-                'id_seller' => $product['id_seller'],
-                'status' => 1,
-                'date' => date('Y-m-d H:i:s'),
-                // 'id_client' => $request->session()->get('id_client') ?: "(create new client)",
-            ];
-            //            dd($orderData);
-            $orderModel->fill($orderData)
-                        ->save();
-            $idNewOrder = Order::latest()->first()->id_order;
-            $orderDetails = [
-                'id_order' => $idNewOrder,
-                'id_product' => $product['id_product'],
-                'count' => $product['total'],
-            ];
-            $orderModel->storeOrderDetails($orderDetails);
-            //            $orderModel->orderDetails->fill($orderDetails)->save();
-
-        }
-        //        $orderModel->storeOrder($data);
+        return view('site.order.index', compact('products', 'productData', 'total', 'client'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Order in storage.
      */
-    public function store(Request $request)
+    public function store(ClientRequest $request)
+    {
+        $orderModel = new Order();
+
+        // Register new client or take existing
+        /** If a customer with the given email doesn't exist, create a new one;
+         * otherwise, only retrieve the ID of the existing customer.
+         */
+        /**
+         * Тут проблема в тому, що новий клієнт реєструється в БД без аккаунта, але з імейлом.
+         * В такому випадку без функціоналу зв'язку з імейлом
+         * не можливо зареєструвати аккаунт клієнта на вже зайнятий імейл.
+         */
+        $client = Client::firstOrCreate([
+            'email' => $request->post('email'),
+        ],
+        [
+            'phone' => $request->post('phone'),
+            'name' => $request->post('name'),
+            'surname' => $request->post('surname'),
+        ]);
+
+        // Additionally, if the existing customer's data from the form is different, update it in the DB.
+        $client->email = $request->post('email');
+        $client->phone = $request->post('phone');
+        $client->name = $request->post('name');
+        $client->surname = $request->post('surname');
+        if ($client->isDirty()) {
+            $client->save();
+        }
+        $idClient = $client->id_client;
+
+//        /** If a customer with the given email doesn't exist, create a new one;
+//         * otherwise, only retrieve the ID of the existing customer.
+//         * Additionally, if the existing customer's data from the form is different, update it in the DB.
+//         */
+//        $clientModel = new Client();
+//        $clientEmail = $request->post('email');
+//        $oldClient = Client::where('email', $clientEmail)->first();
+//        if (!$oldClient) {
+//            $clientModel->fill($request->validated())
+//                        ->save();
+//            $idClient = Client::latest()->first()->id_client;
+//            /**
+//             * Тут проблема в тому, що новий клієнт реєструється в БД без аккаунта, але з імейлом.
+//             * В такому випадку без функціоналу зв'язку з імейлом
+//             * не можливо зареєструвати аккаунт клієнта на вже зайнятий імейл.
+//            */
+//        } else {
+//            $idClient = $oldClient->id_client;
+//            if (($oldClient->name != $request->post('name'))
+//                || ($oldClient->surname != $request->post('surname'))
+//                || ($oldClient->phone != $request->post('phone'))) {
+//                Client::where('email', $clientEmail)->update([
+//                    'name' => $request->post('name'),
+//                    'surname' => $request->post('surname'),
+//                    'phone' => $request->post('phone')
+//                ]);
+//            }
+//        }
+
+        // Forming Order's data
+        $cartData = $request->session()->get('cart');
+        if (!empty($cartData)) {
+            foreach ($cartData['product'] as $product) {
+                $orderData = [
+                    'id_client' => $idClient,
+                    'id_seller' => $product['id_seller'],
+                    'status' => 'new',
+                    'date' => date('Y-m-d H:i:s'),
+                ];
+                $orderModel->fill($orderData)
+                            ->save();
+
+                $idNewOrder = Order::latest()->first()->id_order;
+                $orderDetailsData = [
+                    'id_order' => $idNewOrder,
+                    'id_product' => $product['id_product'],
+                    'count' => $product['quantity'],
+                    'total' => $product['total'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ];
+                $orderModel->storeOrderDetails($orderDetailsData);
+            }
+            $request->session()->forget('cart');
+        }
+
+        return view('site.templates.order-done');
+    }
+
+    /**
+     * Display a listing of the Orders.
+     */
+    public function index(Request $request)
     {
         //
     }

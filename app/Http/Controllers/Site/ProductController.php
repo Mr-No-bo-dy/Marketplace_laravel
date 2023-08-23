@@ -116,18 +116,18 @@ class ProductController extends Controller
 
         $idProduct = $request->post('id_product');
         $postData = $request->post();
-        unset($postData['_token'], $postData['delete_media']);
-//	    $setProductData = [
-//            'id_producer' => $postData['id_producer'],
-//            'id_category' => $postData['id_category'],
-//            'id_subcategory' => $postData['id_subcategory'],
-//            'name' => ucfirst($postData['name']),
-//            'description' => ucfirst($postData['description']),
-//            'price' => $postData['price'],
-//            'amount' => $postData['amount'],
-//        ];
+//        unset($postData['_token'], $postData['delete_media']);
+	    $setProductData = [
+            'id_producer' => $postData['id_producer'],
+            'id_category' => $postData['id_category'],
+            'id_subcategory' => $postData['id_subcategory'],
+            'name' => ucfirst($postData['name']),
+            'description' => ucfirst($postData['description']),
+            'price' => $postData['price'],
+            'amount' => $postData['amount'],
+        ];
 	    $productModel->fill($request->validated());
-	    $productModel->where('id_product', $idProduct)->update($postData);
+	    $productModel->where('id_product', $idProduct)->update($setProductData);
 
 	    if ($request->hasFile('images')) {
 		    $product = $productModel->find($idProduct);

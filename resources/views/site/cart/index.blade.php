@@ -61,7 +61,7 @@
                          <p class="text-lg"><b>Total Quantity:</b> {{ $total['quantity'] }}</p>
                          <p class="text-lg"><b>Total Price:</b> {{ $total['total'] }}</p>
                      </div>
-                     <a class="inline-block px-5 py-3 rounded-md text-xl font-semibold text-white bg-blue-600 shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" href="{{ route('order') }}">Order</a>
+                     <a class="inline-block px-5 py-3 rounded-md text-xl font-semibold text-white bg-blue-600 shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" href="{{ route('create_order') }}">Order</a>
                  </div>
             @endif
          </div>

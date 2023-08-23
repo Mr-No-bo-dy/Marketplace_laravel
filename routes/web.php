@@ -27,30 +27,39 @@ use App\Http\Controllers\Site\SellerController;
 // });
 
 // Site
-Route::controller(GeneralController::class)->group(function () {
-    Route::get('/', 'index')->name('index');
-    Route::post('/product/cart', 'addToCart')->name('product.cart');
-    Route::get('/registration', 'register')->name('registration');
-    Route::post('/registration', 'store')->name('registration');
-    Route::get('/registrationClient', 'registerClient')->name('registrationClient');
-    Route::post('/registrationClient', 'storeClient')->name('registrationClient');
-    Route::get('/auth', 'auth')->name('auth');
-    Route::post('/auth', 'auth')->name('auth');
-    Route::post('/log_out', 'logout')->name('log_out');
-});
-Route::controller(ProductController::class)->group(function () {
-    Route::get('/product', 'index')->name('product');
-    Route::post('/product', 'index')->name('product');
-    Route::get('/product/show/{id_product}', 'show')->name('product.show');
-});
-Route::controller(CartController::class)->group(function () {
-    Route::get('cart', 'index')->name('cart');
-    Route::post('cart', 'index')->name('cart');
-});
-Route::controller(OrderController::class)->group(function () {
-    Route::get('order', 'index')->name('order');
-    Route::post('make_order', 'create')->name('make_order');
-});
+//Route::middleware('setLocale')->group(function () {
+//    Route::prefix('{lang?}')->group(function () {
+
+        Route::controller(GeneralController::class)->group(function () {
+//            Route::get('/l', 'switchLanguage')->name('switchLanguage');
+
+            Route::get('/', 'index')->name('index');
+            Route::post('/product/cart', 'addToCart')->name('product.cart');
+            Route::get('/registration', 'register')->name('registration');
+            Route::post('/registration', 'store')->name('registration');
+            Route::get('/registrationClient', 'registerClient')->name('registrationClient');
+            Route::post('/registrationClient', 'storeClient')->name('registrationClient');
+            Route::get('/auth', 'auth')->name('auth');
+            Route::post('/auth', 'auth')->name('auth');
+            Route::post('/log_out', 'logout')->name('log_out');
+        });
+        Route::controller(ProductController::class)->group(function () {
+            Route::get('/product', 'index')->name('product');
+            Route::post('/product', 'index')->name('product');
+            Route::get('/product/show/{id_product?}', 'show')->name('product.show');
+        });
+        Route::controller(CartController::class)->group(function () {
+            Route::get('cart', 'index')->name('cart');
+            Route::post('cart', 'index')->name('cart');
+        });
+        Route::controller(OrderController::class)->group(function () {
+            Route::get('create_order', 'create')->name('create_order');
+            Route::post('make_order', 'store')->name('make_order');
+        });
+
+//    });
+//});
+
 
 Route::middleware('authClient')->group(function () {
     Route::controller(ClientController::class)->group(function () {
@@ -66,6 +75,7 @@ Route::middleware('authSeller')->group(function () {
         Route::get('/seller/personal', 'show')->name('seller.personal');
         Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
         Route::get('/seller/my_orders', 'sellerOrders')->name('seller.my_orders');
+        Route::post('/seller/my_orders', 'sellerOrdersUpdate')->name('seller.my_orders');
         Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
         Route::post('/seller/update', 'update')->name('seller.update');
         Route::post('/seller/delete', 'destroy')->name('seller.delete');

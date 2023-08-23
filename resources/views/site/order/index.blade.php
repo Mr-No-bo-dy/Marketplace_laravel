@@ -12,7 +12,7 @@
                                     <div class="sm:col-span-1">
                                         <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}">
                                     </div>
-                                    <div class="sm:col-span-4">
+                                    <div class="sm:col-span-6">
                                         <b class="text-xl">{{ $product->name }}</b>
                                         <p><b>Price:</b> {{ $product->price }}</p>
                                         <p><b>Total:</b> {{ $productData[$product->id_product]['total'] }}</p>
@@ -35,28 +35,28 @@
                                 <div class="sm:col-span-3">
                                     <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
                                     <div class="mt-2">
-                                        <input type="text" name="name" id="name" autocomplete="given-name"
+                                        <input id="name" type="text" name="name" value="{{ $client->name ?? '' }}" autocomplete="given-name"
                                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                     </div>
                                 </div>
                                 <div class="sm:col-span-3">
                                     <label for="surname" class="block text-sm font-medium leading-6 text-gray-900">Surname</label>
                                     <div class="mt-2">
-                                        <input type="text" name="surname" id="surname" autocomplete="given-name"
+                                        <input id="surname" type="text" name="surname" value="{{ $client->surname ?? '' }}" autocomplete="given-name"
                                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                     </div>
                                 </div>
                                 <div class="sm:col-span-3">
                                     <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
                                     <div class="mt-2">
-                                        <input type="text" name="email" id="email" autocomplete="given-name" required
+                                        <input id="email" type="text" name="email" value="{{ $client->email ?? '' }}" autocomplete="given-name" required
                                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                     </div>
                                 </div>
                                 <div class="sm:col-span-3">
                                     <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Phone</label>
                                     <div class="mt-2">
-                                        <input type="text" name="phone" id="phone" autocomplete="given-name" required
+                                        <input id="phone" type="text" name="phone" value="{{ $client->phone ?? '' }}" autocomplete="given-name" required
                                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                     </div>
                                 </div>

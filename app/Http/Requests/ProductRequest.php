@@ -32,4 +32,14 @@ class ProductRequest extends FormRequest
             'amount' => ['int'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Назва',
+            'description' => 'Опис',
+            'price' => 'Ціна',
+            'amount' => 'Кількість',
+        ];
+    }
 }

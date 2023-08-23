@@ -6,6 +6,7 @@ use App\Models\Admin\Marketplace;
 use App\Models\Site\Client;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
+use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -207,5 +208,15 @@ class GeneralController extends Controller
         }
 
         return redirect()->route('product');
+    }
+
+    public function switchLanguage(Request $request, Closure $next, $lang = 'en')
+    {
+        if (in_array($lang, ['en', 'uk'])) {
+            session(['locale' => $lang]);
+        }
+
+//        return redirect()->back();
+        return $next($request);
     }
 }

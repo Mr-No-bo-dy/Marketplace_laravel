@@ -50,7 +50,7 @@ class SellerController extends Controller
     }
 
     /**
-     * Display a listing of the Products from given Seller.
+     * Display a listing of the Orders from given Seller.
      */
     public function sellerOrders(Request $request)
     {
@@ -70,6 +70,22 @@ class SellerController extends Controller
         }
 
         return view('site.seller.orders', compact('seller', 'orders'));
+    }
+
+    /**
+     * Update active Orders from given Seller.
+     */
+    public function sellerOrdersUpdate(Request $request)
+    {
+        $idOrder = $request->post('id_order');
+
+        if ($request->post('order_accept')) {
+            Order::where('id_order', $idOrder)->update(['status' => 'processed']);
+        } elseif ($request->post('order_decline')) {
+            Order::where('id_order', $idOrder)->update(['status' => 'declined']);
+        }
+
+        return redirect()->route('seller.my_orders');
     }
 
     /**

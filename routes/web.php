@@ -22,16 +22,12 @@ use App\Http\Controllers\Site\SellerController;
 | and all of them will be assigned to the "web" middleware group.
 */
 
-// Route::get('/', function () {
-//    return view('welcome');
-// });
-
 // Site
 //Route::middleware('setLocale')->group(function () {
-//    Route::prefix('{lang?}')->group(function () {
+    Route::prefix('{locale}')->group(function () {
 
         Route::controller(GeneralController::class)->group(function () {
-//            Route::get('/l', 'switchLanguage')->name('switchLanguage');
+            Route::post('/switchLanguage', 'switchLanguage')->name('switchLanguage');
 
             Route::get('/', 'index')->name('index');
             Route::post('/product/cart', 'addToCart')->name('product.cart');
@@ -46,7 +42,7 @@ use App\Http\Controllers\Site\SellerController;
         Route::controller(ProductController::class)->group(function () {
             Route::get('/product', 'index')->name('product');
             Route::post('/product', 'index')->name('product');
-            Route::get('/product/show/{id_product?}', 'show')->name('product.show');
+            Route::get('/product/show/{id_product}', 'show')->name('product.show');
         });
         Route::controller(CartController::class)->group(function () {
             Route::get('cart', 'index')->name('cart');
@@ -57,37 +53,35 @@ use App\Http\Controllers\Site\SellerController;
             Route::post('make_order', 'store')->name('make_order');
         });
 
-//    });
+        Route::middleware('authClient')->group(function () {
+            Route::controller(ClientController::class)->group(function () {
+                Route::get('/client/personal', 'show')->name('client.personal');
+                Route::get('/client/edit/{id_client}', 'edit')->name('client.edit');
+                Route::post('/client/update', 'update')->name('client.update');
+                Route::post('/client/delete', 'destroy')->name('client.delete');
+            });
+        });
+
+        Route::middleware('authSeller')->group(function () {
+            Route::controller(SellerController::class)->group(function () {
+                Route::get('/seller/personal', 'show')->name('seller.personal');
+                Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
+                Route::get('/seller/my_orders', 'sellerOrders')->name('seller.my_orders');
+                Route::post('/seller/my_orders', 'sellerOrdersUpdate')->name('seller.my_orders');
+                Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
+                Route::post('/seller/update', 'update')->name('seller.update');
+                Route::post('/seller/delete', 'destroy')->name('seller.delete');
+            });
+            Route::controller(ProductController::class)->group(function () {
+                Route::get('/product/create', 'create')->name('product.create');
+                Route::post('/product/store', 'store')->name('product.store');
+                Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
+                Route::post('/product/update', 'update')->name('product.update');
+                Route::post('/product/delete', 'destroy')->name('product.delete');
+            });
+        });
+    });
 //});
-
-
-Route::middleware('authClient')->group(function () {
-    Route::controller(ClientController::class)->group(function () {
-        Route::get('/client/personal', 'show')->name('client.personal');
-        Route::get('/client/edit/{id_client}', 'edit')->name('client.edit');
-        Route::post('/client/update', 'update')->name('client.update');
-        Route::post('/client/delete', 'destroy')->name('client.delete');
-    });
-});
-
-Route::middleware('authSeller')->group(function () {
-    Route::controller(SellerController::class)->group(function () {
-        Route::get('/seller/personal', 'show')->name('seller.personal');
-        Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
-        Route::get('/seller/my_orders', 'sellerOrders')->name('seller.my_orders');
-        Route::post('/seller/my_orders', 'sellerOrdersUpdate')->name('seller.my_orders');
-        Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
-        Route::post('/seller/update', 'update')->name('seller.update');
-        Route::post('/seller/delete', 'destroy')->name('seller.delete');
-    });
-    Route::controller(ProductController::class)->group(function () {
-        Route::get('/product/create', 'create')->name('product.create');
-        Route::post('/product/store', 'store')->name('product.store');
-        Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
-        Route::post('/product/update', 'update')->name('product.update');
-        Route::post('/product/delete', 'destroy')->name('product.delete');
-    });
-});
 
 // Admin Panel
 Route::middleware('auth')->group(function () {

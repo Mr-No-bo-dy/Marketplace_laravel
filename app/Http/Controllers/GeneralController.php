@@ -210,13 +210,21 @@ class GeneralController extends Controller
         return redirect()->route('product');
     }
 
-    public function switchLanguage(Request $request, Closure $next, $lang = 'en')
+    public function switchLanguage(Request $request)
     {
-        if (in_array($lang, ['en', 'uk'])) {
-            session(['locale' => $lang]);
-        }
+//        $lang = $request->post('lang');
+//        app()->setLocale($lang);
+//
+//        if (in_array($lang, ['en', 'uk'])) {
+//            $request->session()->put('locale', $lang);
+//        }
+//        dd($request->session());
 
-//        return redirect()->back();
-        return $next($request);
+//        return redirect($request->session());
+//        return url()->previous();
+//        dd(url()->previous());
+
+        return redirect(url()->previous());
+//        return $next($request);
     }
 }

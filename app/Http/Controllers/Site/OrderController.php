@@ -60,35 +60,6 @@ class OrderController extends Controller
         }
         $idClient = $client->id_client;
 
-//        /** If a customer with the given email doesn't exist, create a new one;
-//         * otherwise, only retrieve the ID of the existing customer.
-//         * Additionally, if the existing customer's data from the form is different, update it in the DB.
-//         */
-//        $clientModel = new Client();
-//        $clientEmail = $request->post('email');
-//        $oldClient = Client::where('email', $clientEmail)->first();
-//        if (!$oldClient) {
-//            $clientModel->fill($request->validated())
-//                        ->save();
-//            $idClient = Client::latest()->first()->id_client;
-//            /**
-//             * Тут проблема в тому, що новий клієнт реєструється в БД без аккаунта, але з імейлом.
-//             * В такому випадку без функціоналу зв'язку з імейлом
-//             * не можливо зареєструвати аккаунт клієнта на вже зайнятий імейл.
-//            */
-//        } else {
-//            $idClient = $oldClient->id_client;
-//            if (($oldClient->name != $request->post('name'))
-//                || ($oldClient->surname != $request->post('surname'))
-//                || ($oldClient->phone != $request->post('phone'))) {
-//                Client::where('email', $clientEmail)->update([
-//                    'name' => $request->post('name'),
-//                    'surname' => $request->post('surname'),
-//                    'phone' => $request->post('phone')
-//                ]);
-//            }
-//        }
-
         // Forming Order's data
         $cartData = $request->session()->get('cart');
         if (!empty($cartData)) {

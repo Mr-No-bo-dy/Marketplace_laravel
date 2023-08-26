@@ -60,9 +60,11 @@
                      <b class="text-xl">{{ $product->name }}</b>
                      <p><b>Category:</b> {{ $product->category->name }}</p>
                      <p><b>Price:</b> {{ $product->price }}</p>
+                      <p>{{ __('products.products') }}</p>
                   </div>
                   <div class="sm:col-span-1 justify-self-end self-center">
                      <a class="inline-block rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+{{--                        href="{{ route('product.show', $product->id_product) }}">View</a>--}}
                         href="{{ route('product.show', $product->id_product) }}">View</a>
                   </div>
                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">

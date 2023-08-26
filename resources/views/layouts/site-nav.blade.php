@@ -54,10 +54,12 @@
 
          <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
-{{--             <div class="me-4">--}}
-{{--                <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('switchLanguage', 'uk') }}">UK</a>--}}
-{{--                <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('switchLanguage', 'en') }}">EN</a>--}}
-{{--             </div>--}}
+             <form class="me-4" action="{{ route('switchLanguage') }}" method="post">
+                 @csrf
+
+                 <button class="inline-block me-2 text-gray-400 hover:text-white"  type="submit" name="lang" value="uk">UK</button>
+                 <button class="inline-block me-2 text-gray-400 hover:text-white"  type="submit" name="lang" value="en">EN</button>
+             </form>
 
              <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('cart') }}">Cart ({{ $cart_num ?? '0' }})</a>
              <button type="button"

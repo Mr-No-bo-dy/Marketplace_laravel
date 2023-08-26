@@ -10,11 +10,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
+//use Illuminate\Contracts\Auth\MustVerifyEmail;
+//use Illuminate\Notifications\Notifiable;
 
 class Seller extends Model
+//class Seller extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory;
     use SoftDeletes;
+//    use Notifiable;
 
     /**
      * The table associated with the model.

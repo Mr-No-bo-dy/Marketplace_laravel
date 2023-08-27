@@ -10,6 +10,7 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
+use App\Models\Site\Review;
 use App\Models\Site\Seller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,6 +37,19 @@ class ProductController extends Controller
         // Getting Products based on filters
         $products = $this->getProducts($request, 3);
 
+        // Calculating Product's Rating
+        foreach ($products as $product) {
+            $ratingSum = 0;
+            $ratingCount = count($product->comments);
+            foreach ($product->comments as $comment) {
+                $ratingSum += $comment->rating;
+            }
+            $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
+            $product->avgRating = number_format($avgRating, 2);
+            $product->price = number_format($product->price, 0, '.', ' ') . ' '. $product->seller->marketplace->currency;
+        }
+
+
         $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
         $categoriesSelect = new HtmlString($this->customSelectData($categories, 'category', $filters));
         $subcategoriesSelect = new HtmlString($this->customSelectData($subcategories, 'subcategory', $filters));
@@ -48,8 +62,17 @@ class ProductController extends Controller
      * Display one chosen Product.
      */
     public function show($idProduct)
+//    public function show($locale, $idProduct)
     {
         $product = Product::find($idProduct);
+
+        $ratingSum = 0;
+        $ratingCount = count($product->comments);
+        foreach ($product->comments as $comment) {
+            $ratingSum += $comment->rating;
+        }
+        $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
+        $product->avgRating = number_format($avgRating, 2);
 
         return view('site.products.show', compact('product'));
     }
@@ -166,5 +189,31 @@ class ProductController extends Controller
 	    $productModel->deleteProduct($idProduct);
 
         return redirect()->route('seller.my_products');
+    }
+
+    public function storeReview(Request $request)
+    {
+        $reviewModel = new Review();
+
+
+        if (!$request->session()->has('id_client')) {
+            return back();
+        }
+
+//        $productModel = new Product();
+
+        if ($request->has('addReview')) {
+            $review = [
+                'id_client' => $request->session()->get('id_client'),
+                'id_product' => $request->post('id_product'),
+                'comment' => $request->post('comment'),
+                'rating' => $request->post('rating'),
+            ];
+
+            $reviewModel->insert($review);
+//            $productModel->storeProductReview($review);
+        }
+
+        return back();
     }
 }

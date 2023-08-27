@@ -212,19 +212,12 @@ class GeneralController extends Controller
 
     public function switchLanguage(Request $request)
     {
-//        $lang = $request->post('lang');
-//        app()->setLocale($lang);
-//
-//        if (in_array($lang, ['en', 'uk'])) {
-//            $request->session()->put('locale', $lang);
-//        }
-//        dd($request->session());
-
 //        return redirect($request->session());
 //        return url()->previous();
-//        dd(url()->previous());
 
-        return redirect(url()->previous());
+//        return redirect(url()->previous());
 //        return $next($request);
+
+        return redirect()->back();
     }
 }

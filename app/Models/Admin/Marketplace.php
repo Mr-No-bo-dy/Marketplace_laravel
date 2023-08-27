@@ -62,4 +62,13 @@ class Marketplace extends Model
             ->where($this->primaryKey, $idMarketplace)
             ->delete();
     }
+
+    public function getCurrency()
+    {
+        $currency = [
+            'UAH' => '&#8372;',
+            'USD' => '&#8372;',
+            'GDP' => '&#8372;',
+        ];
+    }
 }

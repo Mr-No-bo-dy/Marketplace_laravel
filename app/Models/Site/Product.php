@@ -6,6 +6,7 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Seller;
+use App\Models\Site\Review;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
@@ -81,6 +82,22 @@ class Product extends Model implements HasMedia
         return $this->hasMany(Order::class, 'id_product', 'id_product');
     }
 
+    /**
+     * Setting relationship with DB table Comments.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Review::class, 'id_product', 'id_product');
+    }
+
+//    /**
+//     * Setting relationship with DB table Orders.
+//     */
+//    public function comments(): HasMany
+//    {
+//        return $this->hasMany(Comment::class, 'id_product', 'id_product');
+//    }
+
 //    /**
 //     * Insert entity into DB table Products
 //     *
@@ -116,5 +133,23 @@ class Product extends Model implements HasMedia
         DB::table($this->table)
             ->where($this->primaryKey, $idProduct)
             ->delete();
+    }
+
+//    /**
+//     * Store
+//     *
+//     * @param array $review
+//     */
+//    public function storeProductReview(array $review)
+//    {
+//        DB::table('comments')
+//            ->insert($review);
+//    }
+
+    public function getReviews($idProduct)
+    {
+        return DB::table('comments')
+            ->where('id_product', $idProduct)
+            ->get();
     }
 }

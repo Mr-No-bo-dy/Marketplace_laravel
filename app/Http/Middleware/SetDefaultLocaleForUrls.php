@@ -16,8 +16,6 @@ class SetDefaultLocaleForUrls
      */
     public function handle(Request $request, Closure $next): Response
     {
-//        dd(app());
-
         $lang = $request->post('lang');
         if (in_array($lang, ['en', 'uk'])) {
             $request->session()->put('locale', $lang);
@@ -25,9 +23,8 @@ class SetDefaultLocaleForUrls
 
         $request->session()->has('locale') ? app()->setLocale($request->session()->get('locale')) : app()->setLocale(config('app.fallback_locale'));
 
+        // Adding locale prefix itself
         URL::defaults(['locale' => app()->getLocale()]);
-
-//        dump($request->session('locale'), $isLanguage);
 
         return $next($request);
     }

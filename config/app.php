@@ -85,10 +85,6 @@ return [
 
     'locale' => 'en',
 
-//    'locales' => [
-//        'en',
-//        'uk',
-//    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -173,7 +169,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\HeaderProvider::class,
+//        App\Providers\HeaderProvider::class,
     ])->toArray(),
 
     /*

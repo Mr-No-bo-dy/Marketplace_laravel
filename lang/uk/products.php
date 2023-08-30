@@ -1,4 +1,27 @@
 <?php
-    return [
-        'products' => 'Товари',
-    ];
+
+return [
+    'myProducts' => 'Мої Товари',
+    'all' => 'Всі',
+    'Producer' => 'Виробник',
+    'Category' => 'Категорія',
+    'Subcategory' => 'Підкатегорія',
+    'Seller' => 'Продавець',
+    'Name' => 'Назва',
+    'Description' => 'Опис',
+    'Min_Price' => 'Мін. ціна',
+    'Max_Price' => 'Макс. ціна',
+    'Show' => 'Показати',
+    'Reset_Filters' => 'Скинути фільтри',
+    'View' => 'Детальніше',
+    'Add_to_Cart' => 'В корзину',
+    'Rating' => 'Рейтинг',
+    'No_reviews' => 'Немає оцінок',
+    'Price' => 'Ціна',
+    'Back' => 'Назад',
+    'Reviews' => 'Відгуки',
+    'Add_Review' => 'Додати Відгук',
+    'Rate_product' => 'Оцініть товар:',
+    'Write_review' => 'Напишіть кілька речеь про даний товар:',
+    'Edit' => 'Редагувати',
+];

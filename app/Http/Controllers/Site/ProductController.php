@@ -39,16 +39,19 @@ class ProductController extends Controller
 
         // Calculating Product's Rating
         foreach ($products as $product) {
+            $product->reviews = $product->reviews->where('status', 2);
+
             $ratingSum = 0;
-            $ratingCount = count($product->comments);
-            foreach ($product->comments as $comment) {
-                $ratingSum += $comment->rating;
+            $ratingCount = count($product->reviews);
+            foreach ($product->reviews as $review) {
+                    $ratingSum += $review->rating;
             }
             $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
             $product->avgRating = number_format($avgRating, 2);
-            $product->price = number_format($product->price, 0, '.', ' ') . ' '. $product->seller->marketplace->currency;
+            $marketplace = $product->seller->marketplace;
+            $product->priceFormatted = number_format($product->price, 0, '.', ' ')
+                . ' '. $marketplace->getCurrency($marketplace->currency);
         }
-
 
         $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
         $categoriesSelect = new HtmlString($this->customSelectData($categories, 'category', $filters));
@@ -62,14 +65,15 @@ class ProductController extends Controller
      * Display one chosen Product.
      */
     public function show($idProduct)
-//    public function show($locale, $idProduct)
     {
         $product = Product::find($idProduct);
 
+        $product->reviews = $product->reviews->where('status', 2);
+
         $ratingSum = 0;
-        $ratingCount = count($product->comments);
-        foreach ($product->comments as $comment) {
-            $ratingSum += $comment->rating;
+        $ratingCount = count($product->reviews);
+        foreach ($product->reviews as $review) {
+            $ratingSum += $review->rating;
         }
         $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
         $product->avgRating = number_format($avgRating, 2);
@@ -139,7 +143,6 @@ class ProductController extends Controller
 
         $idProduct = $request->post('id_product');
         $postData = $request->post();
-//        unset($postData['_token'], $postData['delete_media']);
 	    $setProductData = [
             'id_producer' => $postData['id_producer'],
             'id_category' => $postData['id_category'],
@@ -195,25 +198,39 @@ class ProductController extends Controller
     {
         $reviewModel = new Review();
 
-
         if (!$request->session()->has('id_client')) {
             return back();
         }
-
-//        $productModel = new Product();
 
         if ($request->has('addReview')) {
             $review = [
                 'id_client' => $request->session()->get('id_client'),
                 'id_product' => $request->post('id_product'),
-                'comment' => $request->post('comment'),
+                'review' => $request->post('review'),
                 'rating' => $request->post('rating'),
+                'status' => 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ];
 
             $reviewModel->insert($review);
-//            $productModel->storeProductReview($review);
         }
 
         return back();
+    }
+
+    public function updateReview(Request $request)
+    {
+//        in_progress...
+
+//        $reviewUpdate = false;
+//        if ($request->has('updateReview')) {
+//            $request->session()->put('');
+//        }
+//
+//
+//        $reviewUpdate = true;
+//
+//        return $reviewUpdate;
     }
 }

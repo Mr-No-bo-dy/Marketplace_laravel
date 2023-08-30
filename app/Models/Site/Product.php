@@ -83,45 +83,12 @@ class Product extends Model implements HasMedia
     }
 
     /**
-     * Setting relationship with DB table Comments.
+     * Setting relationship with DB table Reviews.
      */
-    public function comments(): HasMany
+    public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'id_product', 'id_product');
     }
-
-//    /**
-//     * Setting relationship with DB table Orders.
-//     */
-//    public function comments(): HasMany
-//    {
-//        return $this->hasMany(Comment::class, 'id_product', 'id_product');
-//    }
-
-//    /**
-//     * Insert entity into DB table Products
-//     *
-//     * @param array $data
-//     * @return int
-//     */
-//    public function storeProduct(array $data): int
-//    {
-//        return DB::table($this->table)
-//            ->insertGetId($data);
-//    }
-
-//    /**
-//     * Update entity into DB table Products
-//     *
-//     * @param int $idProduct
-//     * @param array $data
-//     */
-//    public function updateProduct(int $idProduct, array $data): void
-//    {
-//        DB::table($this->table)
-//            ->where($this->primaryKey, $idProduct)
-//            ->update($data);
-//    }
 
     /**
      * Delete entity from DB table Products
@@ -133,23 +100,5 @@ class Product extends Model implements HasMedia
         DB::table($this->table)
             ->where($this->primaryKey, $idProduct)
             ->delete();
-    }
-
-//    /**
-//     * Store
-//     *
-//     * @param array $review
-//     */
-//    public function storeProductReview(array $review)
-//    {
-//        DB::table('comments')
-//            ->insert($review);
-//    }
-
-    public function getReviews($idProduct)
-    {
-        return DB::table('comments')
-            ->where('id_product', $idProduct)
-            ->get();
     }
 }

@@ -32,8 +32,8 @@ class OrderController extends Controller
     {
         $orderModel = new Order();
 
-        // Register new client or take existing
-        /** If a customer with the given email doesn't exist, create a new one;
+        /** Register new client or take existing:
+         * If a customer with the given email doesn't exist, create a new one;
          * otherwise, only retrieve the ID of the existing customer.
          */
         /**

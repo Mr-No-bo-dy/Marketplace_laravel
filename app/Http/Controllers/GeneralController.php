@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Hash;
 class GeneralController extends Controller
 {
     /**
+     * Switch Language.
+     */
+    public function switchLanguage(Request $request)
+    {
+        return redirect()->back();
+    }
+
+    /**
      * Display site's Home page.
      */
     public function index()
@@ -23,7 +31,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * Show the form for Registrating a new Seller.
+     * Show the form for Registering a new Seller.
      */
     public function register()
     {
@@ -33,7 +41,7 @@ class GeneralController extends Controller
     }
 
     /**
-     * Show the form for Registrating a new Client.
+     * Show the form for Registering a new Client.
      */
     public function registerClient()
     {
@@ -208,16 +216,5 @@ class GeneralController extends Controller
         }
 
         return redirect()->route('product');
-    }
-
-    public function switchLanguage(Request $request)
-    {
-//        return redirect($request->session());
-//        return url()->previous();
-
-//        return redirect(url()->previous());
-//        return $next($request);
-
-        return redirect()->back();
     }
 }

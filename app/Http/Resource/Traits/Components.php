@@ -13,7 +13,7 @@ trait Components
             $entities = $entities->toArray();
         }
         $idEntity = 'id_' . $type;
-        $entities = array_merge([0 => [$idEntity => 0, 'name' => 'All']], $entities);
+        $entities = array_merge([0 => [$idEntity => 0, 'name' => trans('products.all')]], $entities);
 
         return view('components.select', compact('entities', 'idEntity', 'type', 'filters'));
     }

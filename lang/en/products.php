@@ -1,4 +1,27 @@
 <?php
+
 return [
-    'products' => 'Products',
+    'myProducts' => 'My Products',
+    'all' => 'All',
+    'Producer' => 'Producer',
+    'Category' => 'Category',
+    'Subcategory' => 'Subcategory',
+    'Seller' => 'Seller',
+    'Name' => 'Name',
+    'Description' => 'Description',
+    'Min_Price' => 'Min Price',
+    'Max_Price' => 'Max Price',
+    'Show' => 'Show',
+    'Reset_Filters' => 'Reset Filters',
+    'View' => 'View',
+    'Add_to_Cart' => 'Add to Cart',
+    'Rating' => 'Rating',
+    'No_reviews' => 'No reviews',
+    'Price' => 'Price',
+    'Back' => 'Back',
+    'Reviews' => 'Reviews',
+    'Add_Review' => 'Add Review',
+    'Rate_product' => 'Rate this product:',
+    'Write_review' => 'Write a few sentences about product:',
+    'Edit' => 'Edit',
 ];

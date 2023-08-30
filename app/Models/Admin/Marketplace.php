@@ -63,12 +63,20 @@ class Marketplace extends Model
             ->delete();
     }
 
-    public function getCurrency()
+    /**
+     * Get currency symbol based on Marketplace (country)
+     *
+     * @param string $currency
+     * @return string
+     */
+    public function getCurrency(string $currency): string
     {
-        $currency = [
-            'UAH' => '&#8372;',
-            'USD' => '&#8372;',
-            'GDP' => '&#8372;',
+        $currencies = [
+            'UAH' => '₴',
+            'USD' => '$',
+            'GBP' => '£',
         ];
+
+        return $currencies[$currency];
     }
 }

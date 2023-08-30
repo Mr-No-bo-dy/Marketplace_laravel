@@ -16,20 +16,29 @@ class Review extends Model
      *
      * @var string
      */
-    protected $table = 'comments';
+    protected $table = 'reviews';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $primaryKey = 'id_comment';
+    protected $primaryKey = 'id_review';
     protected $fillable = [
         'id_client',
         'id_product',
         'comment',
         'rating',
+        'status',
     ];
+
+    /**
+     * Setting relationship with DB table Seller.
+     */
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(Seller::class, 'id_seller', 'id_seller');
+    }
 
     /**
      * Setting relationship with DB table Client.
@@ -44,6 +53,6 @@ class Review extends Model
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'id_client', 'id_client');
+        return $this->belongsTo(Product::class, 'id_product', 'id_product');
     }
 }

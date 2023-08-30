@@ -44,6 +44,7 @@ class Kernel extends HttpKernel
         'web' => [
             \App\Http\Middleware\SetDefaultLocaleForUrls::class,
             \App\Http\Middleware\EncryptCookies::class,
+            \App\Http\Middleware\ShareData::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,

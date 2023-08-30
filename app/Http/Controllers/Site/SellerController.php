@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
 class SellerController extends Controller
 {
     /**
-     * Display a listing of the Sellers.b
+     * Display a listing of the Sellers.
      */
     public function index()
     {

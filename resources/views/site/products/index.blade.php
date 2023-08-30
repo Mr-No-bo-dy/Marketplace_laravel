@@ -11,7 +11,7 @@
               @csrf
               <button type="submit" name="resetFilters" value="1"
                       class="rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
-                  Reset Filters
+                  {{ __('products.Reset_Filters') }}
               </button>
           </form>
           <form class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 items-end justify-self-end self-center" action="{{ route('product') }}" method="post">
@@ -30,21 +30,21 @@
                   {{ $sellersSelect }}
               </div>
               <div class="sm:col-span-1">
-                    <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
+                    <label for="name" class="block text-sm font-medium leading-6 text-gray-900">{{ __('products.Name') }}</label>
                   <input type="text" id="name" name="name" value="{{ $filters['name'] }}" class="block mt-1 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
               </div>
               <div class="sm:col-span-1">
-                    <label for="priceMin" class="block text-sm font-medium leading-6 text-gray-900">Min Price</label>
+                    <label for="priceMin" class="block text-sm font-medium leading-6 text-gray-900">{{ __('products.Min_Price') }}</label>
                   <input type="number" id="priceMin" name="price[min]" value="{{ $filters['price']['min'] }}" class="block mt-1 w-full rounded-md border-0 py-1.5 text-right text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
               </div>
               <div class="sm:col-span-1">
-                    <label for="priceMax" class="block text-sm font-medium leading-6 text-gray-900">Max Price</label>
+                    <label for="priceMax" class="block text-sm font-medium leading-6 text-gray-900">{{ __('products.Max_Price') }}</label>
                   <input type="number" id="priceMax" name="price[max]" value="{{ $filters['price']['max'] }}" class="block mt-1 w-full rounded-md border-0 py-1.5 text-right text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
               </div>
               <div class="sm:col-span-1">
                   <button type="submit" name="filter" value="1"
                           class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                      Show
+                      {{ __('products.Show') }}
                   </button>
               </div>
           </form>
@@ -58,14 +58,13 @@
                   </div>
                   <div class="sm:col-span-5">
                      <b class="text-xl">{{ $product->name }}</b>
-                     <p><b>Category:</b> {{ $product->category->name }}</p>
-                     <p><b>Price:</b> {{ $product->price }}</p>
-                      <p><b>Rating:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : 'No reviews' }}</p>
-{{--                      <p>{{ __('products.products') }}</p>--}}
+                     <p><b>{{ __('products.Category') }}:</b> {{ $product->category->name }}</p>
+                     <p><b>{{ __('products.Price') }}:</b> {{ $product->priceFormatted }}</p>
+                      <p><b>{{ __('products.Rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.No_reviews') }}</p>
                   </div>
                   <div class="sm:col-span-1 justify-self-end self-center">
                      <a class="inline-block rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                        href="{{ route('product.show', $product->id_product) }}">View</a>
+                        href="{{ route('product.show', $product->id_product) }}">{{ __('products.View') }}</a>
                   </div>
                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
                      @csrf
@@ -73,7 +72,7 @@
                      <input type="hidden" name="price" value="{{ $product->price }}">
                      <button type="submit" name="addToCart" value="1"
                         class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
-                        Add to Cart
+                         {{ __('products.Add_to_Cart') }}
                      </button>
                   </form>
                </li>

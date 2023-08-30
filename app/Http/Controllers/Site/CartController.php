@@ -44,7 +44,7 @@ class CartController extends Controller
                 $newQuantity = $product['quantity'] + 1;
                 $total['quantity'] += 1;
                 $total['total'] += $product['price'];
-            } elseif ($request->post('minus')) {
+            } elseif ($request->post('minus') && !empty($product)) {
                 $newQuantity = $product['quantity'] - 1;
                 if ($newQuantity <= 0) {
                     $request->session()->forget('cart.product.' . $idProduct);
@@ -62,7 +62,7 @@ class CartController extends Controller
             }
 
             // Setting new Cart data into session Cart
-            if (isset($idProduct)) {
+            if (isset($idProduct) && !empty($product)) {
                 $newProduct['quantity'] = $newQuantity;
                 $newProduct['total'] = $newQuantity * $product['price'];
                 $request->session()->put('cart.product.' . $idProduct, $newProduct);

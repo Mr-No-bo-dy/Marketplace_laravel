@@ -64,7 +64,6 @@ Route::middleware('auth')->group(function () {
 
 // Site
 Route::prefix('{locale}')->group(function () {
-
     Route::controller(GeneralController::class)->group(function () {
         Route::post('/switchLanguage', 'switchLanguage')->name('switchLanguage');
         Route::get('/', 'index')->name('index');
@@ -80,7 +79,6 @@ Route::prefix('{locale}')->group(function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('/product', 'index')->name('product');
         Route::post('/product', 'index')->name('product');
-//            Route::get('/product/show/{id_product}', 'show')->name('product.show');
         Route::post('/product/addReview', 'storeReview')->name('product.addReview');
     });
     Route::controller(CartController::class)->group(function () {
@@ -95,9 +93,12 @@ Route::prefix('{locale}')->group(function () {
     Route::middleware('authClient')->group(function () {
         Route::controller(ClientController::class)->group(function () {
             Route::get('/client/personal', 'show')->name('client.personal');
-//                Route::get('/client/edit/{id_client}', 'edit')->name('client.edit');
             Route::post('/client/update', 'update')->name('client.update');
             Route::post('/client/delete', 'destroy')->name('client.delete');
+        });
+        Route::controller(ProductController::class)->group(function () {
+            Route::post('/product/reviewEdit', 'editReview')->name('product.reviewEdit');
+            Route::post('/product/reviewDelete', 'destroyReview')->name('product.reviewDelete');
         });
     });
 
@@ -107,14 +108,12 @@ Route::prefix('{locale}')->group(function () {
             Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
             Route::get('/seller/my_orders', 'sellerOrders')->name('seller.my_orders');
             Route::post('/seller/my_orders', 'sellerOrdersUpdate')->name('seller.my_orders');
-//                Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
             Route::post('/seller/update', 'update')->name('seller.update');
             Route::post('/seller/delete', 'destroy')->name('seller.delete');
         });
         Route::controller(ProductController::class)->group(function () {
             Route::get('/product/create', 'create')->name('product.create');
             Route::post('/product/store', 'store')->name('product.store');
-//                Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
             Route::post('/product/update', 'update')->name('product.update');
             Route::post('/product/delete', 'destroy')->name('product.delete');
         });
@@ -133,7 +132,6 @@ Route::prefix('{locale}')->group(function () {
                 Route::get('/marketplace', 'index')->name('admin.marketplace');
                 Route::get('/marketplace/create', 'create')->name('admin.marketplace.create');
                 Route::post('/marketplace/store', 'store')->name('admin.marketplace.store');
-//                    Route::get('/marketplace/edit/{id_marketplace}', 'edit')->name('admin.marketplace.edit');
                 Route::post('/marketplace/update', 'update')->name('admin.marketplace.update');
                 Route::post('/marketplace/delete', 'destroy')->name('admin.marketplace.delete');
             });
@@ -141,7 +139,6 @@ Route::prefix('{locale}')->group(function () {
                 Route::get('/producer', 'index')->name('admin.producer');
                 Route::get('/producer/create', 'create')->name('admin.producer.create');
                 Route::post('/producer/store', 'store')->name('admin.producer.store');
-//                    Route::get('/producer/edit/{id_producer}', 'edit')->name('admin.producer.edit');
                 Route::post('/producer/update', 'update')->name('admin.producer.update');
                 Route::post('/producer/delete', 'destroy')->name('admin.producer.delete');
             });
@@ -149,7 +146,6 @@ Route::prefix('{locale}')->group(function () {
                 Route::get('/category', 'index')->name('admin.category');
                 Route::get('/category/create', 'create')->name('admin.category.create');
                 Route::post('/category/store', 'store')->name('admin.category.store');
-//                    Route::get('/category/edit/{id_category}', 'edit')->name('admin.category.edit');
                 Route::post('/category/update', 'update')->name('admin.category.update');
                 Route::post('/category/delete', 'destroy')->name('admin.category.delete');
             });
@@ -157,7 +153,6 @@ Route::prefix('{locale}')->group(function () {
                 Route::get('/subcategory', 'index')->name('admin.subcategory');
                 Route::get('/subcategory/create', 'create')->name('admin.subcategory.create');
                 Route::post('/subcategory/store', 'store')->name('admin.subcategory.store');
-//                    Route::get('/subcategory/edit/{id_subcategory}', 'edit')->name('admin.subcategory.edit');
                 Route::post('/subcategory/update', 'update')->name('admin.subcategory.update');
                 Route::post('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
             });
@@ -170,7 +165,6 @@ Route::prefix('{locale}')->group(function () {
                 Route::get('/reviews', 'index')->name('admin.reviews');
                 Route::post('/review/change', 'change')->name('admin.review.change');
             });
-
             Route::get('/users', [UserController::class, 'users'])->name('admin.users');
         });
     });

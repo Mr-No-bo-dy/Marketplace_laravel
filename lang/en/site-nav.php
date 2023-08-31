@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'Home' => 'Home',
-    'Admin' => 'Admin',
-    'Products' => 'Products',
-    'Cart' => 'Cart',
-    'Login' => 'Login',
-    'Logout' => 'Logout',
-    'Profile' => 'Profile',
+    'home' => 'Home',
+    'admin' => 'Admin',
+    'products' => 'Products',
+    'cart' => 'Cart',
+    'login' => 'Login',
+    'logout' => 'Logout',
+    'profile' => 'Profile',
 ];

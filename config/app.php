@@ -85,7 +85,6 @@ return [
 
     'locale' => 'en',
 
-
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
@@ -169,7 +168,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-//        App\Providers\HeaderProvider::class,
     ])->toArray(),
 
     /*

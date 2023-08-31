@@ -37,11 +37,11 @@
                <div class="flex space-x-4">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                   <a href="{{ route('index') }}" class="text-white hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                     aria-current="page">{{ __('site-nav.Home') }}</a>
+                     aria-current="page">{{ __('site-nav.home') }}</a>
                   <a href="{{ route('admin.dashboard') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                     aria-current="page">{{ __('site-nav.Admin') }}</a>
+                     aria-current="page">{{ __('site-nav.admin') }}</a>
                   <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                     aria-current="page">{{ __('site-nav.Products') }}</a>
+                     aria-current="page">{{ __('site-nav.products') }}</a>
                </div>
             </div>
          </div>
@@ -54,11 +54,10 @@
                  <button class="inline-block me-2 text-gray-400 hover:text-white"  type="submit" name="lang" value="en">EN</button>
              </form>
 
-             <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('cart') }}">{{ __('site-nav.Cart') }} ({{ $cart_num ?? '0' }})</a>
+             <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('cart') }}">{{ __('site-nav.cart') }} ({{ $cartNum ?? '0' }})</a>
 
-             {{--          @dump($client_id ?? 'немає')--}}
             @if(!isset($seller_name) && !isset($client_name))
-               <a class="inline-block ms-3 text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller_name ?? $client_name ?? __('site-nav.Login') }}</a>
+               <a class="inline-block ms-3 text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller_name ?? $client_name ?? __('site-nav.login') }}</a>
             @else
 {{--                 <button type="button"--}}
 {{--                         class="ms-3 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">--}}
@@ -76,7 +75,7 @@
                          class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                          id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                          <span class="sr-only"></span>
-                          <p class="inline-block text-base text-gray-400 hover:text-white">{{ $seller_name ?? $client_name ?? __('site-nav.Profile') }}</p>
+                          <p class="inline-block text-base text-gray-400 hover:text-white">{{ $seller_name ?? $client_name ?? __('site-nav.profile') }}</p>
     {{--                     <img class="h-8 w-8 rounded-full"--}}
     {{--                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"--}}
     {{--                        alt="">--}}
@@ -88,10 +87,10 @@
                       role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                       <!-- Active: "bg-gray-100", Not Active: "" -->
                       <a href="{{ route('auth') }}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700" role="menuitem" tabindex="-1"
-                         id="user-menu-item-0">{{ __('site-nav.Profile') }}</a>
+                         id="user-menu-item-0">{{ __('site-nav.profile') }}</a>
                        <form class="hover:bg-gray-700" action="{{ route('log_out') }}" method="post">
                            @csrf
-                           <button class="block w-full text-left px-4 py-2 text-sm text-gray-300" type="submit">{{ __('site-nav.Logout') }}</button>
+                           <button class="block w-full text-left px-4 py-2 text-sm text-gray-300" type="submit">{{ __('site-nav.logout') }}</button>
                        </form>
                    </div>
                 </div>
@@ -105,11 +104,11 @@
       <div class="space-y-1 px-2 pb-3 pt-2">
          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
          <a href="{{ route('index') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page">{{ __('site-nav.Home') }}</a>
+            aria-current="page">{{ __('site-nav.home') }}</a>
          <a href="{{ route('admin.dashboard') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page">{{ __('site-nav.Admin') }}</a>
+            aria-current="page">{{ __('site-nav.admin') }}</a>
          <a href="{{ route('product') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-            aria-current="page">{{ __('site-nav.Products') }}</a>
+            aria-current="page">{{ __('site-nav.products') }}</a>
       </div>
    </div>
 </nav>

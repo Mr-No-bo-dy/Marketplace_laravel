@@ -20,6 +20,7 @@ class ShareData
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Active User's data
         if ($request->session()->get('id_seller')) {
             $idSeller = $request->session()->get('id_seller');
             $sellerName = Seller::find($idSeller)->name;
@@ -32,7 +33,11 @@ class ShareData
             View::share('client_name', $clientName);
         }
 
-        View::share('cart_num', $request->session()->get('cart.total.quantity'));
+        // Total number of products in Cart
+        View::share('cartNum', $request->session()->get('cart.total.quantity'));
+
+        // Key for Edit Review
+        View::share('reviewEditIdReview', $request->session()->get('reviewEditIdReview'));
 
         return $next($request);
     }

@@ -5,14 +5,14 @@
    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
          <div class="p-6 text-gray-900">
-            <h1>Update Marketplace</h1>
+            <h1>{{ __('admin/marketplaces.updateMarketplace') }}</h1>
             <form action="{{ route('admin.marketplace.update') }}" method="post">
                @csrf
 
                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div class="sm:col-span-2">
-                     <label for="country_code" class="block text-sm font-medium leading-6 text-gray-900">Country
-                        Code</label>
+                     <label for="country_code" class="block text-sm font-medium leading-6 text-gray-900">
+                         {{ __('admin/marketplaces.countryCode') }}</label>
                      <div class="mt-2">
                         <input type="text" name="country_code" value="{{ $marketplace->country_code }}"
                            id="country_code" autocomplete="given-name"
@@ -21,7 +21,7 @@
                   </div>
                   <div class="sm:col-span-2">
                      <label for="country"
-                        class="block text-sm font-medium leading-6 text-gray-900">Country</label>
+                        class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/marketplaces.country') }}</label>
                      <div class="mt-2">
                         <input type="text" name="country" value="{{ $marketplace->country }}" id="country"
                            autocomplete="given-name"
@@ -30,7 +30,7 @@
                   </div>
                   <div class="sm:col-span-2">
                      <label for="currency"
-                        class="block text-sm font-medium leading-6 text-gray-900">Currency</label>
+                        class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/marketplaces.currency') }}</label>
                      <div class="mt-2">
                         <input type="text" name="currency" value="{{ $marketplace->currency }}" id="currency"
                            autocomplete="given-name"
@@ -40,11 +40,11 @@
                </div>
                <button type="submit" name="id_marketplace" value="{{ $marketplace->id_marketplace }}"
                   class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                  Update
+                   {{ __('admin/marketplaces.update') }}
                </button>
                <span class="inline-block my-3">
                   <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-                     href="{{ route('admin.marketplace') }}">Cancel</a>
+                     href="{{ route('admin.marketplace') }}">{{ __('admin/marketplaces.cancel') }}</a>
                </span>
             </form>
 

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -53,9 +53,9 @@ class Order extends Model
     /**
      * Setting relationship with DB table OrderDetails.
      */
-    public function orderDetails(): HasMany
+    public function orderDetails(): HasOne
     {
-        return $this->hasMany(OrderDetails::class, 'id_order', 'id_order');
+        return $this->hasOne(OrderDetails::class, 'id_order', 'id_order');
     }
 
     public function storeOrderDetails(array $orderDetails)

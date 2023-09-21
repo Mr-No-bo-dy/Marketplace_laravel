@@ -53,10 +53,10 @@ class Product extends Model implements HasMedia
     /**
      * Setting relationship with DB table Category.
      */
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class, 'id_category', 'id_category');
-    }
+public function category(): BelongsTo
+{
+    return $this->belongsTo(Category::class, 'id_category', 'id_category');
+}
 
     /**
      * Setting relationship with DB table Subcategory.

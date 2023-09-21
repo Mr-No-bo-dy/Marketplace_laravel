@@ -58,7 +58,7 @@
                   </div>
                   <div class="sm:col-span-5">
                      <b class="text-xl">{{ $product->name }}</b>
-                     <p><b>{{ __('products.category') }}:</b> {{ $product->category->name }}</p>
+                     <p><b>{{ __('products.category') }}:</b> {{ ucfirst($product->category->name) }}</p>
                      <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                       <p><b>{{ __('products.rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
                   </div>

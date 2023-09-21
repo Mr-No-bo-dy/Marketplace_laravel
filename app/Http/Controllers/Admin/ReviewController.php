@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\Review;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -16,8 +17,8 @@ class ReviewController extends Controller
         $reviews = Review::all();
 
         $statuses = [
-            1 => trans('reviews.status1'),
-            2 => trans('reviews.status2'),
+            1 => trans('admin/reviews.status1'),
+            2 => trans('admin/reviews.status2'),
         ];
 
         foreach ($reviews as $review) {
@@ -40,18 +41,16 @@ class ReviewController extends Controller
     /**
      * Change Review's status.
      */
-    public function change(Request $request)
+    public function change(Request $request): RedirectResponse
     {
-        $reviewModel = new Review();
-
         $idReview = $request->post('id_review');
-        $reviewStatus = $reviewModel->find($idReview)->status;
+        $reviewStatus = Review::find($idReview)->status;
         if ($reviewStatus == 1) {
-            $reviewModel->where('id_review', $idReview)->update(['status' => 2]);
+            Review::where('id_review', $idReview)->update(['status' => 2]);
         } elseif ($reviewStatus == 2) {
-            $reviewModel->where('id_review', $idReview)->update(['status' => 1]);
+            Review::where('id_review', $idReview)->update(['status' => 1]);
         }
 
-        return redirect()->route('admin.reviews');
+        return back();
     }
 }

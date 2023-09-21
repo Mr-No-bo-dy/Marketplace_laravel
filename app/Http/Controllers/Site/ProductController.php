@@ -10,7 +10,6 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
-use App\Models\Site\Review;
 use App\Models\Site\Seller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -77,6 +76,9 @@ class ProductController extends Controller
         }
         $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
         $product->avgRating = number_format($avgRating, 2);
+        $marketplace = $product->seller->marketplace;
+        $product->priceFormatted = number_format($product->price, 0, '.', ' ')
+            . ' '. $marketplace->getCurrency($marketplace->currency);
 
         return view('site.products.show', compact('product'));
     }
@@ -192,70 +194,5 @@ class ProductController extends Controller
 	    $productModel->deleteProduct($idProduct);
 
         return redirect()->route('seller.my_products');
-    }
-
-    /**
-     * Create Review
-     */
-    public function storeReview(Request $request): RedirectResponse
-    {
-        $reviewModel = new Review();
-
-        if (!$request->session()->has('id_client')) {
-            return back();
-        }
-
-        if ($request->has('addReview')) {
-            $review = [
-                'id_client' => $request->session()->get('id_client'),
-                'id_product' => $request->post('id_product'),
-                'comment' => $request->post('comment'),
-                'rating' => $request->post('rating'),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-
-            $reviewModel->insert($review);
-        }
-
-        return back();
-    }
-
-    /**
-     * Update Review
-     */
-    public function editReview(Request $request): RedirectResponse
-    {
-        $idReview = $request->post('id_review');
-        if ($request->post('reviewEdit')) {
-            $request->session()->put('reviewEditIdReview', $idReview);
-
-        } elseif ($request->has('reviewUpdate')) {
-            $idReview = $request->post('id_review');
-            $reviewUpdateData = [
-                'comment' => $request->post('comment'),
-                'rating' => $request->post('rating'),
-            ];
-            Review::where('id_review', $idReview)->update($reviewUpdateData);
-            $request->session()->forget('reviewEditIdReview');
-
-        } elseif ($request->has('reviewCancel')) {
-            $request->session()->forget('reviewEditIdReview');
-        }
-
-        return back();
-    }
-
-    /**
-     * Delete Review
-     */
-    public function destroyReview(Request $request): RedirectResponse
-    {
-        if ($request->has('reviewDelete')) {
-            $idReview = $request->post('id_review');
-            Review::destroy($idReview);
-        }
-
-        return back();
     }
 }

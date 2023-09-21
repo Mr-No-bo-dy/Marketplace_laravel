@@ -7,13 +7,14 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MarketplaceController;
 use App\Http\Controllers\Admin\ProducerController;
-use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\CartController;
 use App\Http\Controllers\Site\ClientController;
 use App\Http\Controllers\Site\OrderController;
 use App\Http\Controllers\Site\ProductController;
+use App\Http\Controllers\Site\ReviewController as SiteReviewController;
 use App\Http\Controllers\Site\SellerController;
 
 /*
@@ -29,36 +30,20 @@ Route::get('/', function () {
 });
 
 // Routes without '{locale}' because of get-parameter conflict:
-Route::controller(ProductController::class)->group(function () {
-    Route::get('/product/show/{id_product}', 'show')->name('product.show');
-});
+Route::get('/product/show/{id_product}', [ProductController::class, 'show'])->name('product.show');
 Route::middleware('authClient')->group(function () {
-    Route::controller(ClientController::class)->group(function () {
-        Route::get('/client/edit/{id_client}', 'edit')->name('client.edit');
-    });
+    Route::get('/client/edit/{id_client}', [ClientController::class, 'edit'])->name('client.edit');
 });
 Route::middleware('authSeller')->group(function () {
-    Route::controller(SellerController::class)->group(function () {
-        Route::get('/seller/edit/{id_seller}', 'edit')->name('seller.edit');
-    });
-    Route::controller(ProductController::class)->group(function () {
-        Route::get('/product/edit/{id_product}', 'edit')->name('product.edit');
-    });
+    Route::get('/seller/edit/{id_seller}', [SellerController::class, 'edit'])->name('seller.edit');
+    Route::get('/product/edit/{id_product}', [ProductController::class, 'edit'])->name('product.edit');
 });
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->group(function () {
-        Route::controller(MarketplaceController::class)->group(function () {
-            Route::get('/marketplace/edit/{id_marketplace}', 'edit')->name('admin.marketplace.edit');
-        });
-        Route::controller(ProducerController::class)->group(function () {
-            Route::get('/producer/edit/{id_producer}', 'edit')->name('admin.producer.edit');
-        });
-        Route::controller(CategoryController::class)->group(function () {
-            Route::get('/category/edit/{id_category}', 'edit')->name('admin.category.edit');
-        });
-        Route::controller(SubcategoryController::class)->group(function () {
-            Route::get('/subcategory/edit/{id_subcategory}', 'edit')->name('admin.subcategory.edit');
-        });
+        Route::get('/marketplace/edit/{id_marketplace}', [MarketplaceController::class, 'edit'])->name('admin.marketplace.edit');
+        Route::get('/producer/edit/{id_producer}', [ProducerController::class, 'edit'])->name('admin.producer.edit');
+        Route::get('/category/edit/{id_category}', [CategoryController::class, 'edit'])->name('admin.category.edit');
+        Route::get('/subcategory/edit/{id_subcategory}', [SubcategoryController::class, 'edit'])->name('admin.subcategory.edit');
     });
 });
 
@@ -79,7 +64,6 @@ Route::prefix('{locale}')->group(function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('/product', 'index')->name('product');
         Route::post('/product', 'index')->name('product');
-        Route::post('/product/addReview', 'storeReview')->name('product.addReview');
     });
     Route::controller(CartController::class)->group(function () {
         Route::get('cart', 'index')->name('cart');
@@ -96,9 +80,10 @@ Route::prefix('{locale}')->group(function () {
             Route::post('/client/update', 'update')->name('client.update');
             Route::post('/client/delete', 'destroy')->name('client.delete');
         });
-        Route::controller(ProductController::class)->group(function () {
-            Route::post('/product/reviewEdit', 'editReview')->name('product.reviewEdit');
-            Route::post('/product/reviewDelete', 'destroyReview')->name('product.reviewDelete');
+        Route::controller(SiteReviewController::class)->group(function () {
+            Route::post('/review/add', 'store')->name('review.add');
+            Route::post('/review/update', 'update')->name('review.update');
+            Route::post('/review/destroy', 'destroy')->name('review.destroy');
         });
     });
 
@@ -161,7 +146,7 @@ Route::prefix('{locale}')->group(function () {
                 Route::post('/seller/block', 'block')->name('admin.seller.block');
                 Route::post('/seller/unblock', 'unblock')->name('admin.seller.unblock');
             });
-            Route::controller(ReviewController::class)->group(function () {
+            Route::controller(AdminReviewController::class)->group(function () {
                 Route::get('/reviews', 'index')->name('admin.reviews');
                 Route::post('/review/change', 'change')->name('admin.review.change');
             });

@@ -60,6 +60,10 @@ class SellerController extends Controller
         $orders = $seller->orders;
 
         foreach ($orders as $order) {
+            $order->id_product = $order->orderDetails->id_product ?? '';
+            $order->count = $order->orderDetails->count ?? '';
+            $order->total = $order->orderDetails->total ?? '';
+
             $idClient = $order->id_client;
             $client = Client::find($idClient);
 

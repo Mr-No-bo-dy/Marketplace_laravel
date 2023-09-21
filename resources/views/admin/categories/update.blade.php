@@ -5,13 +5,13 @@
    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
          <div class="p-6 text-gray-900">
-            <h1>Update Category</h1>
+            <h1>{{ __('admin/categories.updateCategory') }}</h1>
             <form action="{{ route('admin.category.update') }}" method="post">
                @csrf
 
                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div class="sm:col-span-2">
-                     <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
+                     <label for="name" class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/categories.name') }}</label>
                      <div class="mt-2">
                         <input type="text" name="name" value="{{ $category->name }}"
                            id="name" autocomplete="given-name"
@@ -20,7 +20,7 @@
                   </div>
                   <div class="sm:col-span-2">
                      <label for="description"
-                        class="block text-sm font-medium leading-6 text-gray-900">Description</label>
+                        class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/categories.description') }}</label>
                      <div class="mt-2">
                         <input type="text" name="description" value="{{ $category->description }}" id="description"
                            autocomplete="given-name"
@@ -30,11 +30,11 @@
                </div>
                <button type="submit" name="id_category" value="{{ $category->id_category }}"
                   class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                  Update
+                   {{ __('admin/categories.update') }}
                </button>
                <span class="inline-block my-3">
                   <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-                     href="{{ route('admin.category') }}">Cancel</a>
+                     href="{{ route('admin.category') }}">{{ __('admin/categories.cancel') }}</a>
                </span>
             </form>
 

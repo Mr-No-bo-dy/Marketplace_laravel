@@ -1,7 +1,7 @@
 <x-app-layout>
    <x-slot name="header">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-         {{ __('Users') }}
+         {{ __('admin/users.title') }}
       </h2>
    </x-slot>
 
@@ -10,9 +10,9 @@
          <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                @foreach ($users as $user)
-                  <p><b>ID:</b> {{ $user->id }}</p>
-                  <p><b>Name:</b> {{ $user->name }}</p>
-                  <p><b>Email:</b> {{ $user->email }}</p>
+                  <p><b>{{ __('admin/users.id') }}:</b> {{ $user->id }}</p>
+                  <p><b>{{ __('admin/users.name') }}:</b> {{ $user->name }}</p>
+                  <p><b>{{ __('admin/users.email') }}:</b> {{ $user->email }}</p>
                @endforeach
             </div>
          </div>

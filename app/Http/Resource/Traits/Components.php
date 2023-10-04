@@ -6,6 +6,10 @@ trait Components
 {
     /**
      * Forming select for HTML-page.
+     *
+     * @param mixed $entities
+     * @param string $type
+     * @param array $filters
      */
     public function customSelectData(mixed $entities, string $type, array $filters = [])
     {

@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Marketplace extends Model
@@ -26,6 +27,30 @@ class Marketplace extends Model
         'country',
         'currency',
     ];
+
+    /**
+     * Read all entities from DB table Marketplaces
+     *
+     * @return Collection
+     */
+    public function readAllMarketplaces(): Collection
+    {
+        return DB::table($this->table)
+                ->get();
+    }
+
+    /**
+     * Read one entity from DB table Marketplaces
+     *
+     * @param int $idProducer
+     * @return object
+     */
+    public function reaMarketplace(int $idProducer): object
+    {
+        return DB::table($this->table)
+            ->where($this->primaryKey, $idProducer)
+            ->first();
+    }
 
     /**
      * Insert entity into DB table Marketplaces

@@ -34,6 +34,8 @@ class Review extends Model
 
     /**
      * Setting relationship with DB table Seller.
+     *
+     * @return BelongsTo
      */
     public function seller(): BelongsTo
     {
@@ -42,6 +44,8 @@ class Review extends Model
 
     /**
      * Setting relationship with DB table Client.
+     *
+     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -50,9 +54,47 @@ class Review extends Model
 
     /**
      * Setting relationship with DB table Product.
+     *
+     * @return BelongsTo
      */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'id_product', 'id_product');
+    }
+
+    /**
+     * Insert entity into DB table Reviews
+     *
+     * @param array $data
+     */
+    public function storeReview(array $data): void
+    {
+        DB::table($this->table)
+            ->insert($data);
+    }
+
+    /**
+     * Insert entity into DB table Reviews
+     *
+     * @param int $idReview
+     * @param array $data
+     */
+    public function updateReview(int $idReview, array $data): void
+    {
+        DB::table($this->table)
+            ->where($this->primaryKey, $idReview)
+            ->update($data);
+    }
+
+    /**
+     * Delete entity from DB table Reviews
+     *
+     * @param int $idReview
+     */
+    public function deleteReview(int $idReview): void
+    {
+        DB::table($this->table)
+            ->where($this->primaryKey, $idReview)
+            ->delete();
     }
 }

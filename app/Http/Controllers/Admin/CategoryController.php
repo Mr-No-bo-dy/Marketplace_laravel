@@ -14,7 +14,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categoryModel = new Category();
+
+        $categories = $categoryModel->readAllCategories();
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -35,26 +37,31 @@ class CategoryController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $categoryModel = new Category();
+        if ($request->has('createCategory')) {
+            $categoryModel = new Category();
 
-        $postData = $request->post();
-        $setCategoryData = [
-            'name' => ucfirst($postData['name']),
-            'description' => $postData['description'],
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $categoryModel->storeCategory($setCategoryData);
+            $setCategoryData = [
+                'name' => ucfirst($request->post('name')),
+                'description' => $request->post('description'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $categoryModel->storeCategory($setCategoryData);
+        }
 
         return redirect()->route('admin.category');
     }
 
     /**
      * Display Category update form
+     *
+     * @param int $idCategory
      */
-    public function edit($idCategory)
+    public function edit(int $idCategory)
     {
-        $category = Category::find($idCategory);
+        $categoryModel = new Category();
+
+        $category = $categoryModel->readCategory($idCategory);
 
         return view('admin.categories.update', compact('category'));
     }
@@ -67,30 +74,35 @@ class CategoryController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $categoryModel = new Category();
+        if ($request->has('updateCategory')) {
+            $categoryModel = new Category();
 
-        $postData = $request->post();
-        $setCategoryData = [
-            'name' => ucfirst($postData['name']),
-            'description' => $postData['description'],
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $idCategory = $request->post('id_category');
-        $categoryModel->updateCategory($idCategory, $setCategoryData);
+            $setCategoryData = [
+                'name' => $request->post('name'),
+                'description' => $request->post('description'),
+            ];
+            $idCategory = $request->post('id_category');
+            $categoryModel->updateCategory($idCategory, $setCategoryData);
+        }
 
         return redirect()->route('admin.category');
     }
 
     /**
      * Delete Category
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $categoryModel = new Category();
+        if ($request->has('deleteCategory')) {
+            $categoryModel = new Category();
 
-        $idCategory = $request->post('id_category');
-        $categoryModel->deleteCategory($idCategory);
+            $idCategory = $request->post('id_category');
+            $categoryModel->deleteCategory($idCategory);
+        }
 
-        return redirect()->route('admin.category');
+        return back();
     }
 }

@@ -34,15 +34,22 @@ class OrderDetails extends Model
 
     /**
     * Setting relationship with DB table Orders.
+     *
+     * @return BelongsTo
     */
     public function orders(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'id_order', 'id_order');
     }
 
-    public function storeOrderDetails(array $orderDetails)
+    /**
+     * Storing order's data into DB table OrderDetails.
+     *
+     * @param array $orderDetails
+     */
+    public function storeOrderDetails(array $orderDetails): void
     {
-        DB::table('order_details')
+        DB::table($this->table)
             ->insert($orderDetails);
     }
 }

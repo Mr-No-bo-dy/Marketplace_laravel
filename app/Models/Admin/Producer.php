@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Producer extends Model
@@ -25,6 +26,30 @@ class Producer extends Model
         'address',
         'contacts',
     ];
+
+    /**
+     * Read all entities from DB table Producers
+     *
+     * @return Collection
+     */
+    public function readAllProducers(): Collection
+    {
+        return DB::table($this->table)
+                ->get();
+    }
+
+    /**
+     * Read one entity from DB table Producers
+     *
+     * @param int $idProducer
+     * @return object
+     */
+    public function readProducer(int $idProducer): object
+    {
+        return DB::table($this->table)
+            ->where($this->primaryKey, $idProducer)
+            ->first();
+    }
 
     /**
      * Insert entity into DB table Producers

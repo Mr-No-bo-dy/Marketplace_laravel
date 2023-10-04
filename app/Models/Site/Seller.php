@@ -5,6 +5,7 @@ namespace App\Models\Site;
 use App\Models\Admin\Marketplace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,18 +39,9 @@ class Seller extends Model
     ];
 
     /**
-     * The attributes that are assigning automatically.
-     *
-     * @var array<int, string>
-     */
-    protected array $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
-    /**
      * Setting relationship with DB table Marketplace.
+     *
+     * @return BelongsTo
      */
     public function marketplace(): BelongsTo
     {
@@ -58,6 +50,8 @@ class Seller extends Model
 
     /**
      * Setting relationship with DB table Products.
+     *
+     * @return HasMany
      */
     public function products(): HasMany
     {
@@ -66,6 +60,8 @@ class Seller extends Model
 
     /**
      * Setting relationship with DB table Orders.
+     *
+     * @return HasMany
      */
     public function orders(): HasMany
     {
@@ -76,7 +72,6 @@ class Seller extends Model
      * Check if loggining user exists in DB table Sellers
      *
      * @param array $data
-     *
      * @return int|void
      */
     public function authSeller(array $data)
@@ -110,16 +105,56 @@ class Seller extends Model
     }
 
     /**
+     * Read all entities from DB table Sellers
+     *
+     * @return Collection
+     */
+    public function readAllSellers(): Collection
+    {
+        return DB::table($this->table)
+                ->selectRaw('m.country, '.$this->table.'.*')
+                ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
+                ->get();
+    }
+
+    /**
+     * Read selected entity from DB table Sellers with Marketplace's country
+     *
+     * @param int $idSeller
+     * @return object
+     */
+    public function readSellerWithCountry(int $idSeller): object
+    {
+        return DB::table($this->table)
+                ->selectRaw('m.country, '.$this->table.'.*')
+                ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
+                ->where($this->primaryKey, $idSeller)
+                ->first();
+    }
+
+    /**
+     * Read selected entity from DB table Sellers
+     *
+     * @param int $idSeller
+     * @return object
+     */
+    public function readSeller(int $idSeller): object
+    {
+        return DB::table($this->table)
+                ->where($this->primaryKey, $idSeller)
+                ->first();
+    }
+
+    /**
      * Insert entity into DB table Sellers
      *
      * @param array $data
-     *
-     * @return int $idNewSeller
+     * @return int
      */
     public function storeSeller(array $data): int
     {
         return DB::table($this->table)
-            ->insertGetId($data);
+                ->insertGetId($data);
     }
 
     /**

@@ -9,10 +9,10 @@ use App\Models\Site\Seller;
 use App\Models\Site\Review;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Product extends Model implements HasMedia
 {
@@ -44,6 +44,8 @@ class Product extends Model implements HasMedia
 
     /**
      * Setting relationship with DB table Producer.
+     *
+     * @return BelongsTo
      */
     public function producer(): BelongsTo
     {
@@ -52,14 +54,18 @@ class Product extends Model implements HasMedia
 
     /**
      * Setting relationship with DB table Category.
+     *
+     * @return BelongsTo
      */
-public function category(): BelongsTo
-{
-    return $this->belongsTo(Category::class, 'id_category', 'id_category');
-}
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'id_category', 'id_category');
+    }
 
     /**
      * Setting relationship with DB table Subcategory.
+     *
+     * @return BelongsTo
      */
     public function subcategory(): BelongsTo
     {
@@ -68,6 +74,8 @@ public function category(): BelongsTo
 
     /**
      * Setting relationship with DB table Seller.
+     *
+     * @return BelongsTo
      */
     public function seller(): BelongsTo
     {
@@ -76,6 +84,8 @@ public function category(): BelongsTo
 
     /**
      * Setting relationship with DB table Orders.
+     *
+     * @return HasMany
      */
     public function orders(): HasMany
     {
@@ -84,21 +94,11 @@ public function category(): BelongsTo
 
     /**
      * Setting relationship with DB table Reviews.
+     *
+     * @return HasMany
      */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'id_product', 'id_product');
-    }
-
-    /**
-     * Delete entity from DB table Products
-     *
-     * @param int $idProduct
-     */
-    public function deleteProduct(int $idProduct): void
-    {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idProduct)
-            ->delete();
     }
 }

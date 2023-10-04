@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientRequest;
 use App\Models\Site\Client;
 use App\Models\Site\Order;
-use Illuminate\Http\Request;
 use App\Http\Resource\Traits\Cart;
+use App\Models\Site\OrderDetails;
 
 class OrderController extends Controller
 {
@@ -15,24 +15,30 @@ class OrderController extends Controller
 
     /**
      * Show the form for creating a new Order.
+     *
+     * @param ClientRequest $request
      */
     public function create(ClientRequest $request)
     {
+        $clientModel = new Client();
+
+        $client = $clientModel->readClient($request->session()->get('id_client'));
         extract($this->getCartData($request));
 
-        $client = Client::find($request->session()->get('id_client'));
-
-        return view('site.order.index', compact('products', 'productData', 'total', 'client'));
+        return view('site.order.index', compact('client', 'products', 'productData', 'total'));
     }
 
     /**
      * Store a newly created Order in storage.
+     *
+     * @param ClientRequest $request
      */
     public function store(ClientRequest $request)
     {
         $orderModel = new Order();
+        $orderDetailsModel = new OrderDetails();
 
-        /** Register new client or take existing:
+        /** Register new client or use existing:
          * If a customer with the given email doesn't exist, create a new one;
          * otherwise, only retrieve the ID of the existing customer.
          */
@@ -62,7 +68,7 @@ class OrderController extends Controller
 
         // Forming Order's data
         $cartData = $request->session()->get('cart');
-        if (!empty($cartData)) {
+        if (!empty($cartData) && $request->has('makeOrder')) {
             foreach ($cartData['product'] as $product) {
                 $orderData = [
                     'id_client' => $idClient,
@@ -82,51 +88,11 @@ class OrderController extends Controller
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
                 ];
-                $orderModel->storeOrderDetails($orderDetailsData);
+                $orderDetailsModel->storeOrderDetails($orderDetailsData);
             }
             $request->session()->forget('cart');
         }
 
         return view('site.templates.order-done');
-    }
-
-    /**
-     * Display a listing of the Orders.
-     */
-    public function index(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
     }
 }

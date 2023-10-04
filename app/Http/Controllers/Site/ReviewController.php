@@ -11,17 +11,20 @@ class ReviewController extends Controller
 {
     /**
      * Create Review
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
-        $reviewModel = new Review();
-
         if (!$request->session()->has('id_client')) {
             return back();
         }
 
         if ($request->has('addReview')) {
-            $review = [
+            $reviewModel = new Review();
+
+            $setReviewData = [
                 'id_client' => $request->session()->get('id_client'),
                 'id_product' => $request->post('id_product'),
                 'comment' => $request->post('comment'),
@@ -29,8 +32,7 @@ class ReviewController extends Controller
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
-
-            $reviewModel->insert($review);
+            $reviewModel->storeReview($setReviewData);
         }
 
         return back();
@@ -38,24 +40,28 @@ class ReviewController extends Controller
 
     /**
      * Update Review
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function update(Request $request): RedirectResponse
     {
         $idReview = $request->post('id_review');
-        if ($request->post('reviewEdit')) {
-            $request->session()->put('reviewEditIdReview', $idReview);
+        if ($request->has('editReview')) {
+            $request->session()->put('editReviewId', $idReview);
 
-        } elseif ($request->has('reviewUpdate')) {
-            $idReview = $request->post('id_review');
-            $reviewUpdateData = [
+        } elseif ($request->has('updateReview')) {
+            $reviewModel = new Review();
+
+            $setReviewData = [
                 'comment' => $request->post('comment'),
                 'rating' => $request->post('rating'),
             ];
-            Review::where('id_review', $idReview)->update($reviewUpdateData);
-            $request->session()->forget('reviewEditIdReview');
+            $reviewModel->updateReview($idReview, $setReviewData);
+            $request->session()->forget('editReviewId');
 
-        } elseif ($request->has('reviewCancel')) {
-            $request->session()->forget('reviewEditIdReview');
+        } elseif ($request->has('cancelReview')) {
+            $request->session()->forget('editReviewId');
         }
 
         return back();
@@ -63,12 +69,17 @@ class ReviewController extends Controller
 
     /**
      * Delete Review
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        if ($request->has('reviewDelete')) {
+        if ($request->has('deleteReview')) {
+            $reviewModel = new Review();
+
             $idReview = $request->post('id_review');
-            Review::destroy($idReview);
+            $reviewModel->deleteReview($idReview);
         }
 
         return back();

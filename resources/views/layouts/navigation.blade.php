@@ -15,8 +15,8 @@
                     <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('admin/nav.dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
-                        {{ __('admin/nav.users') }}
+                    <x-nav-link :href="route('admin.admins')" :active="request()->routeIs('admin.admins')">
+                        {{ __('admin/nav.admins') }}
                     </x-nav-link>
                     <x-nav-link :href="route('admin.marketplace')" :active="request()->routeIs('admin.marketplace')">
                         {{ __('admin/nav.marketplaces') }}
@@ -32,6 +32,9 @@
                     </x-nav-link>
                     <x-nav-link :href="route('admin.seller')" :active="request()->routeIs('admin.seller')">
                         {{ __('admin/nav.sellers') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.client')" :active="request()->routeIs('admin.client')">
+                        {{ __('admin/nav.clients') }}
                     </x-nav-link>
                     <x-nav-link :href="route('admin.reviews')" :active="request()->routeIs('admin.reviews')">
                         {{ __('admin/nav.reviews') }}
@@ -101,8 +104,8 @@
             <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 {{ __('admin/nav.dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
-                {{ __('admin/nav.users') }}
+            <x-responsive-nav-link :href="route('admin.admins')" :active="request()->routeIs('admin.admins')">
+                {{ __('admin/nav.admins') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.marketplace')" :active="request()->routeIs('admin.marketplace')">
                 {{ __('admin/nav.marketplaces') }}
@@ -118,6 +121,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.seller')" :active="request()->routeIs('admin.seller')">
                 {{ __('admin/nav.sellers') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.client')" :active="request()->routeIs('admin.client')">
+                {{ __('admin/nav.clients') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.reviews')" :active="request()->routeIs('admin.reviews')">
                 {{ __('admin/nav.reviews') }}

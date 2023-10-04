@@ -16,7 +16,7 @@
                         <select name="id_category" id="category"
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                            @foreach ($categories as $category)
-                           <option value="{{ $category->id_category }}">{{ $category->name }}</option>
+                           <option value="{{ $category->id_category }}">{{ ucfirst($category->name) }}</option>
                            @endforeach
                         </select>
                      </div>
@@ -24,7 +24,7 @@
                   <div class="sm:col-span-2">
                      <label for="name" class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/subcategories.name') }}</label>
                      <div class="mt-2">
-                        <input type="text" name="name" id="name" autocomplete="given-name"
+                        <input type="text" name="name" id="name" autocomplete="given-name" required
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
@@ -32,12 +32,12 @@
                      <label for="description"
                         class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/subcategories.description') }}</label>
                      <div class="mt-2">
-                        <input type="text" name="description" id="description" autocomplete="given-name"
+                        <input type="text" name="description" id="description" autocomplete="given-name" required
                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                      </div>
                   </div>
                </div>
-               <button type="submit"
+               <button type="submit" name="createSubcategory" value="1"
                   class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                    {{ __('admin/subcategories.create') }}
                </button>

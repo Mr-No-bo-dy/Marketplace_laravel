@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\MarketplaceController;
 use App\Http\Controllers\Admin\ProducerController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\SubcategoryController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\CartController;
 use App\Http\Controllers\Site\ClientController;
 use App\Http\Controllers\Site\OrderController;
@@ -23,6 +22,10 @@ use App\Http\Controllers\Site\SellerController;
 | These routes are loaded by the RouteServiceProvider
 | and all of them will be assigned to the "web" middleware group.
 */
+
+//Route::get('/welcome', function () {
+//    return view('welcome');
+//});
 
 // Automated Redirect of Homepage with localization:
 Route::get('/', function () {
@@ -112,6 +115,7 @@ Route::prefix('{locale}')->group(function () {
 
         Route::prefix('admin')->group(function () {
             Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+            Route::get('/admins', [AdminController::class, 'admins'])->name('admin.admins');
 
             Route::controller(MarketplaceController::class)->group(function () {
                 Route::get('/marketplace', 'index')->name('admin.marketplace');
@@ -146,11 +150,13 @@ Route::prefix('{locale}')->group(function () {
                 Route::post('/seller/block', 'block')->name('admin.seller.block');
                 Route::post('/seller/unblock', 'unblock')->name('admin.seller.unblock');
             });
+            Route::controller(ClientController::class)->group(function () {
+                Route::get('/client', 'index')->name('admin.client');
+            });
             Route::controller(AdminReviewController::class)->group(function () {
                 Route::get('/reviews', 'index')->name('admin.reviews');
                 Route::post('/review/change', 'change')->name('admin.review.change');
             });
-            Route::get('/users', [UserController::class, 'users'])->name('admin.users');
         });
     });
 });

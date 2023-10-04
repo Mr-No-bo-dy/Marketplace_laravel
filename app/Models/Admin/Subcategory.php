@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Models\Admin\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,10 +31,38 @@ class Subcategory extends Model
 
     /**
      * Setting relationship with DB table Category.
+     *
+     * @return BelongsTo
      */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'id_category', 'id_category');
+    }
+
+    /**
+     * Read all entities from DB table Subcategories
+     *
+     * @return Collection
+     */
+    public function readAllSubcategories(): Collection
+    {
+        return DB::table($this->table)
+            ->selectRaw('c.name as category, '.$this->table.'.*')
+            ->join('categories as c', $this->table.'.id_category', '=', 'c.id_category')
+            ->get();
+    }
+
+    /**
+     * Read one entity from DB table Subcategories
+     *
+     * @param int $idSubcategory
+     * @return object
+     */
+    public function readSubcategory(int $idSubcategory): object
+    {
+        return DB::table($this->table)
+                ->where($this->primaryKey, $idSubcategory)
+                ->first();
     }
 
     /**

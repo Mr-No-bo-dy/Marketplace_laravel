@@ -6,7 +6,6 @@ use App\Models\Admin\Marketplace;
 use App\Models\Site\Client;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
-use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,8 +15,10 @@ class GeneralController extends Controller
 {
     /**
      * Switch Language.
+     *
+     * @return RedirectResponse
      */
-    public function switchLanguage(Request $request)
+    public function switchLanguage(): RedirectResponse
     {
         return redirect()->back();
     }
@@ -56,29 +57,30 @@ class GeneralController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $sellerModel = new Seller();
+        if ($request->has('createSeller')) {
+            $sellerModel = new Seller();
 
-        $postData = $request->post();
-        $setSellerData = [
-            'id_marketplace' => $postData['id_marketplace'],
-            'name' => $postData['name'],
-            'surname' => $postData['surname'],
-            'email' => $postData['email'],
-            'phone' => $postData['tel'],
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $idNewSeller = $sellerModel->storeSeller($setSellerData);
+            $seller = [
+                'id_marketplace' => $request->post('id_marketplace'),
+                'name' => $request->post('name'),
+                'surname' => $request->post('surname'),
+                'email' => $request->post('email'),
+                'phone' => $request->post('tel'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $idNewSeller = $sellerModel->storeSeller($seller);
 
-        $setSellerPasswordData = [
-            'id_seller' => $idNewSeller,
-            'password' => Hash::make($postData['password']),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $sellerModel->storeSellerPassword($setSellerPasswordData);
+            $setSellerPasswordData = [
+                'id_seller' => $idNewSeller,
+                'password' => Hash::make($request->post('password')),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $sellerModel->storeSellerPassword($setSellerPasswordData);
 
-        $request->session()->put('id_seller', $idNewSeller);
+            $request->session()->put('id_seller', $idNewSeller);
+        }
 
         return redirect()->route('auth');
     }
@@ -91,34 +93,35 @@ class GeneralController extends Controller
      */
     public function storeClient(Request $request): RedirectResponse
     {
-        $clientModel = new Client();
+        if ($request->has('createClient')) {
+            $clientModel = new Client();
 
-        $postData = $request->post();
-        $setClientData = [
-            'name' => $postData['name'],
-            'surname' => $postData['surname'],
-            'email' => $postData['email'],
-            'phone' => $postData['tel'],
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $idNewClient = $clientModel->storeClient($setClientData);
+            $setClientData = [
+                'name' => $request->post('name'),
+                'surname' => $request->post('surname'),
+                'email' => $request->post('email'),
+                'phone' => $request->post('tel'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $idNewClient = $clientModel->storeClient($setClientData);
 
-        $setClientPasswordData = [
-            'id_client' => $idNewClient,
-            'password' => Hash::make($postData['password']),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $clientModel->storeClientPassword($setClientPasswordData);
+            $setClientPasswordData = [
+                'id_client' => $idNewClient,
+                'password' => Hash::make($request->post('password')),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $clientModel->storeClientPassword($setClientPasswordData);
 
-        $request->session()->put('id_client', $idNewClient);
+            $request->session()->put('id_client', $idNewClient);
+        }
 
         return redirect()->route('auth');
     }
 
     /**
-     * Login Seller into Personal Page.
+     * Login Seller / Client or lead logged one to Personal Page.
      *
      * @param Request $request
      * @return View|RedirectResponse

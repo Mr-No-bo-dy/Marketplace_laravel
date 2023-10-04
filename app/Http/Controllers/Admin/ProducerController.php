@@ -14,7 +14,9 @@ class ProducerController extends Controller
      */
     public function index()
     {
-        $producers = Producer::all();
+        $producerModel = new Producer();
+
+        $producers = $producerModel->readAllProducers();
 
         return view('admin.producers.index', compact('producers'));
     }
@@ -35,27 +37,32 @@ class ProducerController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $producerModel = new Producer();
+        if ($request->has('createProducer')) {
+            $producerModel = new Producer();
 
-        $postData = $request->post();
-        $setProducerData = [
-            'name' => ucfirst($postData['name']),
-            'address' => ucfirst($postData['address']),
-            'contacts' => $postData['contacts'],
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $producerModel->storeProducer($setProducerData);
+            $setProducerData = [
+                'name' => ucfirst($request->post('name')),
+                'address' => ucfirst($request->post('address')),
+                'contacts' => $request->post('contacts'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $producerModel->storeProducer($setProducerData);
+        }
 
         return redirect()->route('admin.producer');
     }
 
     /**
      * Display Producer update form
+     *
+     * @param int $idProducer
      */
-    public function edit($idProducer)
+    public function edit(int $idProducer)
     {
-        $producer = Producer::find($idProducer);
+        $producerModel = new Producer();
+
+        $producer = $producerModel->readProducer($idProducer);
 
         return view('admin.producers.update', compact('producer'));
     }
@@ -68,31 +75,36 @@ class ProducerController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $producerModel = new Producer();
+        if ($request->has('updateProducer')) {
+            $producerModel = new Producer();
 
-        $postData = $request->post();
-        $setProducerData = [
-            'name' => ucfirst($postData['name']),
-            'address' => ucfirst($postData['address']),
-            'contacts' => $postData['contacts'],
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $idProducer = $request->post('id_producer');
-        $producerModel->updateProducer($idProducer, $setProducerData);
+            $setProducerData = [
+                'name' => ucfirst($request->post('name')),
+                'address' => ucfirst($request->post('address')),
+                'contacts' => $request->post('contacts'),
+            ];
+            $idProducer = $request->post('id_producer');
+            $producerModel->updateProducer($idProducer, $setProducerData);
+        }
 
         return redirect()->route('admin.producer');
     }
 
     /**
      * Delete Producer
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $producerModel = new Producer();
+        if ($request->has('deleteProducer')) {
+            $producerModel = new Producer();
 
-        $idProducer = $request->post('id_producer');
-        $producerModel->deleteProducer($idProducer);
+            $idProducer = $request->post('id_producer');
+            $producerModel->deleteProducer($idProducer);
+        }
 
-        return redirect()->route('admin.producer');
+        return back();
     }
 }

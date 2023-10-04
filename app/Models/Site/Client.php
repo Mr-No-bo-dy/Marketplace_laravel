@@ -2,6 +2,7 @@
 
 namespace App\Models\Site;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,8 @@ class Client extends Model
 
     /**
      * Setting relationship with DB table Orders.
+     *
+     * @return HasMany
      */
     public function orders(): HasMany
     {
@@ -44,7 +47,6 @@ class Client extends Model
      * Check if loggining user exists in DB table Clients
      *
      * @param array $data
-     *
      * @return int|void
      */
     public function authClient(array $data)
@@ -78,11 +80,38 @@ class Client extends Model
     }
 
     /**
+     * Read all entities from DB table Clients
+     *
+     * @return Collection
+     */
+    public function readAllClients(): Collection
+    {
+        return DB::table($this->table)
+                ->selectRaw('SUM(od.count) as total_count, SUM(od.total) as total_amount, '.$this->table.'.*')
+                ->join('orders as o', $this->table.'.id_client', '=', 'o.id_client')
+                ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
+                ->groupBy($this->table.'.id_client')
+                ->get();
+    }
+
+    /**
+     * Read one entity from DB table Clients
+     *
+     * @param int $idClient
+     * @return object
+     */
+    public function readClient(int $idClient): object
+    {
+        return DB::table($this->table)
+                ->where('id_client', $idClient)
+                ->first();
+    }
+
+    /**
      * Insert entity into DB table Clients
      *
      * @param array $data
-     *
-     * @return int $idNewClient
+     * @return int
      */
     public function storeClient(array $data): int
     {

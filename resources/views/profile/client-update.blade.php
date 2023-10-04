@@ -46,7 +46,9 @@
                      </div>
                   </div>
                </div>
-               <button type="submit" name="id_client" value="{{ $client->id_client }}"
+
+               <input type="hidden" name="id_client" value="{{ $client->id_client }}">
+               <button type="submit" name="updateClient" value="1"
                   class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                    {{ __('site_profile.update') }}
                </button>

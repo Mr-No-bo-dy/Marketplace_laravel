@@ -43,7 +43,7 @@
                     <ul role="list" class="divide-y divide-gray-100">
                         @foreach($product->reviews as $review)
                         <li class="flex justify-between gap-x-6 py-5 shadow-sm">
-                            @if(!isset($reviewEditIdReview) || ($reviewEditIdReview != $review->id_review))
+                            @if(!isset($editReviewId) || ($editReviewId != $review->id_review))
                                 <div class="flex min-w-0 gap-x-4">
                                     <div class="min-w-0 flex-auto">
                                         <p class="text-base leading-5 text-gray-500">{{ $review->client->name }} {{ $review->client->surname }}
@@ -52,14 +52,16 @@
                                         @if(isset($client_id) && $client_id == $review->client->id_client)
                                             <form action="{{ route('review.update') }}" method="post" class="inline-block">
                                                 @csrf
+
                                                 <input type="hidden" name="id_review" value="{{ $review->id_review }}">
-                                                <button type="submit" name="reviewEdit" value="1" class="rounded-md mt-2 px-3 py-1 text-sm font-semibold text-white bg-yellow-500 shadow-sm hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">
+                                                <button type="submit" name="editReview" value="1" class="rounded-md mt-2 px-3 py-1 text-sm font-semibold text-white bg-yellow-500 shadow-sm hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">
                                                     {{ __('products.edit') }}</button>
                                             </form>
                                             <form action="{{ route('review.destroy') }}" method="post" class="inline-block">
                                                 @csrf
+
                                                 <input type="hidden" name="id_review" value="{{ $review->id_review }}">
-                                                <button type="submit" name="reviewDelete" value="1" class="rounded-md mt-2 ms-2 px-3 py-1 text-sm font-semibold text-white bg-red-500 shadow-sm hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                                                <button type="submit" name="deleteReview" value="1" class="rounded-md mt-2 ms-2 px-3 py-1 text-sm font-semibold text-white bg-red-500 shadow-sm hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                                                     {{ __('products.delete') }}</button>
                                             </form>
                                         @endif
@@ -72,6 +74,7 @@
                             @else
                                 <form action="{{ route('review.update') }}" method="post" class="w-full">
                                     @csrf
+
                                     <input type="hidden" name="id_review" value="{{ $review->id_review }}">
                                     <label class="block">
                                         @for($i = 1; $i <= 5; $i++)
@@ -83,9 +86,9 @@
                                               class="block w-full rounded-md border-0 py-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                         {{ $review->comment }}
                                     </textarea>
-                                    <button type="submit" name="reviewUpdate" value="1" class="rounded-md mt-2 px-3 py-1 text-sm font-semibold text-white bg-blue-500 shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                    <button type="submit" name="updateReview" value="1" class="rounded-md mt-2 px-3 py-1 text-sm font-semibold text-white bg-blue-500 shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                                         {{ __('products.update') }}</button>
-                                    <button type="submit" name="reviewCancel" value="1" class="rounded-md mt-2 ms-2 px-3 py-1 text-sm font-semibold text-white bg-gray-400 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500">
+                                    <button type="submit" name="cancelReview" value="1" class="rounded-md mt-2 ms-2 px-3 py-1 text-sm font-semibold text-white bg-gray-400 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500">
                                         {{ __('products.cancel') }}</button>
                                 </form>
                             @endif
@@ -95,6 +98,7 @@
                     @if(isset($client_id))
                         <form action="{{ route('review.add') }}" method="post">
                             @csrf
+
                             <div class="mt-3">
                                 <p>{{ __('products.rateProduct') }}</p>
                                 <div>

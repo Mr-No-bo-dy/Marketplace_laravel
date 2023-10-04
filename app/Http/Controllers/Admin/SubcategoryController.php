@@ -15,7 +15,9 @@ class SubcategoryController extends Controller
      */
     public function index()
     {
-        $subcategories = Subcategory::all();
+        $subcategoryModel = new Subcategory();
+
+        $subcategories = $subcategoryModel->readAllSubcategories();
 
         return view('admin.subcategories.index', compact('subcategories'));
     }
@@ -25,7 +27,9 @@ class SubcategoryController extends Controller
      */
     public function create()
     {
-        $categories = Category::all(['id_category', 'name']);
+        $categoryModel = new Category();
+
+        $categories = $categoryModel->readCategoriesNames();
 
         return view('admin.subcategories.create', compact('categories'));
     }
@@ -38,28 +42,35 @@ class SubcategoryController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $subcategoryModel = new Subcategory();
+        if ($request->has('createSubcategory')) {
+            $subcategoryModel = new Subcategory();
 
-        $postData = $request->post();
-        $setSubcategoryData = [
-            'id_category' => $postData['id_category'],
-            'name' => ucfirst($postData['name']),
-            'description' => $postData['description'],
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $subcategoryModel->storeSubcategory($setSubcategoryData);
+            $setSubcategoryData = [
+                'id_category' => $request->post('id_category'),
+                'name' => $request->post('name'),
+                'description' => $request->post('description'),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $subcategoryModel->storeSubcategory($setSubcategoryData);
+
+        }
 
         return redirect()->route('admin.subcategory');
     }
 
     /**
      * Display Subcategory update form
+     *
+     * @param int $idSubcategory
      */
-    public function edit($idSubcategory)
+    public function edit(int $idSubcategory)
     {
-        $categories = Category::all(['id_category', 'name']);
-        $subcategory = Subcategory::find($idSubcategory);
+        $categoryModel = new Category();
+        $subcategoryModel = new Subcategory();
+
+        $categories = $categoryModel->readCategoriesNames();
+        $subcategory = $subcategoryModel->readSubcategory($idSubcategory);
 
         return view('admin.subcategories.update', compact('categories', 'subcategory'));
     }
@@ -72,31 +83,36 @@ class SubcategoryController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $subcategoryModel = new Subcategory();
+        if ($request->has('updateSubcategory')) {
+            $subcategoryModel = new Subcategory();
 
-        $postData = $request->post();
-        $setCategoryData = [
-            'id_category' => $postData['id_category'],
-            'name' => ucfirst($postData['name']),
-            'description' => $postData['description'],
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $idSubcategory = $request->post('id_subcategory');
-        $subcategoryModel->updateSubCategory($idSubcategory, $setCategoryData);
+            $setSubcategoryData = [
+                'id_category' => $request->post('id_category'),
+                'name' => $request->post('name'),
+                'description' => $request->post('description'),
+            ];
+            $idSubcategory = $request->post('id_subcategory');
+            $subcategoryModel->updateSubcategory($idSubcategory, $setSubcategoryData);
+        }
 
         return redirect()->route('admin.subcategory');
     }
 
     /**
      * Delete Subcategory
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $subcategoryModel = new Subcategory();
+        if ($request->has('deleteSubcategory')) {
+            $subcategoryModel = new Subcategory();
 
-        $idSubcategory = $request->post('id_subcategory');
-        $subcategoryModel->deleteSubCategory($idSubcategory);
+            $idSubcategory = $request->post('id_subcategory');
+            $subcategoryModel->deleteSubcategory($idSubcategory);
+        }
 
-        return redirect()->route('admin.subcategory');
+        return back();
     }
 }

@@ -40,14 +40,17 @@ class ReviewController extends Controller
 
     /**
      * Change Review's status.
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function change(Request $request): RedirectResponse
     {
         $idReview = $request->post('id_review');
         $reviewStatus = Review::find($idReview)->status;
-        if ($reviewStatus == 1) {
+        if ($request->has('approveReview') && $reviewStatus == 1) {
             Review::where('id_review', $idReview)->update(['status' => 2]);
-        } elseif ($reviewStatus == 2) {
+        } elseif ($request->has('unapproveReview') && $reviewStatus == 2) {
             Review::where('id_review', $idReview)->update(['status' => 1]);
         }
 

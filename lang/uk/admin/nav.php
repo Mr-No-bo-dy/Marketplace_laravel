@@ -2,12 +2,13 @@
 
 return [
     'dashboard' => 'Майстерня',
-    'users' => 'Користувачі',
+    'admins' => 'Адміни',
     'marketplaces' => 'Ринки',
     'producers' => 'Виробники',
     'categories' => 'Категорії',
     'subcategories' => 'Підкатегорії',
     'sellers' => 'Продавці',
+    'clients' => 'Клієнти',
     'reviews' => 'Відгуки',
     'profile' => 'Профіль',
     'toSite' => 'Повернутись на Сайт',

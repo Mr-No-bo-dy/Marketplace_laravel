@@ -3,12 +3,16 @@
 namespace App\Http\Resource\Traits;
 
 use App\Models\Site\Product;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 
 trait Products
 {
     /**
      * Forming the filters for Products.
+     *
+     * @param Request $request
+     * @return mixed
      */
     public function getFilters(Request $request): mixed
     {
@@ -57,8 +61,12 @@ trait Products
 
     /**
      * Getting Products based on filters.
+     *
+     * @param Request $request
+     * @param int $perPage
+     * @return LengthAwarePaginator
      */
-    public function getProducts(Request $request, int $perPage = 5)
+    public function getProducts(Request $request, int $perPage = 5): LengthAwarePaginator
     {
         $products = Product::query();
 

@@ -36,6 +36,8 @@ class Order extends Model
 
     /**
      * Setting relationship with DB table Seller.
+     *
+     * @return BelongsTo
      */
     public function seller(): BelongsTo
     {
@@ -44,6 +46,8 @@ class Order extends Model
 
     /**
      * Setting relationship with DB table Client.
+     *
+     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -52,15 +56,11 @@ class Order extends Model
 
     /**
      * Setting relationship with DB table OrderDetails.
+     *
+     * @return HasOne
      */
     public function orderDetails(): HasOne
     {
         return $this->hasOne(OrderDetails::class, 'id_order', 'id_order');
-    }
-
-    public function storeOrderDetails(array $orderDetails)
-    {
-        DB::table('order_details')
-            ->insert($orderDetails);
     }
 }

@@ -37,7 +37,7 @@ class ShareData
         View::share('cartNum', $request->session()->get('cart.total.quantity'));
 
         // Key for Edit Review
-        View::share('reviewEditIdReview', $request->session()->get('reviewEditIdReview'));
+        View::share('editReviewId', $request->session()->get('editReviewId'));
 
         return $next($request);
     }

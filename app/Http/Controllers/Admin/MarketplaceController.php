@@ -14,7 +14,9 @@ class MarketplaceController extends Controller
      */
     public function index()
     {
-        $marketplaces = Marketplace::all();
+        $marketplaceModel = new Marketplace();
+
+        $marketplaces = $marketplaceModel->readAllMarketplaces();
 
         return view('admin.marketplaces.index', compact('marketplaces'));
     }
@@ -35,27 +37,32 @@ class MarketplaceController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $marketplaceModel = new Marketplace();
+        if ($request->has('createMarketplace')) {
+            $marketplaceModel = new Marketplace();
 
-        $postData = $request->post();
-        $setMarketplaceData = [
-            'country_code' => strtoupper($postData['country_code']),
-            'country' => ucfirst($postData['country']),
-            'currency' => strtoupper($postData['currency']),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $marketplaceModel->storeMarketplace($setMarketplaceData);
+            $setMarketplaceData = [
+                'country_code' => strtoupper($request->post('country_code')),
+                'country' => ucfirst($request->post('country')),
+                'currency' => strtoupper($request->post('currency')),
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $marketplaceModel->storeMarketplace($setMarketplaceData);
+        }
 
         return redirect()->route('admin.marketplace');
     }
 
     /**
      * Display Marketplace update form
+     *
+     * @param int $idMarketplace
      */
-    public function edit($idMarketplace)
+    public function edit(int $idMarketplace)
     {
-        $marketplace = Marketplace::find($idMarketplace);
+        $marketplaceModel = new Marketplace();
+
+        $marketplace = $marketplaceModel->reaMarketplace($idMarketplace);
 
         return view('admin.marketplaces.update', compact('marketplace'));
     }
@@ -68,31 +75,36 @@ class MarketplaceController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $marketplaceModel = new Marketplace();
+        if ($request->has('updateMarketplace')) {
+            $marketplaceModel = new Marketplace();
 
-        $postData = $request->post();
-        $setMarketplaceData = [
-            'country_code' => strtoupper($postData['country_code']),
-            'country' => ucfirst($postData['country']),
-            'currency' => strtoupper($postData['currency']),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $idMarketplace = $request->post('id_marketplace');
-        $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
+            $setMarketplaceData = [
+                'country_code' => strtoupper($request->post('country_code')),
+                'country' => ucfirst($request->post('country')),
+                'currency' => strtoupper($request->post('currency')),
+            ];
+            $idMarketplace = $request->post('id_marketplace');
+            $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
+        }
 
         return redirect()->route('admin.marketplace');
     }
 
     /**
      * Delete Marketplace
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $marketplaceModel = new Marketplace();
+        if ($request->has('deleteMarketplace')) {
+            $marketplaceModel = new Marketplace();
 
-        $idMarketplace = $request->post('id_marketplace');
-        $marketplaceModel->deleteMarketplace($idMarketplace);
+            $idMarketplace = $request->post('id_marketplace');
+            $marketplaceModel->deleteMarketplace($idMarketplace);
+        }
 
-        return redirect()->route('admin.marketplace');
+        return back();
     }
 }

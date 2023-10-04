@@ -18,7 +18,7 @@
                <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 ...">
                   <div class="sm:col-span-6">
                      <b class="text-xl">{{ ucfirst($subcategory->name) }}</b>
-                     <p><b>{{ __('admin/subcategories.category') }}:</b> {{ ucfirst($subcategory->category->name) }}</p>
+                     <p><b>{{ __('admin/subcategories.category') }}:</b> {{ ucfirst($subcategory->category) }}</p>
                      <p><b>{{ __('admin/subcategories.description') }}:</b> {{ $subcategory->description }}</p>
                   </div>
                   <div class="sm:col-span-1 justify-self-end self-center">
@@ -28,7 +28,8 @@
                   <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('admin.subcategory.delete') }}" method="post">
                      @csrf
 
-                     <button type="submit" name="id_subcategory" value="{{ $subcategory->id_subcategory }}"
+                      <input type="hidden" name="id_subcategory" value="{{ $subcategory->id_subcategory }}">
+                      <button type="submit"  name="deleteSubcategory" value="1"
                         class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                          {{ __('admin/subcategories.delete') }}
                      </button>

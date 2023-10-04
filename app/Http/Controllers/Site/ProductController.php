@@ -15,6 +15,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class ProductController extends Controller
 {
@@ -22,6 +24,8 @@ class ProductController extends Controller
 
     /**
     * Display a listing of the Products.
+     *
+     * @param Request $request
     */
     public function index(Request $request)
     {
@@ -38,8 +42,9 @@ class ProductController extends Controller
 
         // Calculating Product's Rating
         foreach ($products as $product) {
-            $product->reviews = $product->reviews->where('status', 2);
+            $product->reviews = $product->reviews->where('status', 2);      // show only approved reviews
 
+            // Calculating average rating
             $ratingSum = 0;
             $ratingCount = count($product->reviews);
             foreach ($product->reviews as $review) {
@@ -47,6 +52,8 @@ class ProductController extends Controller
             }
             $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
             $product->avgRating = number_format($avgRating, 2);
+
+            // Formatting price
             $marketplace = $product->seller->marketplace;
             $product->priceFormatted = number_format($product->price, 0, '.', ' ')
                 . ' '. $marketplace->getCurrency($marketplace->currency);
@@ -62,13 +69,16 @@ class ProductController extends Controller
 
     /**
      * Display one chosen Product.
+     *
+     * @param int $idProduct
      */
-    public function show($idProduct)
+    public function show(int $idProduct)
     {
         $product = Product::find($idProduct);
 
-        $product->reviews = $product->reviews->where('status', 2);
+        $product->reviews = $product->reviews->where('status', 2);      // show only approved reviews
 
+        // Calculating Product's Rating
         $ratingSum = 0;
         $ratingCount = count($product->reviews);
         foreach ($product->reviews as $review) {
@@ -76,6 +86,8 @@ class ProductController extends Controller
         }
         $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
         $product->avgRating = number_format($avgRating, 2);
+
+        // Formatting price
         $marketplace = $product->seller->marketplace;
         $product->priceFormatted = number_format($product->price, 0, '.', ' ')
             . ' '. $marketplace->getCurrency($marketplace->currency);
@@ -101,29 +113,36 @@ class ProductController extends Controller
      *
      * @param ProductRequest $request
      * @return RedirectResponse
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
      */
     public function store(ProductRequest $request): RedirectResponse
     {
-        $productModel = new Product();
+        if ($request->has('createProduct')) {
+            $productModel = new Product();
 
-        $productModel->fill($request->validated());
+            $productModel->fill($request->validated());
+            $productModel->save();
 
-		if ($request->hasFile('images')) {
-			$images = $request->file('images');
-			foreach ($images as $image) {
-				$productModel->addMedia($image)
-					->toMediaCollection('products');
-			}
-		}
-	    $productModel->save();
+            // Save Media
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                foreach ($images as $image) {
+                    $productModel->addMedia($image)
+                        ->toMediaCollection('products');
+                }
+            }
+        }
 
         return redirect()->route('seller.my_products');
     }
 
     /**
      * Display Product update form
+     *
+     * @param int $idProduct
      */
-    public function edit($idProduct)
+    public function edit(int $idProduct)
     {
         $product = Product::find($idProduct);
         $producers = Producer::all(['id_producer', 'name']);
@@ -141,58 +160,62 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request): RedirectResponse
     {
-        $productModel = new Product();
+        if ($request->has('updateProduct')) {
+            $productModel = new Product();
 
-        $idProduct = $request->post('id_product');
-        $postData = $request->post();
-	    $setProductData = [
-            'id_producer' => $postData['id_producer'],
-            'id_category' => $postData['id_category'],
-            'id_subcategory' => $postData['id_subcategory'],
-            'name' => ucfirst($postData['name']),
-            'description' => ucfirst($postData['description']),
-            'price' => $postData['price'],
-            'amount' => $postData['amount'],
-        ];
-	    $productModel->fill($request->validated());
-	    $productModel->where('id_product', $idProduct)->update($setProductData);
+            $idProduct = $request->post('id_product');
+            $setProductData = [
+                'id_producer' => $request->post('id_producer'),
+                'id_category' => $request->post('id_category'),
+                'id_subcategory' => $request->post('id_subcategory'),
+                'name' => ucfirst($request->post('name')),
+                'description' => ucfirst($request->post('description')),
+                'price' => $request->post('price'),
+                'amount' => $request->post('amount'),
+            ];
+            $productModel->fill($request->validated());
+            $productModel->where('id_product', $idProduct)->update($setProductData);
 
-	    if ($request->hasFile('images')) {
-		    $product = $productModel->find($idProduct);
-		    // Optional Delete old media
-			if ($request->post('delete_media')) {
-				$medias = $product->media;
-				foreach ($medias as $media) {
-					$media->delete($media->id);
-				}
-			}
-
-			// Save new Media
-		    $images = $request->file('images');
-		    foreach ($images as $image) {
-			    $product->addMedia($image)
-				    ->toMediaCollection('products');
-		    }
-	    }
+            // Update Media
+            if ($request->hasFile('images')) {
+                $product = $productModel->find($idProduct);
+                // Optional Delete old media
+                if ($request->post('delete_media')) {
+                    $medias = $product->media;
+                    foreach ($medias as $media) {
+                        $media->delete($media->id);
+                    }
+                }
+                // Save new Media
+                $images = $request->file('images');
+                foreach ($images as $image) {
+                    $product->addMedia($image)
+                        ->toMediaCollection('products');
+                }
+            }
+        }
 
         return redirect()->route('seller.my_products');
     }
 
     /**
      * Delete Product
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $productModel = new Product();
-
-        $idProduct = $request->post('id_product');
-	    $product = $productModel->find($idProduct);
-	    $medias = $product->media;
-	    foreach ($medias as $media) {
-		    $media->delete($media->id);
+        if ($request->has('deleteProduct')) {
+            $idProduct = $request->post('id_product');
+            $product = Product::find($idProduct);
+            $medias = $product->media;
+            foreach ($medias as $media) {
+                $media->delete($media->id);
+            }
+            Product::destroy($idProduct);
         }
-	    $productModel->deleteProduct($idProduct);
 
-        return redirect()->route('seller.my_products');
+        return back();
     }
 }

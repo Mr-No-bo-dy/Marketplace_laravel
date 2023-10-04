@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Category extends Model
@@ -24,6 +25,42 @@ class Category extends Model
         'name',
         'description',
     ];
+
+    /**
+     * Read all entities from DB table Categories
+     *
+     * @return Collection
+     */
+    public function readAllCategories(): Collection
+    {
+        return DB::table($this->table)
+                ->get();
+    }
+
+    /**
+     * Read all entities ids & names from DB table Categories
+     *
+     * @return Collection
+     */
+    public function readCategoriesNames(): Collection
+    {
+        return DB::table($this->table)
+                    ->select($this->primaryKey, 'name')
+                    ->get();
+    }
+
+    /**
+     * Read one entity from DB table Categories
+     *
+     * @param int $idCategory
+     * @return object
+     */
+    public function readCategory(int $idCategory): object
+    {
+        return DB::table($this->table)
+                    ->where($this->primaryKey, $idCategory)
+                    ->first();
+    }
 
     /**
      * Insert entity into DB table Categories

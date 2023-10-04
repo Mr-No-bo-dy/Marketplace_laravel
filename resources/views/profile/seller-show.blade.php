@@ -9,7 +9,7 @@
             <div class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 mt-2">
                <div class="sm:col-span-6">
                   <p><b>{{ __('site_profile.name') }}:</b> {{ $seller->name }} {{ $seller->surname }}</p>
-                  <p><b>{{ __('site_profile.marketplace') }}</b> {{ $seller->marketplace->country }}</p>
+                  <p><b>{{ __('site_profile.marketplace') }}</b> {{ $seller->country }}</p>
                   <p><b>{{ __('site_profile.email') }}:</b> {{ $seller->email }}</p>
                   <p><b>{{ __('site_profile.phone') }}:</b> {{ $seller->phone }}</p>
                </div>
@@ -19,7 +19,9 @@
                </div>
                <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('seller.delete') }}" method="post">
                   @csrf
-                  <button type="submit" name="id_seller" value="{{ $seller->id_seller }}"
+
+                  <input type="hidden" name="id_seller" value="{{ $seller->id_seller }}">
+                  <button type="submit" name="deleteSeller" value="1"
                      class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                       {{ __('site_profile.deleteAccount') }}
                   </button>

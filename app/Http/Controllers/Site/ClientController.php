@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Site;
 
+use App\Http\Controllers\Controller;
 use App\Models\Site\Client;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
@@ -15,19 +15,24 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::all();
+        $clientModel = new Client();
+
+        $clients = $clientModel->readAllClients();
 
         return view('admin.clients.index', compact('clients'));
     }
 
     /**
      * Show one Client's personal page.
+     *
+     * @param Request $request
      */
     public function show(Request $request)
     {
         $idClient = $request->session()->get('id_client');
+        $clientModel = new Client();
 
-        $client = Client::find($idClient);
+        $client = $clientModel->readClient($idClient);
 
         return view('profile.client-show', compact('client'));
     }
@@ -37,9 +42,11 @@ class ClientController extends Controller
      *
      * @param int $idClient
      */
-    public function edit($idClient)
+    public function edit(int $idClient)
     {
-        $client = Client::find($idClient);
+        $clientModel = new Client();
+
+        $client = $clientModel->readClient($idClient);
 
         return view('profile.client-update', compact('client'));
     }
@@ -52,24 +59,25 @@ class ClientController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $clientModel = new Client();
+        if ($request->has('updateClient')) {
+            $clientModel = new Client();
 
-        $postData = $request->post();
-        $setClientData = [
-            'name' => $postData['name'],
-            'surname' => $postData['surname'],
-            'email' => $postData['email'],
-            'phone' => $postData['tel'],
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
+            $setClientData = [
+                'name' => $request->post('name'),
+                'surname' => $request->post('surname'),
+                'email' => $request->post('email'),
+                'phone' => $request->post('tel'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $idClient = $request->post('id_client');
+            $clientModel->updateClient($idClient, $setClientData);
 
-        $idClient = $request->post('id_client');
-        $clientModel->updateClient($idClient, $setClientData);
-        $setClientPasswordData = [
-            'password' => Hash::make($postData['password']),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ];
-        $clientModel->updateClientPassword($idClient, $setClientPasswordData);
+            $setClientPasswordData = [
+                'password' => Hash::make($request->post('password')),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+            $clientModel->updateClientPassword($idClient, $setClientPasswordData);
+        }
 
         return redirect()->route('client.personal');
     }
@@ -82,10 +90,14 @@ class ClientController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $clientModel = new Client();
+        if ($request->has('deleteClient')) {
+            $clientModel = new Client();
 
-        $idClient = $request->post('id_client');
-        $clientModel->deleteClient($idClient);
+            $idClient = $request->post('id_client');
+            $clientModel->deleteClient($idClient);
+
+            $request->session()->forget('id_client');
+        }
 
         return redirect()->route('index');
     }

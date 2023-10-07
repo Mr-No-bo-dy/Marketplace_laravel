@@ -4,9 +4,10 @@
 <div class="py-6">
    <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+          <h1 class="mt-4 mx-6 text-2xl font-bold text-gray-900">{{ __('products.title') }}</h1>
           <div class="p-6 text-gray-900">
 
-{{--         Filters--}}
+    {{--         Filters--}}
           <form class="mb-4" action="{{ route('product') }}" method="post">
               @csrf
               <button type="submit" name="resetFilters" value="1"
@@ -49,35 +50,40 @@
               </div>
           </form>
 
-{{--              Products--}}
-            <ul role="list" class="mt-3">
-               @foreach ($products as $product)
-               <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 ...">
-                  <div class="sm:col-span-1">
-                     <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}">
+    {{--              Products--}}
+              <div class="bg-white">
+                  <div class="mx-auto max-w-2xl py-4 sm:py-6 lg:max-w-7xl">
+                      <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+                          @foreach ($products as $product)
+                          <div class="p-4 hover:shadow-lg">
+                              <a href="{{ route('product.show', $product->id_product) }}" class="group" title="{{ __('products.view') }}">
+                                  <h2 class="text-center text-lg font-bold text-gray-700">{{ $product->name }}</h2>
+                                  <div class="my-2 aspect-h-1 aspect-w-1 h-48 w-full overflow-hidden rounded-lg xl:aspect-h-8 xl:aspect-w-7">
+                                      <img src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}"
+                                      class="h-full w-full object-contain object-center group-hover:opacity-90">
+                                  </div>
+                                  <div class="px-2">
+                                      <p><b>{{ __('products.category') }}:</b> {{ ucfirst($product->category->name) }}</p>
+                                      <p><b>{{ __('products.rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
+                                      <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
+                                  </div>
+                              </a>
+                              <form class="mt-2 text-right" action="{{ route('product.cart') }}" method="post">
+                                  @csrf
+
+                                  <input type="hidden" name="id_product" value="{{ $product->id_product }}">
+                                  <input type="hidden" name="price" value="{{ $product->price }}">
+                                  <button type="submit" name="addToCart" value="1"
+                                          class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                                      {{ __('products.addToCart') }}
+                                  </button>
+                              </form>
+                          </div>
+                          @endforeach
+                      </div>
                   </div>
-                  <div class="sm:col-span-5">
-                     <b class="text-xl">{{ $product->name }}</b>
-                     <p><b>{{ __('products.category') }}:</b> {{ ucfirst($product->category->name) }}</p>
-                     <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
-                      <p><b>{{ __('products.rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
-                  </div>
-                  <div class="sm:col-span-1 justify-self-end self-center">
-                     <a class="inline-block rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                        href="{{ route('product.show', $product->id_product) }}">{{ __('products.view') }}</a>
-                  </div>
-                   <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
-                     @csrf
-                     <input type="hidden" name="id_product" value="{{ $product->id_product }}">
-                     <input type="hidden" name="price" value="{{ $product->price }}">
-                     <button type="submit" name="addToCart" value="1"
-                        class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
-                         {{ __('products.addToCart') }}
-                     </button>
-                  </form>
-               </li>
-               @endforeach
-            </ul>
+              </div>
+
           <div class="mt-3">
             {{ $products->withQueryString()->links('vendor.pagination.tailwind') }}
           </div>

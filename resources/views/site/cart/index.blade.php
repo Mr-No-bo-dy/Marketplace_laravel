@@ -15,7 +15,7 @@
                      <div class="sm:col-span-1">
                         <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name . '-pic' }}">
                      </div>
-                     <div class="sm:col-span-4">
+                     <div class="sm:col-span-4 justify-self-start">
                         <b class="text-xl">{{ $product->name }}</b>
                         <p><b>{{ __('cart.price') }}</b> {{ $product->price }}</p>
                         <p><b>{{ __('cart.total') }}</b> {{ $productData[$product->id_product]['total'] }}</p>

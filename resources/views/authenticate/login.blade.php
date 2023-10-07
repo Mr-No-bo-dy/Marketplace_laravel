@@ -1,49 +1,42 @@
 @extends('layouts.site')
 
 @section('content')
-<div class="py-6">
-   <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
-      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-         <div class="p-6 text-gray-900">
-            <h1 class="text-xl">{{ __('site_profile.login') }}</h1>
-            <form action="{{ route('auth') }}" method="post">
-               @csrf
+<div class="flex min-h-full flex-col justify-center p-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h1 class="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">{{ __('site_profile.signIn') }}</h1>
+    </div>
 
-               <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div class="sm:col-span-2">
-                     <label for="login" class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.emailOrPhone') }}</label>
-                     <div class="mt-2">
-                        <input type="text" name="login" id="login" autocomplete="given-name" required
-                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                     </div>
-                  </div>
-                  <div class="sm:col-span-2">
-                     <label for="password" class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.password') }}</label>
-                     <div class="mt-2">
-                        <input type="password" name="password" id="password" required
-                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                     </div>
-                  </div>
-               </div>
-               <button type="submit"
-                  class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                   {{ __('site_profile.logIn') }}
-               </button>
-               <span class="inline-block my-3">
-                  <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
-                     href="{{ route('index') }}">{{ __('site_profile.cancel') }}</a>
-               </span>
-               <span class="inline-block my-3 ms-12">
-                  <a class="inline-block rounded-md bg-green-600 m-2 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                     href="{{ route('registration') }}">{{ __('site_profile.registerSeller') }}</a>
-               </span>
-               <span class="inline-block my-3">
-                  <a class="inline-block rounded-md bg-green-600 m-2 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-                     href="{{ route('registrationClient') }}">{{ __('site_profile.registerClient') }}</a>
-               </span>
-            </form>
-         </div>
-      </div>
-   </div>
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <form class="space-y-6" action="{{ route('auth') }}" method="post">
+            @csrf
+
+            <div>
+                <label for="login" class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.emailOrPhone') }}</label>
+                <div class="mt-2">
+                    <input id="login" type="text" name="login" autocomplete="given-name" required
+                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.password') }}</label>
+                <div class="mt-2">
+                    <input id="password" type="password" name="password" required
+                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                </div>
+            </div>
+
+            <button type="submit" name="createSeller" value="1"
+                class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                {{ __('site_profile.login') }}
+            </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-gray-500">
+            {{ __('site_profile.notYet') }}
+            <a href="{{ route('registration_client') }}" class="ms-2 font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                {{ __('site_profile.signUp') }}</a>
+        </p>
+    </div>
 </div>
 @endsection

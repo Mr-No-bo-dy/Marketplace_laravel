@@ -38,7 +38,7 @@ class ProductController extends Controller
         $filters = $this->getFilters($request);
 
         // Getting Products based on filters
-        $products = $this->getProducts($request, 3);
+        $products = $this->getProducts($request, 4);
 
         // Calculating Product's Rating
         foreach ($products as $product) {

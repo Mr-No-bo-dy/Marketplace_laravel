@@ -53,13 +53,13 @@ Route::middleware('auth')->group(function () {
 // Site
 Route::prefix('{locale}')->group(function () {
     Route::controller(GeneralController::class)->group(function () {
-        Route::post('/switchLanguage', 'switchLanguage')->name('switchLanguage');
+        Route::post('/switch_language', 'switchLanguage')->name('switchLanguage');
         Route::get('/', 'index')->name('index');
         Route::post('/product/cart', 'addToCart')->name('product.cart');
-        Route::get('/registration', 'register')->name('registration');
-        Route::post('/registration', 'store')->name('registration');
-        Route::get('/registrationClient', 'registerClient')->name('registrationClient');
-        Route::post('/registrationClient', 'storeClient')->name('registrationClient');
+        Route::get('/registration_seller', 'registerSeller')->name('registration_seller');
+        Route::post('/registration_seller', 'storeSeller')->name('registration_seller');
+        Route::get('/registration_client', 'registerClient')->name('registration_client');
+        Route::post('/registration_client', 'storeClient')->name('registration_client');
         Route::get('/auth', 'auth')->name('auth');
         Route::post('/auth', 'auth')->name('auth');
         Route::post('/log_out', 'logout')->name('log_out');

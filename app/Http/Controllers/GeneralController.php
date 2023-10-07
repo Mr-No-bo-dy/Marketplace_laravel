@@ -34,11 +34,11 @@ class GeneralController extends Controller
     /**
      * Show the form for Registering a new Seller.
      */
-    public function register()
+    public function registerSeller()
     {
         $marketplaces = Marketplace::all(['id_marketplace', 'country']);
 
-        return view('authenticate.register', compact('marketplaces'));
+        return view('authenticate.register-seller', compact('marketplaces'));
     }
 
     /**
@@ -46,7 +46,7 @@ class GeneralController extends Controller
      */
     public function registerClient()
     {
-        return view('authenticate.registerClient');
+        return view('authenticate.register-client');
     }
 
     /**
@@ -55,7 +55,7 @@ class GeneralController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function storeSeller(Request $request): RedirectResponse
     {
         if ($request->has('createSeller')) {
             $sellerModel = new Seller();
@@ -139,14 +139,13 @@ class GeneralController extends Controller
 
         $route = view('authenticate.login');
 
-        $postData = $request->post();
-        if (!empty($postData)) {
-            $data = [
-                'login' => $postData['login'],
-                'password' => $postData['password'],
+        if (!empty($request->post())) {
+            $loginData = [
+                'login' => $request->post('login'),
+                'password' => $request->post('password'),
             ];
 
-            $idAuthUser = $sellerModel->authSeller($data);
+            $idAuthUser = $sellerModel->authSeller($loginData);
             if (!empty($idAuthUser)) {
                 $seller = Seller::withTrashed()->find($idAuthUser);
                 if (!$seller->trashed()) {
@@ -154,7 +153,7 @@ class GeneralController extends Controller
                     $route = redirect()->route('seller.personal');
                 }
             } else {
-                $idAuthUser = $clientModel->authClient($data);
+                $idAuthUser = $clientModel->authClient($loginData);
                 $request->session()->put('id_client', $idAuthUser);
                 $route = redirect()->route('client.personal');
             }

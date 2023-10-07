@@ -5,7 +5,7 @@ return [
     'admin' => 'Admin',
     'products' => 'Products',
     'cart' => 'Cart',
-    'login' => 'Login',
+    'signIn' => 'Sign in',
     'logout' => 'Logout',
     'profile' => 'Profile',
 ];

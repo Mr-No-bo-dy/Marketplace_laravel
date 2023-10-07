@@ -1,18 +1,11 @@
 <?php
 
 return [
+    'title' => 'Товари',
     'myProducts' => 'Мої Товари',
     'all' => 'Всі',
     'producer' => 'Виробник',
     'category' => 'Категорія',
-//    'computing' => 'Комп\'ютери',
-//    'gadget' => 'Гаджети',
-//    'TV' => 'ТВ',
-//    'refrigerator' => 'Холодильники',
-//    'cooker' => 'Кухонні плити',
-//    'washing machine' => 'Пральні машини',
-//    'vacuum cleaner' => 'Пилосмоки',
-//    'microwave' => 'Мікрохвильові печі',
     'subcategory' => 'Підкатегорія',
     'seller' => 'Продавець',
     'name' => 'Назва',
@@ -28,7 +21,7 @@ return [
     'show' => 'Показати',
     'resetFilters' => 'Скинути фільтри',
     'view' => 'Детальніше',
-    'addToCart' => 'В корзину',
+    'addToCart' => 'В кошик',
     'rating' => 'Рейтинг',
     'noReviews' => 'Немає оцінок',
     'back' => 'Назад',

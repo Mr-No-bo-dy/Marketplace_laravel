@@ -38,8 +38,6 @@
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                   <a href="{{ route('index') }}" class="text-white hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                      aria-current="page">{{ __('site-nav.home') }}</a>
-{{--                  <a href="{{ route('admin.dashboard') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"--}}
-{{--                     aria-current="page">{{ __('site-nav.admin') }}</a>--}}
                   <a href="{{ route('product') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
                      aria-current="page">{{ __('site-nav.products') }}</a>
                </div>
@@ -57,7 +55,7 @@
              <a class="inline-block me-2 text-gray-400 hover:text-white" href="{{ route('cart') }}">{{ __('site-nav.cart') }} ({{ $cartNum ?? '0' }})</a>
 
             @if(!isset($seller_name) && !isset($client_name))
-               <a class="inline-block ms-3 text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller_name ?? $client_name ?? __('site-nav.login') }}</a>
+               <a class="inline-block ms-3 text-gray-400 hover:text-white" href="{{ route('auth') }}">{{ $seller_name ?? $client_name ?? __('site-nav.signIn') }}</a>
             @else
                 <!-- Profile dropdown -->
                  <div class="relative ml-3">
@@ -93,8 +91,6 @@
          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
          <a href="{{ route('index') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
             aria-current="page">{{ __('site-nav.home') }}</a>
-{{--         <a href="{{ route('admin.dashboard') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"--}}
-{{--            aria-current="page">{{ __('site-nav.admin') }}</a>--}}
          <a href="{{ route('product') }}" class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
             aria-current="page">{{ __('site-nav.products') }}</a>
       </div>

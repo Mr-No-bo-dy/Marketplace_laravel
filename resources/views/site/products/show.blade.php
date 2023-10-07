@@ -13,18 +13,18 @@
                </div>
             </div>
             <div class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 ...">
-               <div class="sm:col-span-1">
+               <div class="sm:col-span-2">
                    @foreach($product->getMedia('products') as $item)
-                       <img class="h-24 w-24 object-contain" src="{{ $item->getUrl() }}" alt="{{ $product->name . '-pic' }}">
+                       <img class="h-48 w-48 object-contain" src="{{ $item->getUrl() }}" alt="{{ $product->name . '-pic' }}">
                    @endforeach
                </div>
-               <div class="sm:col-span-6">
+               <div class="sm:col-span-5 py-2">
                    <p><b>{{ __('products.category') }}: </b>{{ ucfirst($product->category->name) }}</p>
                    <p><b>{{ __('products.subcategory') }}:</b> {{ $product->subcategory->name }}</p>
                    <p><b>{{ __('products.description') }}:</b> {{ $product->description }}</p>
                    <p><b>{{ __('products.seller') }}:</b> {{ $product->seller->name }} {{ $product->seller->surname }}</p>
-                   <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                    <p><b>{{ __('products.rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
+                   <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                </div>
                 <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
                     @csrf

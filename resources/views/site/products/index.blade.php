@@ -55,7 +55,7 @@
                   <div class="mx-auto max-w-2xl py-4 sm:py-6 lg:max-w-7xl">
                       <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                           @foreach ($products as $product)
-                          <div class="p-4 hover:shadow-lg">
+                          <div class="p-4 border-2 border-gray-200 rounded hover:shadow-lg">
                               <a href="{{ route('product.show', $product->id_product) }}" class="group" title="{{ __('products.view') }}">
                                   <h2 class="text-center text-lg font-bold text-gray-700">{{ $product->name }}</h2>
                                   <div class="my-2 aspect-h-1 aspect-w-1 h-48 w-full overflow-hidden rounded-lg xl:aspect-h-8 xl:aspect-w-7">
@@ -68,7 +68,7 @@
                                       <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                                   </div>
                               </a>
-                              <form class="mt-2 text-right" action="{{ route('product.cart') }}" method="post">
+                              <form class="mt-2 text-right" action="{{ route('cart_store') }}" method="post">
                                   @csrf
 
                                   <input type="hidden" name="id_product" value="{{ $product->id_product }}">

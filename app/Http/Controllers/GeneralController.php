@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin\Marketplace;
 use App\Models\Site\Client;
-use App\Models\Site\Product;
 use App\Models\Site\Seller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -65,7 +64,7 @@ class GeneralController extends Controller
                 'name' => $request->post('name'),
                 'surname' => $request->post('surname'),
                 'email' => $request->post('email'),
-                'phone' => $request->post('tel'),
+                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
@@ -100,7 +99,7 @@ class GeneralController extends Controller
                 'name' => $request->post('name'),
                 'surname' => $request->post('surname'),
                 'email' => $request->post('email'),
-                'phone' => $request->post('tel'),
+                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
@@ -173,50 +172,5 @@ class GeneralController extends Controller
         $request->session()->forget(['id_seller', 'id_client']);
 
         return redirect()->route('index');
-    }
-
-    /**
-     * Adding Products to Cart.
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function addToCart(Request $request): RedirectResponse
-    {
-        if ($request->post('addToCart')) {
-            $idProduct = $request->post('id_product');
-            $price = $request->post('price');
-            $pr = Product::find($idProduct);
-            $product = $request->session()->get('cart.product.' . $idProduct);
-
-            $quantity = 1;
-            $productTotal = $price;
-            if (isset($product['id_product']) && $product['id_product'] == $idProduct) {
-                $quantity = $product['quantity'] + 1;
-                $productTotal = $quantity * $price;
-            }
-            $request->session()->put('cart.product.' . $idProduct, [
-                'id_seller' => $pr->id_seller,
-                'id_product' => $idProduct,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total' => $productTotal,
-            ]);
-
-            $cart = $request->session()->get('cart.product');
-            if (!isset($cartTotal['quantity']) && !isset($cartTotal['total'])) {
-                $cartTotal = [
-                    'quantity' => 0,
-                    'total' => 0,
-                ];
-            }
-            foreach ($cart as $p) {
-                $cartTotal['quantity'] += $p['quantity'];
-                $cartTotal['total'] += $p['total'];
-            }
-            $request->session()->put('cart.total', $cartTotal);
-        }
-
-        return redirect()->route('product');
     }
 }

@@ -25,7 +25,7 @@ class OrderController extends Controller
         $client = $clientModel->readClient($request->session()->get('id_client'));
         extract($this->getCartData($request));
 
-        return view('site.order.index', compact('client', 'products', 'productData', 'total'));
+        return view('site.order.index', compact('client', 'products', 'cartProductsData', 'cartMarketsData', 'totalQuantity'));
     }
 
     /**
@@ -69,7 +69,7 @@ class OrderController extends Controller
         // Forming Order's data
         $cartData = $request->session()->get('cart');
         if (!empty($cartData) && $request->has('makeOrder')) {
-            foreach ($cartData['product'] as $product) {
+            foreach ($cartData['products'] as $product) {
                 $orderData = [
                     'id_client' => $idClient,
                     'id_seller' => $product['id_seller'],

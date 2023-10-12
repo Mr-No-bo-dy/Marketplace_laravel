@@ -15,7 +15,7 @@
                                     <div class="sm:col-span-6">
                                         <b class="text-xl">{{ $product->name }}</b>
                                         <p><b>{{ __('order.price') }}</b> {{ $product->price }}</p>
-                                        <p><b>{{ __('order.total') }}</b> {{ $productData[$product->id_product]['total'] }}</p>
+                                        <p><b>{{ __('order.total') }}</b> {{ $cartProductsData[$product->id_product]['total'] }}</p>
                                     </div>
                                     <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('cart') }}" method="post">
                                         @csrf

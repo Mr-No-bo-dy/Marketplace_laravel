@@ -26,7 +26,7 @@
                    <p><b>{{ __('products.rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
                    <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                </div>
-                <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.cart') }}" method="post">
+                <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('cart_store') }}" method="post">
                     @csrf
                     <input type="hidden" name="id_product" value="{{ $product->id_product }}">
                     <input type="hidden" name="price" value="{{ $product->price }}">

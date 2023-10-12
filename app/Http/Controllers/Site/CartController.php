@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Models\Site\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Resource\Traits\Cart;
 
@@ -11,116 +13,136 @@ class CartController extends Controller
     use Cart;
 
     /**
-     * Display a listing of the resource.
+     * Adding Products to Cart.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        if ($request->has('addToCart')) {
+            $idProduct = $request->post('id_product');
+            $price = $request->post('price');
+            $product = Product::find($idProduct);
+            $idMarketplace = $product->seller->id_marketplace;
+            $cartProduct = $request->session()->get('cart.products.' . $idProduct);
+
+            // Saving cart's Products data
+            $quantity = 1;
+            $productTotal = $price;
+            if (isset($cartProduct['id_product']) && $cartProduct['id_product'] == $idProduct) {
+                $quantity = $cartProduct['quantity'] + 1;
+                $productTotal = $quantity * $price;
+            }
+            $request->session()->put('cart.products.' . $idProduct, [
+                'id_marketplace' => $idMarketplace,
+                'id_seller' => $product->id_seller,
+                'id_product' => $idProduct,
+                'quantity' => $quantity,
+                'price' => $price,
+                'total' => $productTotal,
+            ]);
+
+            // Saving cart's Markets data
+            $cart = $request->session()->get('cart.products', []);
+            if (!isset($totalQuantity)) {
+                $totalQuantity = 0;
+            }
+            $marketsTotal = [];
+            foreach ($cart as $cartProd) {
+                $idMarket = $cartProd['id_marketplace'];
+                if (!isset($marketsTotal[$idMarket])) {
+                    $marketsTotal[$idMarket] = [
+                        'quantity' => 0,
+                        'total' => 0,
+                    ];
+                }
+                $marketsTotal[$idMarket]['quantity'] += $cartProd['quantity'];
+                $marketsTotal[$idMarket]['total'] += $cartProd['total'];
+                $totalQuantity += $cartProd['quantity'];
+            }
+            $request->session()->put('cart.markets', $marketsTotal);
+            $request->session()->put('cart.total_quantity', $totalQuantity);
+        }
+
+        return back();
+    }
+
+    /**
+     * Displaying & Updating a listing of the Cart
+     *
+     * @param Request $request
      */
     public function index(Request $request)
     {
-        if (!$request->session()->has('cart')) {
+        if ($request->session()->missing('cart')) {
             return view('site.cart.index');
         }
 
-        $idProduct = $request->post('id_product');
-        $product = $request->session()->get('cart.product.' . $idProduct);
-        $total = $request->session()->get('cart.total');
-
-        // If form with changes in Cart is sent
-        if (!empty($request->post('id_product'))) {
+        if ($request->has('id_product')) {
+            $idProduct = $request->post('id_product');
+            $product = $request->session()->get('cart.products.' . $idProduct);
 
             if (!is_null($product)) {
+                $idMarketplace = $product['id_marketplace'];
                 $newProduct = [
-                    'id_product' => $product['id_product'],
+                    'id_marketplace' => $idMarketplace,
+                    'id_seller' => $product['id_seller'],
+                    'id_product' => $idProduct,
                     'quantity' => $product['quantity'],
                     'price' => $product['price'],
                     'total' => $product['total'],
                 ];
-            }
 
-            $newQuantity = null;
-            if ($request->post('quantity')) {
-                $newQuantity = $request->post('quantity');
-                $total['quantity'] = $total['quantity'] - $product['quantity'] + $newQuantity;
-                $total['total'] = ($total['total'] - $product['total']) + ($newQuantity * $product['price']);
-            } elseif ($request->post('plus')) {
-                $newQuantity = $product['quantity'] + 1;
-                $total['quantity'] += 1;
-                $total['total'] += $product['price'];
-            } elseif ($request->post('minus') && !empty($product)) {
-                $newQuantity = $product['quantity'] - 1;
-                if ($newQuantity <= 0) {
-                    $request->session()->forget('cart.product.' . $idProduct);
+                // Setting cart product's data
+                $newQuantity = $product['quantity'];
+                if ($request->has('quantity')) {
+                    $newQuantity = $request->post('quantity');
+                } elseif ($request->has('plus')) {
+                    $newQuantity += 1;
+                } elseif ($request->has('minus') && $product['quantity'] > 1) {
+                    $newQuantity -= 1;
+                } elseif (($request->has('minus') && $product['quantity'] <= 1) || $request->has('remove')) {
+                    // Removing cart's product & Updating cart's market
+                    $request->session()->forget('cart.products.' . $idProduct);
                     unset($idProduct);
+                    $marketProducts = collect($request->session()->get('cart.products', []))
+                                    ->where('id_marketplace', $idMarketplace);
+                    if ($marketProducts->isNotEmpty()) {
+                        $marketTotal = $request->session()->get('cart.markets.' . $idMarketplace, []);
+                        $marketTotal['quantity'] -= $product['quantity'];
+                        $marketTotal['total'] -= $product['total'];
+                        $request->session()->put('cart.markets.' . $idMarketplace, $marketTotal);
+                    } else {
+                        $request->session()->forget('cart.markets.' . $idMarketplace);
+                    }
                 }
-                $total['quantity'] -= 1;
-                $total['total'] -= $product['price'];
-            } elseif ($request->post('remove')) {
-                if (!is_null($product)) {
-                    $total['quantity'] = $total['quantity'] - $product['quantity'];
-                    $total['total'] = $total['total'] - $product['total'];
+
+                // Updating cart's product
+                if (isset($idProduct)) {
+                    $newProduct['quantity'] = $newQuantity;
+                    $newProduct['total'] = $newQuantity * $product['price'];
+                    $request->session()->put('cart.products.' . $idProduct, $newProduct);
+
+                    // Updating cart's market if product is NOT removed
+                    $cartMarkets = $request->session()->get('cart.markets', []);
+                    if (!empty($cartMarkets)) {
+                        $marketTotal = $cartMarkets[$idMarketplace];
+                        $marketTotal['quantity'] = $marketTotal['quantity'] - $product['quantity'] + $newQuantity;
+                        $marketTotal['total'] = $marketTotal['total'] - $product['total'] + ($newQuantity * $product['price']);
+                        $request->session()->put('cart.markets.' . $idMarketplace, $marketTotal);
+                    }
                 }
-                $request->session()->forget('cart.product.' . $idProduct);
-                unset($idProduct);
             }
 
-            // Setting new Cart data into session Cart
-            if (isset($idProduct) && !empty($product)) {
-                $newProduct['quantity'] = $newQuantity;
-                $newProduct['total'] = $newQuantity * $product['price'];
-                $request->session()->put('cart.product.' . $idProduct, $newProduct);
-            }
-            $request->session()->put('cart.total', $total);
+            // Updating & setting cart's total quantity
+            $totalQuantity = array_sum(array_column($request->session()->get('cart.products', []), 'quantity'));
+            $request->session()->put('cart.total_quantity', $totalQuantity);
         }
 
         // Setting data for view
         extract($this->getCartData($request));
 
-        return view('site.cart.index', compact('products', 'productData', 'total'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('site.cart.index', compact('products', 'cartProductsData', 'cartMarketsData', 'totalQuantity'));
     }
 }

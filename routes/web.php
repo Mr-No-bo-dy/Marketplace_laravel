@@ -55,7 +55,6 @@ Route::prefix('{locale}')->group(function () {
     Route::controller(GeneralController::class)->group(function () {
         Route::post('/switch_language', 'switchLanguage')->name('switchLanguage');
         Route::get('/', 'index')->name('index');
-        Route::post('/product/cart', 'addToCart')->name('product.cart');
         Route::get('/registration_seller', 'registerSeller')->name('registration_seller');
         Route::post('/registration_seller', 'storeSeller')->name('registration_seller');
         Route::get('/registration_client', 'registerClient')->name('registration_client');
@@ -69,12 +68,13 @@ Route::prefix('{locale}')->group(function () {
         Route::post('/product', 'index')->name('product');
     });
     Route::controller(CartController::class)->group(function () {
-        Route::get('cart', 'index')->name('cart');
-        Route::post('cart', 'index')->name('cart');
+        Route::post('/add-to-cart', 'store')->name('cart_store');
+        Route::get('/cart', 'index')->name('cart');
+        Route::post('/cart', 'index')->name('cart');
     });
     Route::controller(OrderController::class)->group(function () {
-        Route::get('create_order', 'create')->name('create_order');
-        Route::post('make_order', 'store')->name('make_order');
+        Route::get('/create_order', 'create')->name('create_order');
+        Route::post('/make_order', 'store')->name('make_order');
     });
 
     Route::middleware('authClient')->group(function () {

@@ -34,7 +34,7 @@ class ShareData
         }
 
         // Total number of products in Cart
-        View::share('cartNum', $request->session()->get('cart.total.quantity'));
+        View::share('cartNum', $request->session()->get('cart.total_quantity'));
 
         // Key for Edit Review
         View::share('editReviewId', $request->session()->get('editReviewId'));

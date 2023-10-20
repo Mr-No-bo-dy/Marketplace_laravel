@@ -5,16 +5,18 @@ use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\MarketplaceController;
 use App\Http\Controllers\Admin\ProducerController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\SellerController as AdminSellerController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Site\CartController;
-use App\Http\Controllers\Site\ClientController;
+use App\Http\Controllers\Site\ClientController as SiteClientController;
 use App\Http\Controllers\Site\OrderController;
 use App\Http\Controllers\Site\ProductController;
 use App\Http\Controllers\Site\ReviewController as SiteReviewController;
-use App\Http\Controllers\Site\SellerController;
+use App\Http\Controllers\Site\SellerController as SiteSellerController;
 
 /*
 | Web Routes:
@@ -35,10 +37,10 @@ Route::get('/', function () {
 // Routes without '{locale}' because of get-parameter conflict:
 Route::get('/product/show/{id_product}', [ProductController::class, 'show'])->name('product.show');
 Route::middleware('authClient')->group(function () {
-    Route::get('/client/edit/{id_client}', [ClientController::class, 'edit'])->name('client.edit');
+    Route::get('/client/edit/{id_client}', [SiteClientController::class, 'edit'])->name('client.edit');
 });
 Route::middleware('authSeller')->group(function () {
-    Route::get('/seller/edit/{id_seller}', [SellerController::class, 'edit'])->name('seller.edit');
+    Route::get('/seller/edit/{id_seller}', [SiteSellerController::class, 'edit'])->name('seller.edit');
     Route::get('/product/edit/{id_product}', [ProductController::class, 'edit'])->name('product.edit');
 });
 Route::middleware('auth')->group(function () {
@@ -68,7 +70,7 @@ Route::prefix('{locale}')->group(function () {
         Route::post('/product', 'index')->name('product');
     });
     Route::controller(CartController::class)->group(function () {
-        Route::post('/add-to-cart', 'store')->name('cart_store');
+        Route::post('/add_to_cart', 'store')->name('cart_store');
         Route::get('/cart', 'index')->name('cart');
         Route::post('/cart', 'index')->name('cart');
     });
@@ -78,7 +80,7 @@ Route::prefix('{locale}')->group(function () {
     });
 
     Route::middleware('authClient')->group(function () {
-        Route::controller(ClientController::class)->group(function () {
+        Route::controller(SiteClientController::class)->group(function () {
             Route::get('/client/personal', 'show')->name('client.personal');
             Route::post('/client/update', 'update')->name('client.update');
             Route::post('/client/delete', 'destroy')->name('client.delete');
@@ -91,7 +93,7 @@ Route::prefix('{locale}')->group(function () {
     });
 
     Route::middleware('authSeller')->group(function () {
-        Route::controller(SellerController::class)->group(function () {
+        Route::controller(SiteSellerController::class)->group(function () {
             Route::get('/seller/personal', 'show')->name('seller.personal');
             Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
             Route::get('/seller/my_orders', 'sellerOrders')->name('seller.my_orders');
@@ -104,6 +106,7 @@ Route::prefix('{locale}')->group(function () {
             Route::post('/product/store', 'store')->name('product.store');
             Route::post('/product/update', 'update')->name('product.update');
             Route::post('/product/delete', 'destroy')->name('product.delete');
+            Route::post('/product/restore', 'restore')->name('product.restore');
         });
     });
 
@@ -114,8 +117,10 @@ Route::prefix('{locale}')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         Route::prefix('admin')->group(function () {
-            Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-            Route::get('/admins', [AdminController::class, 'admins'])->name('admin.admins');
+            Route::controller(AdminController::class)->group(function () {
+                Route::get('/', 'dashboard')->name('admin.dashboard');
+                Route::get('/admins', 'admins')->name('admin.admins');
+            });
 
             Route::controller(MarketplaceController::class)->group(function () {
                 Route::get('/marketplace', 'index')->name('admin.marketplace');
@@ -123,6 +128,7 @@ Route::prefix('{locale}')->group(function () {
                 Route::post('/marketplace/store', 'store')->name('admin.marketplace.store');
                 Route::post('/marketplace/update', 'update')->name('admin.marketplace.update');
                 Route::post('/marketplace/delete', 'destroy')->name('admin.marketplace.delete');
+                Route::post('/marketplace/restore', 'restore')->name('admin.marketplace.restore');
             });
             Route::controller(ProducerController::class)->group(function () {
                 Route::get('/producer', 'index')->name('admin.producer');
@@ -130,6 +136,7 @@ Route::prefix('{locale}')->group(function () {
                 Route::post('/producer/store', 'store')->name('admin.producer.store');
                 Route::post('/producer/update', 'update')->name('admin.producer.update');
                 Route::post('/producer/delete', 'destroy')->name('admin.producer.delete');
+                Route::post('/producer/restore', 'restore')->name('admin.producer.restore');
             });
             Route::controller(CategoryController::class)->group(function () {
                 Route::get('/category', 'index')->name('admin.category');
@@ -137,6 +144,7 @@ Route::prefix('{locale}')->group(function () {
                 Route::post('/category/store', 'store')->name('admin.category.store');
                 Route::post('/category/update', 'update')->name('admin.category.update');
                 Route::post('/category/delete', 'destroy')->name('admin.category.delete');
+                Route::post('/category/restore', 'restore')->name('admin.category.restore');
             });
             Route::controller(SubcategoryController::class)->group(function () {
                 Route::get('/subcategory', 'index')->name('admin.subcategory');
@@ -144,14 +152,17 @@ Route::prefix('{locale}')->group(function () {
                 Route::post('/subcategory/store', 'store')->name('admin.subcategory.store');
                 Route::post('/subcategory/update', 'update')->name('admin.subcategory.update');
                 Route::post('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
+                Route::post('/subcategory/restore', 'restore')->name('admin.subcategory.restore');
             });
-            Route::controller(SellerController::class)->group(function () {
+            Route::controller(AdminSellerController::class)->group(function () {
                 Route::get('/seller', 'index')->name('admin.seller');
                 Route::post('/seller/block', 'block')->name('admin.seller.block');
                 Route::post('/seller/unblock', 'unblock')->name('admin.seller.unblock');
             });
-            Route::controller(ClientController::class)->group(function () {
+            Route::controller(AdminClientController::class)->group(function () {
                 Route::get('/client', 'index')->name('admin.client');
+                Route::post('/client/block', 'block')->name('admin.client.block');
+                Route::post('/client/unblock', 'unblock')->name('admin.client.unblock');
             });
             Route::controller(AdminReviewController::class)->group(function () {
                 Route::get('/reviews', 'index')->name('admin.reviews');

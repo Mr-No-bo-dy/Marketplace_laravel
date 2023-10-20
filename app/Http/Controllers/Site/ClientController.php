@@ -11,18 +11,6 @@ use Illuminate\Support\Facades\Hash;
 class ClientController extends Controller
 {
     /**
-     * Display a listing of the Clients.
-     */
-    public function index()
-    {
-        $clientModel = new Client();
-
-        $clients = $clientModel->readAllClients();
-
-        return view('admin.clients.index', compact('clients'));
-    }
-
-    /**
      * Show one Client's personal page.
      *
      * @param Request $request
@@ -66,7 +54,7 @@ class ClientController extends Controller
                 'name' => $request->post('name'),
                 'surname' => $request->post('surname'),
                 'email' => $request->post('email'),
-                'phone' => $request->post('tel'),
+                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
             $idClient = $request->post('id_client');
@@ -83,7 +71,7 @@ class ClientController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Soft-Delete specified Client in storage.
      *
      * @param Request $request
      * @return RedirectResponse
@@ -95,7 +83,6 @@ class ClientController extends Controller
 
             $idClient = $request->post('id_client');
             $clientModel->deleteClient($idClient);
-
             $request->session()->forget('id_client');
         }
 

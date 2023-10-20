@@ -7,6 +7,7 @@ return [
     'create' => 'Створити',
     'update' => 'Оновити',
     'delete' => 'Видалити',
+    'restore' => 'Відновити',
     'cancel' => 'Відмінити',
     'createMarketplace' => 'Створити ринок',
     'updateMarketplace' => 'Оновити ринок',

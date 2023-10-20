@@ -8,6 +8,7 @@ return [
     'create' => 'Create',
     'update' => 'Update',
     'delete' => 'Delete',
+    'restore' => 'Restore',
     'cancel' => 'Cancel',
     'createProducer' => 'Add producer',
     'updateProducer' => 'Update producer',

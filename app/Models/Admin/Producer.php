@@ -3,11 +3,14 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Producer extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *
@@ -76,14 +79,28 @@ class Producer extends Model
     }
 
     /**
-     * Delete entity from DB table Producers
+     * Soft-Delete entity in DB table Producers
      *
      * @param int $idProducer
      */
     public function deleteProducer(int $idProducer): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idProducer)
-            ->delete();
+        $producer = self::find($idProducer);
+        if ($producer) {
+            $producer->delete();
+        }
+    }
+
+    /**
+     * Restore entity in DB table Producers
+     *
+     * @param int $idProducer
+     */
+    public function restoreMarketplace(int $idProducer): void
+    {
+        $producer = self::onlyTrashed()->find($idProducer);
+        if ($producer) {
+            $producer->restore();
+        }
     }
 }

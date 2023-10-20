@@ -144,6 +144,7 @@ class GeneralController extends Controller
                 'password' => $request->post('password'),
             ];
 
+            // Auth Seller
             $idAuthUser = $sellerModel->authSeller($loginData);
             if (!empty($idAuthUser)) {
                 $seller = Seller::withTrashed()->find($idAuthUser);
@@ -151,10 +152,16 @@ class GeneralController extends Controller
                     $request->session()->put('id_seller', $idAuthUser);
                     $route = redirect()->route('seller.personal');
                 }
-            } else {
-                $idAuthUser = $clientModel->authClient($loginData);
-                $request->session()->put('id_client', $idAuthUser);
-                $route = redirect()->route('client.personal');
+            }
+
+            // Auth Client
+            $idAuthUser = $clientModel->authClient($loginData);
+            if (!empty($idAuthUser)) {
+                $client = Client::withTrashed()->find($idAuthUser);
+                if (!$client->trashed()) {
+                    $request->session()->put('id_client', $idAuthUser);
+                    $route = redirect()->route('client.personal');
+                }
             }
         }
 

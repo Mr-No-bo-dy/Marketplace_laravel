@@ -2,15 +2,12 @@
 
 namespace App\Models\Site;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class Review extends Model
 {
-    use HasFactory;
-
     /**
      * The table associated with the model.
      *
@@ -63,6 +60,19 @@ class Review extends Model
     }
 
     /**
+     * Read chosen entity from DB table Reviews
+     *
+     * @param int $idReview
+     * @return object
+     */
+    public function readReview(int $idReview): object
+    {
+        return DB::table($this->table)
+                ->where($this->primaryKey, $idReview)
+                ->first();
+    }
+
+    /**
      * Insert entity into DB table Reviews
      *
      * @param array $data
@@ -91,7 +101,7 @@ class Review extends Model
      *
      * @param int $idReview
      */
-    public function deleteReview(int $idReview): void
+    public function destroyReview(int $idReview): void
     {
         DB::table($this->table)
             ->where($this->primaryKey, $idReview)

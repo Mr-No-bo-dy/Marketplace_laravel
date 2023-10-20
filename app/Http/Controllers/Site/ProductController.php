@@ -40,23 +40,9 @@ class ProductController extends Controller
         // Getting Products based on filters
         $products = $this->getProducts($request, 4);
 
-        // Calculating Product's Rating
+        // Preparing Product for view
         foreach ($products as $product) {
-            $product->reviews = $product->reviews->where('status', 2);      // show only approved reviews
-
-            // Calculating average rating
-            $ratingSum = 0;
-            $ratingCount = count($product->reviews);
-            foreach ($product->reviews as $review) {
-                    $ratingSum += $review->rating;
-            }
-            $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
-            $product->avgRating = number_format($avgRating, 2);
-
-            // Formatting price
-            $marketplace = $product->seller->marketplace;
-            $product->priceFormatted = number_format($product->price, 0, '.', ' ')
-                . ' '. $marketplace->getCurrency($marketplace->currency);
+            $this->formatProduct($product);
         }
 
         $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
@@ -76,21 +62,7 @@ class ProductController extends Controller
     {
         $product = Product::find($idProduct);
 
-        $product->reviews = $product->reviews->where('status', 2);      // show only approved reviews
-
-        // Calculating Product's Rating
-        $ratingSum = 0;
-        $ratingCount = count($product->reviews);
-        foreach ($product->reviews as $review) {
-            $ratingSum += $review->rating;
-        }
-        $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
-        $product->avgRating = number_format($avgRating, 2);
-
-        // Formatting price
-        $marketplace = $product->seller->marketplace;
-        $product->priceFormatted = number_format($product->price, 0, '.', ' ')
-            . ' '. $marketplace->getCurrency($marketplace->currency);
+        $this->formatProduct($product);
 
         return view('site.products.show', compact('product'));
     }
@@ -207,13 +179,28 @@ class ProductController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteProduct')) {
+            $productModel = new Product();
+
             $idProduct = $request->post('id_product');
-            $product = Product::find($idProduct);
-            $medias = $product->media;
-            foreach ($medias as $media) {
-                $media->delete($media->id);
-            }
-            Product::destroy($idProduct);
+            $productModel->deleteProduct($idProduct);
+        }
+
+        return back();
+    }
+
+    /**
+     * Restore Product
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function restore(Request $request): RedirectResponse
+    {
+        if ($request->has('restoreProduct')) {
+            $productModel = new Product();
+
+            $idProduct = $request->post('id_product');
+            $productModel->restoreProduct($idProduct);
         }
 
         return back();

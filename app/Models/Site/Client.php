@@ -2,16 +2,16 @@
 
 namespace App\Models\Site;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Client extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -157,7 +157,7 @@ class Client extends Model
     }
 
     /**
-     * Delete entity from DB table Clients
+     * Soft-Delete entity in DB table Clients
      *
      * @param int $idClient
      */
@@ -165,10 +165,28 @@ class Client extends Model
     {
         DB::table('clients_passwords')
             ->where($this->primaryKey, $idClient)
-            ->delete();
+            ->update(['deleted_at' => date('Y-m-d H:i:s')]);
 
-        DB::table($this->table)
+        $client = self::find($idClient);
+        if ($client) {
+            $client->delete();
+        }
+    }
+
+    /**
+     * restore entity in DB table Clients
+     *
+     * @param int $idClient
+     */
+    public function restoreClient(int $idClient): void
+    {
+        DB::table('clients_passwords')
             ->where($this->primaryKey, $idClient)
-            ->delete();
+            ->update(['deleted_at' => NULL]);
+
+        $client = self::onlyTrashed()->find($idClient);
+        if ($client) {
+            $client->restore();
+        }
     }
 }

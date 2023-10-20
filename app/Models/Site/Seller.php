@@ -3,18 +3,16 @@
 namespace App\Models\Site;
 
 use App\Models\Admin\Marketplace;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Seller extends Model
 {
-    use HasFactory;
     use SoftDeletes;
 
     /**
@@ -195,7 +193,7 @@ class Seller extends Model
     }
 
     /**
-     * Delete entity from DB table Sellers
+     * Soft-Delete entity in DB table Sellers
      *
      * @param int $idSeller
      */
@@ -203,10 +201,76 @@ class Seller extends Model
     {
         DB::table('sellers_passwords')
             ->where($this->primaryKey, $idSeller)
-            ->delete();
+            ->update(['deleted_at' => date('Y-m-d H:i:s')]);
 
-        DB::table($this->table)
+        $seller = self::find($idSeller);
+        if ($seller) {
+            $seller->delete();
+        }
+    }
+
+    /**
+     * Soft-Delete entities in DB table Sellers from given Marketplace
+     *
+     * @param int $idMarketplace
+     * @return array
+     */
+    public function deleteMarketplaceSellers(int $idMarketplace): array
+    {
+        $idsSellerStds = DB::table($this->table)
+            ->select($this->primaryKey)
+            ->where('id_marketplace', $idMarketplace)
+            ->get();
+        $idsSellers = [];
+        foreach ($idsSellerStds as $std) {
+            $idsSellers[] = $std->id_seller;
+            $seller = self::find($std->id_seller);
+            if ($seller) {
+                $seller->delete();
+            }
+        }
+
+        return $idsSellers;
+    }
+
+    /**
+     * Restore entity in DB table Sellers
+     *
+     * @param int $idSeller
+     */
+    public function restoreSeller(int $idSeller): void
+    {
+        DB::table('sellers_passwords')
             ->where($this->primaryKey, $idSeller)
-            ->delete();
+            ->update(['deleted_at' => NULL]);
+
+        $seller = self::onlyTrashed()->find($idSeller);
+        if ($seller) {
+            $seller->restore();
+        }
+    }
+
+    /**
+     * Restore entities in DB table Sellers from given Marketplace
+     *
+     * @param int $idMarketplace
+     * @return array
+     */
+    public function restoreMarketplaceSellers(int $idMarketplace): array
+    {
+        $idsSellerStds = DB::table($this->table)
+            ->select($this->primaryKey)
+            ->where('id_marketplace', $idMarketplace)
+            ->get();
+        $idsSellers = [];
+        foreach ($idsSellerStds as $std) {
+            $idsSellers[] = $std->id_seller;
+            $seller = self::onlyTrashed()->find($std->id_seller);
+            if ($seller) {
+                $seller->restore();
+            }
+        }
+
+        return $idsSellers;
     }
 }

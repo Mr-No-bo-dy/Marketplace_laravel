@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Category;
+use App\Models\Admin\Subcategory;
+use App\Models\Site\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -89,7 +91,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Delete Category
+     * Delete Category, all its Subcategories & Products
      *
      * @param Request $request
      * @return RedirectResponse
@@ -98,9 +100,35 @@ class CategoryController extends Controller
     {
         if ($request->has('deleteCategory')) {
             $categoryModel = new Category();
+            $subcategoryModel = new Subcategory();
+            $productModel = new Product();
 
             $idCategory = $request->post('id_category');
+            $productModel->deleteCategoryProducts($idCategory);
+            $subcategoryModel->deleteCategorySubcategories($idCategory);
             $categoryModel->deleteCategory($idCategory);
+        }
+
+        return back();
+    }
+
+    /**
+     * Restore Category, all its Subcategories & Products
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function restore(Request $request): RedirectResponse
+    {
+        if ($request->has('restoreCategory')) {
+            $categoryModel = new Category();
+            $subcategoryModel = new Subcategory();
+            $productModel = new Product();
+
+            $idCategory = $request->post('id_category');
+            $productModel->restoreCategoryProducts($idCategory);
+            $subcategoryModel->restoreCategorySubcategories($idCategory);
+            $categoryModel->restoreCategory($idCategory);
         }
 
         return back();

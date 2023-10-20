@@ -5,12 +5,12 @@
    <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
          <div class="p-6 text-gray-900">
-            <div class="flex justify-between items-center px-6">
+            <div class="flex justify-between items-center px-8">
                <h1 class="font-bold text-2xl">{{ __('admin/sellers.title') }}</h1>
             </div>
             <ul role="list">
                @foreach ($sellers as $seller)
-               <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 ...">
+               <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 @if(!is_null($seller->deleted_at)) bg-red-100 @endif ...">
                   <div class="sm:col-span-7">
                      <b class="text-xl">{{ $seller->name }} {{ $seller->surname }}</b>
                      <p><b>{{ __('admin/sellers.marketplace') }}:</b> {{ $seller->country }}</p>
@@ -38,15 +38,6 @@
                         </button>
                      </form>
                   @endif
-{{--                  <form class="sm:col-span-1 justify-self-end self-center" action="@if (is_null($seller->deleted_at)) {{ route('admin.seller.block') }} @else {{ route('admin.seller.unblock') }} @endif" method="post">--}}
-{{--                     @csrf--}}
-{{--                      --}}
-{{--                      <input type="hidden"  name="id_seller" value="{{ $seller->id_seller }}">--}}
-{{--                     <button type="submit" name="changeSeller" value="1"--}}
-{{--                        class="rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">--}}
-{{--                        @if (is_null($seller->deleted_at)) {{ __('admin/sellers.block') }} @else {{ __('admin/sellers.unblock') }} @endif--}}
-{{--                     </button>--}}
-{{--                  </form>--}}
                </li>
                @endforeach
             </ul>

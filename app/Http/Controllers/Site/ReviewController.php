@@ -79,7 +79,7 @@ class ReviewController extends Controller
             $reviewModel = new Review();
 
             $idReview = $request->post('id_review');
-            $reviewModel->deleteReview($idReview);
+            $reviewModel->destroyReview($idReview);
         }
 
         return back();

@@ -3,12 +3,14 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Marketplace extends Model
-// class Marketplace extends Base
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *
@@ -77,15 +79,29 @@ class Marketplace extends Model
     }
 
     /**
-     * Delete entity from DB table Marketplaces
+     * Soft-Delete entity in DB table Marketplaces
      *
      * @param int $idMarketplace
      */
     public function deleteMarketplace(int $idMarketplace): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idMarketplace)
-            ->delete();
+        $marketplace = self::find($idMarketplace);
+        if ($marketplace) {
+            $marketplace->delete();
+        }
+    }
+
+    /**
+     * Restore entity in DB table Marketplaces
+     *
+     * @param int $idMarketplace
+     */
+    public function restoreMarketplace(int $idMarketplace): void
+    {
+        $marketplace = self::onlyTrashed()->find($idMarketplace);
+        if ($marketplace) {
+            $marketplace->restore();
+        }
     }
 
     /**

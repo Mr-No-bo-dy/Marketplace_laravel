@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Producer;
+use App\Models\Site\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -91,7 +92,7 @@ class ProducerController extends Controller
     }
 
     /**
-     * Delete Producer
+     * Delete Producer & all its Products
      *
      * @param Request $request
      * @return RedirectResponse
@@ -100,9 +101,31 @@ class ProducerController extends Controller
     {
         if ($request->has('deleteProducer')) {
             $producerModel = new Producer();
+            $productModel = new Product();
 
             $idProducer = $request->post('id_producer');
+            $productModel->deleteProducerProducts($idProducer);
             $producerModel->deleteProducer($idProducer);
+        }
+
+        return back();
+    }
+
+    /**
+     * Restore Producer& all its Products
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function restore(Request $request): RedirectResponse
+    {
+        if ($request->has('restoreProducer')) {
+            $producerModel = new Producer();
+            $productModel = new Product();
+
+            $idProducer = $request->post('id_producer');
+            $productModel->restoreProducerProducts($idProducer);
+            $producerModel->restoreMarketplace($idProducer);
         }
 
         return back();

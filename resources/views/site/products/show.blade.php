@@ -5,7 +5,7 @@
    <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
          <div class="p-6 text-gray-900">
-            <div class="flex justify-between items-center px-6">
+            <div class="flex justify-between items-center px-8">
                <h1 class="font-bold text-2xl">{{ $product->name }}</h1>
                <div class="sm:col-span-1 justify-self-end self-center">
                   <a class="inline-block my-2 rounded-md bg-gray-400 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
@@ -19,10 +19,10 @@
                    @endforeach
                </div>
                <div class="sm:col-span-5 py-2">
+                   <p><b>{{ __('products.producer') }}:</b> {{ $product->producer->name }}</p>
                    <p><b>{{ __('products.category') }}: </b>{{ ucfirst($product->category->name) }}</p>
-                   <p><b>{{ __('products.subcategory') }}:</b> {{ $product->subcategory->name }}</p>
-                   <p><b>{{ __('products.description') }}:</b> {{ $product->description }}</p>
                    <p><b>{{ __('products.seller') }}:</b> {{ $product->seller->name }} {{ $product->seller->surname }}</p>
+                   <p><b>{{ __('products.description') }}:</b> {{ $product->description }}</p>
                    <p><b>{{ __('products.rating') }}:</b> {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
                    <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                </div>
@@ -38,11 +38,11 @@
             </div>
 
 {{--                    Reviews--}}
-                <div class="mt-2">
+                <div class="mt-4">
                     <h2 class="text-xl font-bold leading-6 text-gray-900">{{ __('products.reviews') }}</h2>
                     <ul role="list" class="divide-y divide-gray-100">
                         @foreach($product->reviews as $review)
-                        <li class="flex justify-between gap-x-6 py-5 shadow-sm">
+                        <li class="flex justify-between gap-x-6 py-3 shadow-sm">
                             @if(!isset($editReviewId) || ($editReviewId != $review->id_review))
                                 <div class="flex min-w-0 gap-x-4">
                                     <div class="min-w-0 flex-auto">

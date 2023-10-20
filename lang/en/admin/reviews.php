@@ -11,5 +11,6 @@ return [
     'status1' => 'Unapproved',
     'status2' => 'Approved',
     'approve' => 'Approve',
-    'unapprove' => 'Unapprove',
+    'disapprove' => 'Disapprove',
+    'delete' => 'Delete',
 ];

@@ -6,4 +6,6 @@ return [
     'phone' => 'Phone',
     'count' => 'Orders\' count',
     'total' => 'Orders\' total',
+    'block' => 'Block',
+    'unblock' => 'Unblock',
 ];

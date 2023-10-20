@@ -4,14 +4,11 @@ namespace App\Models\Site;
 
 use App\Models\Site\Order;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderDetails extends Model
 {
-    use HasFactory;
-
     /**
      * The table associated with the model.
      *

@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Models\Admin\Category;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subcategory extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *
@@ -90,14 +93,66 @@ class Subcategory extends Model
     }
 
     /**
-     * Delete entity from DB table Subcategories
+     * Soft-Delete entity in DB table Subcategories
      *
      * @param int $idSubcategory
      */
     public function deleteSubcategory(int $idSubcategory): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idSubcategory)
-            ->delete();
+        $subcategory = self::find($idSubcategory);
+        if ($subcategory) {
+            $subcategory->delete();
+        }
+    }
+
+    /**
+     * Soft-Delete entities in DB table Subcategories by given Category
+     *
+     * @param int $idCategory
+     */
+    public function deleteCategorySubcategories(int $idCategory): void
+    {
+        $idsSubcategories = DB::table($this->table)
+            ->select($this->primaryKey)
+            ->where('id_category', $idCategory)
+            ->get();
+        foreach ($idsSubcategories as $std) {
+            $subcategory = self::find($std->id_subcategory);
+            if ($subcategory) {
+                $subcategory->delete();
+            }
+        }
+    }
+
+    /**
+     * Restore entity in DB table Subcategories
+     *
+     * @param int $idSubcategory
+     */
+    public function restoreSubcategory(int $idSubcategory): void
+    {
+        $subcategory = self::onlyTrashed()->find($idSubcategory);
+        if ($subcategory) {
+            $subcategory->restore();
+        }
+    }
+
+    /**
+     * Restore entities in DB table Subcategories by given Category
+     *
+     * @param int $idCategory
+     */
+    public function restoreCategorySubcategories(int $idCategory): void
+    {
+        $idsSubcategories = DB::table($this->table)
+            ->select($this->primaryKey)
+            ->where('id_category', $idCategory)
+            ->get();
+        foreach ($idsSubcategories as $std) {
+            $subcategory = self::onlyTrashed()->find($std->id_subcategory);
+            if ($subcategory) {
+                $subcategory->restore();
+            }
+        }
     }
 }

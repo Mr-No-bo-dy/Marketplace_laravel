@@ -96,4 +96,32 @@ trait Products
 
         return $products->paginate($perPage);
     }
+
+    /**
+     * Prepare Product for view.
+     *
+     * @param object $product
+     * @return object
+     */
+    public function formatProduct(object $product): object
+    {
+        // Show only approved reviews
+        $product->reviews = $product->reviews->where('status', 2);
+
+        // Calculating Product's Rating
+        $ratingSum = 0;
+        $ratingCount = count($product->reviews);
+        foreach ($product->reviews as $review) {
+            $ratingSum += $review->rating;
+        }
+        $avgRating = !empty($ratingCount) ? $ratingSum / $ratingCount : 0;
+        $product->avgRating = number_format($avgRating, 2);
+
+        // Formatting price
+        $marketplace = $product->seller->marketplace;
+        $product->priceFormatted = number_format($product->price, 0, '.', ' ')
+            . ' '. $marketplace->getCurrency($marketplace->currency);
+
+        return $product;
+    }
 }

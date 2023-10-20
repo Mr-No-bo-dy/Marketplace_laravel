@@ -7,6 +7,7 @@ return [
     'create' => 'Create',
     'update' => 'Update',
     'delete' => 'Delete',
+    'restore' => 'Restore',
     'cancel' => 'Cancel',
     'createMarketplace' => 'Create marketplace',
     'updateMarketplace' => 'Update marketplace',

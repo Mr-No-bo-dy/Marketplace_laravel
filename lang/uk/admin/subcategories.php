@@ -8,6 +8,7 @@ return [
     'create' => 'Створити',
     'update' => 'Оновити',
     'delete' => 'Видалити',
+    'restore' => 'Відновити',
     'cancel' => 'Відмінити',
     'createSubcategory' => 'Створити підкатегорію',
     'updateSubcategory' => 'Оновити підкатегорію',

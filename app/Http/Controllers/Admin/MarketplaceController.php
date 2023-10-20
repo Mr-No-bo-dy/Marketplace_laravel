@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Marketplace;
 use App\Http\Controllers\Controller;
+use App\Models\Site\Product;
+use App\Models\Site\Seller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -91,7 +93,7 @@ class MarketplaceController extends Controller
     }
 
     /**
-     * Delete Marketplace
+     * Delete Marketplace, all its Sellers & Products
      *
      * @param Request $request
      * @return RedirectResponse
@@ -100,9 +102,40 @@ class MarketplaceController extends Controller
     {
         if ($request->has('deleteMarketplace')) {
             $marketplaceModel = new Marketplace();
+            $sellerModel = new Seller();
+            $productModel = new Product();
 
             $idMarketplace = $request->post('id_marketplace');
+            $idsSeller = $sellerModel->deleteMarketplaceSellers($idMarketplace);
+            foreach ($idsSeller as $idSeller) {
+                if ($idSeller == $request->session()->get('id_seller')) {
+                    $request->session()->forget('id_seller');
+                }
+            }
+            $productModel->deleteSellersProducts($idsSeller);
             $marketplaceModel->deleteMarketplace($idMarketplace);
+        }
+
+        return back();
+    }
+
+    /**
+     * Restore Marketplace, all its Sellers & Products
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function restore(Request $request): RedirectResponse
+    {
+        if ($request->has('restoreMarketplace')) {
+            $marketplaceModel = new Marketplace();
+            $sellerModel = new Seller();
+            $productModel = new Product();
+
+            $idMarketplace = $request->post('id_marketplace');
+            $idsSeller = $sellerModel->restoreMarketplaceSellers($idMarketplace);
+            $productModel->restoreSellerProducts($idsSeller);
+            $marketplaceModel->restoreMarketplace($idMarketplace);
         }
 
         return back();

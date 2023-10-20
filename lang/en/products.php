@@ -34,4 +34,5 @@ return [
     'update' => 'Update',
     'cancel' => 'Cancel',
     'delete' => 'Delete',
+    'restore' => 'Restore',
 ];

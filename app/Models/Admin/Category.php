@@ -3,11 +3,14 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Category extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *
@@ -87,14 +90,28 @@ class Category extends Model
     }
 
     /**
-     * Delete entity from DB table Categories
+     * Soft-Delete entity in DB table Categories
      *
      * @param int $idCategory
      */
     public function deleteCategory(int $idCategory): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idCategory)
-            ->delete();
+        $category = self::find($idCategory);
+        if ($category) {
+            $category->delete();
+        }
+    }
+
+    /**
+     * Restore entity in DB table Categories
+     *
+     * @param int $idCategory
+     */
+    public function restoreCategory(int $idCategory): void
+    {
+        $category = self::onlyTrashed()->find($idCategory);
+        if ($category) {
+            $category->restore();
+        }
     }
 }

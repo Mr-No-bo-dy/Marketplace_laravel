@@ -4,21 +4,44 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientRequest;
+use App\Http\Resource\Traits\Cart;
 use App\Models\Site\Client;
 use App\Models\Site\Order;
-use App\Http\Resource\Traits\Cart;
 use App\Models\Site\OrderDetails;
+use App\Models\Site\Seller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     use Cart;
 
     /**
+     * Display a listing of the Orders to given Seller.
+     *
+     * @param Request $request
+     * @return View
+     */
+    public function index(Request $request): View
+    {
+        $sellerModel = new Seller();
+        $orderModel = new Order();
+
+        $idSeller = $request->session()->get('id_seller');
+        $seller = $sellerModel->readSeller($idSeller);
+        $orders = $orderModel->readSellerOrdersWithDetails($idSeller);
+
+        return view('site.seller.orders', compact('seller', 'orders'));
+    }
+
+    /**
      * Show the form for creating a new Order.
      *
      * @param ClientRequest $request
+     * @return View
      */
-    public function create(ClientRequest $request)
+    public function create(ClientRequest $request): View
     {
         $clientModel = new Client();
 
@@ -32,8 +55,9 @@ class OrderController extends Controller
      * Store a newly created Order in storage.
      *
      * @param ClientRequest $request
+     * @return View
      */
-    public function store(ClientRequest $request)
+    public function store(ClientRequest $request): View
     {
         $orderModel = new Order();
         $orderDetailsModel = new OrderDetails();
@@ -79,7 +103,7 @@ class OrderController extends Controller
                 $orderModel->fill($orderData)
                             ->save();
 
-                $idNewOrder = Order::latest()->first()->id_order;
+                $idNewOrder = $orderModel->getLastOrderId();
                 $orderDetailsData = [
                     'id_order' => $idNewOrder,
                     'id_product' => $product['id_product'],
@@ -94,5 +118,25 @@ class OrderController extends Controller
         }
 
         return view('site.templates.order-done');
+    }
+
+    /**
+     * Update active Orders by given Seller.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function update(Request $request): RedirectResponse
+    {
+        $orderModel = new Order();
+
+        $idOrder = $request->post('id_order');
+        if ($request->has('order_accept')) {
+            $orderModel->updateSellerOrders($idOrder, ['status' => 'processed']);
+        } elseif ($request->has('order_decline')) {
+            $orderModel->updateSellerOrders($idOrder, ['status' => 'declined']);
+        }
+
+        return redirect()->route('order.my_orders');
     }
 }

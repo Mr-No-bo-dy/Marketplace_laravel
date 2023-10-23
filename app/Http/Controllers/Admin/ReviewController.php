@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\Review;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -11,8 +12,10 @@ class ReviewController extends Controller
 {
     /**
      * Display a listing of the Reviews.
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $reviews = Review::all();
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
@@ -17,7 +18,7 @@ class ProductRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request for Storing Product.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -27,7 +28,7 @@ class ProductRequest extends FormRequest
             'id_subcategory' => ['int'],
             'id_seller' => ['int'],
             'name' => ['string', 'max:255'],
-            'description' => ['string', 'max:255'],
+            'description' => ['string', 'max:511'],
             'price' => ['int'],
             'amount' => ['int'],
         ];

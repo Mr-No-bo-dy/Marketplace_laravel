@@ -64,7 +64,7 @@
                          @endforeach
                      </div>
                      <a class="inline-block px-5 py-3 rounded-md text-xl font-semibold text-white bg-blue-600 shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                        href="{{ route('create_order') }}">{{ __('cart.order') }}</a>
+                        href="{{ route('order.create') }}">{{ __('cart.order') }}</a>
                  </div>
             @endif
          </div>

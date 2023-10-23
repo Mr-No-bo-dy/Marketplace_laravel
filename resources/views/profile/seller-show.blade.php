@@ -28,9 +28,9 @@
                </form>
             </div>
                 <a class="inline-block rounded-md bg-green-500 my-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
-                   href="{{ route('seller.my_products') }}">{{ __('site_profile.myProducts') }}</a>
+                   href="{{ route('product.my_products') }}">{{ __('site_profile.myProducts') }}</a>
                 <a class="inline-block rounded-md bg-green-500 my-4 ms-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
-                   href="{{ route('seller.my_orders') }}">{{ __('site_profile.myOrders') }}</a>
+                   href="{{ route('order.my_orders') }}">{{ __('site_profile.myOrders') }}</a>
          </div>
       </div>
    </div>

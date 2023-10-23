@@ -42,6 +42,16 @@ class Producer extends Model
     }
 
     /**
+     * Read all entities' ids & names from DB table Producers
+     *
+     * @return Collection
+     */
+    public function readProducersNames(): Collection
+    {
+        return self::all([$this->primaryKey, 'name']);
+    }
+
+    /**
      * Read one entity from DB table Producers
      *
      * @param int $idProducer

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Category;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,10 @@ class CategoryController extends Controller
 {
     /**
      * Display a listing of the Categories.
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $categoryModel = new Category();
 
@@ -25,8 +28,10 @@ class CategoryController extends Controller
 
     /**
      * Display Category creation form
+     *
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin.categories.create');
     }
@@ -58,8 +63,9 @@ class CategoryController extends Controller
      * Display Category update form
      *
      * @param int $idCategory
+     * @return View
      */
-    public function edit(int $idCategory)
+    public function edit(int $idCategory): View
     {
         $categoryModel = new Category();
 

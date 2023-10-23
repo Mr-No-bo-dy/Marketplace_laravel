@@ -42,6 +42,19 @@ class Marketplace extends Model
     }
 
     /**
+     * Read all active entities' names in DB table Marketplaces
+     *
+     * @return Collection
+     */
+    public function readMarketplacesNames(): Collection
+    {
+        return DB::table($this->table)
+                ->select(['id_marketplace', 'country'])
+                ->where('deleted_at', null)
+                ->get();
+    }
+
+    /**
      * Read one entity from DB table Marketplaces
      *
      * @param int $idProducer

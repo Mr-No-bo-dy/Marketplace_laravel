@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Admin\Marketplace;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Marketplace;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,10 @@ class MarketplaceController extends Controller
 {
     /**
      * Display all Marketplaces
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $marketplaceModel = new Marketplace();
 
@@ -25,8 +28,10 @@ class MarketplaceController extends Controller
 
     /**
      * Display Marketplace creation form
+     *
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin.marketplaces.create');
     }
@@ -59,8 +64,9 @@ class MarketplaceController extends Controller
      * Display Marketplace update form
      *
      * @param int $idMarketplace
+     * @return View
      */
-    public function edit(int $idMarketplace)
+    public function edit(int $idMarketplace): View
     {
         $marketplaceModel = new Marketplace();
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Producer;
 use App\Models\Site\Product;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -12,8 +13,10 @@ class ProducerController extends Controller
 {
     /**
      * Display a listing of the Producers
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $producerModel = new Producer();
 
@@ -24,8 +27,10 @@ class ProducerController extends Controller
 
     /**
      * Display Producer creation form
+     *
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin.producers.create');
     }
@@ -58,8 +63,9 @@ class ProducerController extends Controller
      * Display Producer update form
      *
      * @param int $idProducer
+     * @return View
      */
-    public function edit(int $idProducer)
+    public function edit(int $idProducer): View
     {
         $producerModel = new Producer();
 

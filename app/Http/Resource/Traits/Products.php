@@ -2,8 +2,6 @@
 
 namespace App\Http\Resource\Traits;
 
-use App\Models\Site\Product;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 
 trait Products
@@ -57,44 +55,6 @@ trait Products
         }
 
         return $filters;
-    }
-
-    /**
-     * Getting Products based on filters.
-     *
-     * @param Request $request
-     * @param int $perPage
-     * @return LengthAwarePaginator
-     */
-    public function getProducts(Request $request, int $perPage = 5): LengthAwarePaginator
-    {
-        $products = Product::query();
-
-        $filters = $this->getFilters($request);
-
-        if (!empty($filters['id_producer'])) {
-            $products->where('id_producer',$filters['id_producer']);
-        }
-        if (!empty($filters['id_category'])) {
-            $products->where('id_category',$filters['id_category']);
-        }
-        if (!empty($filters['id_subcategory'])) {
-            $products->where('id_subcategory',$filters['id_subcategory']);
-        }
-        if (!empty($filters['id_seller'])) {
-            $products->where('id_seller',$filters['id_seller']);
-        }
-        if (!empty($filters['name'])) {
-            $products->where('name','like', '%' . $filters['name'] . '%');
-        }
-        if (!empty($filters['price']['min'])) {
-            $products->where('price', '>=', $filters['price']['min']);
-        }
-        if (!empty($filters['price']['max'])) {
-            $products->where('price', '<=', $filters['price']['max']);
-        }
-
-        return $products->paginate($perPage);
     }
 
     /**

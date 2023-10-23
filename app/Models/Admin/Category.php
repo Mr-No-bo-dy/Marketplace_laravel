@@ -41,15 +41,13 @@ class Category extends Model
     }
 
     /**
-     * Read all entities ids & names from DB table Categories
+     * Read all entities' ids & names from DB table Categories
      *
      * @return Collection
      */
     public function readCategoriesNames(): Collection
     {
-        return DB::table($this->table)
-                    ->select($this->primaryKey, 'name')
-                    ->get();
+        return self::all([$this->primaryKey, 'name']);
     }
 
     /**

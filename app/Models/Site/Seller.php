@@ -67,7 +67,7 @@ class Seller extends Model
     }
 
     /**
-     * Check if loggining user exists in DB table Sellers
+     * Check if loggining user exists & not soft-deleted in DB table Sellers
      *
      * @param array $data
      * @return int|void
@@ -83,6 +83,7 @@ class Seller extends Model
             $builder = DB::table($this->table)
                         ->select(['id_seller', 'id_marketplace', 'name', 'surname', 'email', 'phone'])
                         ->where($field, $data['login'])
+                        ->where('deleted_at', null)
                         ->get();
             foreach ($builder as $row) {
                 $seller = $row;
@@ -128,6 +129,16 @@ class Seller extends Model
                 ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
                 ->where($this->primaryKey, $idSeller)
                 ->first();
+    }
+
+    /**
+     * Read all entities' ids, names & surnames from DB table Sellers
+     *
+     * @return Collection
+     */
+    public function readSellersNames(): Collection
+    {
+        return self::all([$this->primaryKey, 'name', 'surname']);
     }
 
     /**
@@ -242,7 +253,7 @@ class Seller extends Model
     {
         DB::table('sellers_passwords')
             ->where($this->primaryKey, $idSeller)
-            ->update(['deleted_at' => NULL]);
+            ->update(['deleted_at' => null]);
 
         $seller = self::onlyTrashed()->find($idSeller);
         if ($seller) {

@@ -75,8 +75,8 @@ Route::prefix('{locale}')->group(function () {
         Route::post('/cart', 'index')->name('cart');
     });
     Route::controller(OrderController::class)->group(function () {
-        Route::get('/create_order', 'create')->name('create_order');
-        Route::post('/make_order', 'store')->name('make_order');
+        Route::get('/order/create', 'create')->name('order.create');
+        Route::post('/order/make', 'store')->name('order.make');
     });
 
     Route::middleware('authClient')->group(function () {
@@ -95,18 +95,20 @@ Route::prefix('{locale}')->group(function () {
     Route::middleware('authSeller')->group(function () {
         Route::controller(SiteSellerController::class)->group(function () {
             Route::get('/seller/personal', 'show')->name('seller.personal');
-            Route::get('/seller/my_products', 'sellerProducts')->name('seller.my_products');
-            Route::get('/seller/my_orders', 'sellerOrders')->name('seller.my_orders');
-            Route::post('/seller/my_orders', 'sellerOrdersUpdate')->name('seller.my_orders');
             Route::post('/seller/update', 'update')->name('seller.update');
             Route::post('/seller/delete', 'destroy')->name('seller.delete');
         });
         Route::controller(ProductController::class)->group(function () {
+            Route::get('/product/my_products', 'sellerProducts')->name('product.my_products');
             Route::get('/product/create', 'create')->name('product.create');
             Route::post('/product/store', 'store')->name('product.store');
             Route::post('/product/update', 'update')->name('product.update');
             Route::post('/product/delete', 'destroy')->name('product.delete');
             Route::post('/product/restore', 'restore')->name('product.restore');
+        });
+        Route::controller(OrderController::class)->group(function () {
+            Route::get('/order/my_orders', 'index')->name('order.my_orders');
+            Route::post('/order/my_orders', 'update')->name('order.my_orders');
         });
     });
 

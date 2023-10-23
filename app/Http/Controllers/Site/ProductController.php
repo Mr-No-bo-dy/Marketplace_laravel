@@ -11,9 +11,9 @@ use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -26,24 +26,32 @@ class ProductController extends Controller
     * Display a listing of the Products.
      *
      * @param Request $request
+     * @return View
     */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $producers = Producer::all();
-        $categories = Category::all();
-        $subcategories = Subcategory::all();
-        $sellers = Seller::all();
+        $productModel = new Product();
+        $producerModel = new Producer();
+        $categoryModel = new Category();
+        $subcategoryModel = new Subcategory();
+        $sellerModel = new Seller();
 
-        // Forming the filters for Products
+        // Using the filters for Products
         $filters = $this->getFilters($request);
 
         // Getting Products based on filters
-        $products = $this->getProducts($request, 4);
+        $products = $productModel->readProducts($filters, 4);
 
         // Preparing Product for view
         foreach ($products as $product) {
             $this->formatProduct($product);
         }
+
+        // Getting additional data
+        $producers = $producerModel->readProducersNames();
+        $categories = $categoryModel->readCategoriesNames();
+        $subcategories = $subcategoryModel->readSubcategoriesNames();
+        $sellers = $sellerModel->readSellersNames();
 
         $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
         $categoriesSelect = new HtmlString($this->customSelectData($categories, 'category', $filters));
@@ -54,14 +62,32 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a listing of the Products from given Seller.
+     *
+     * @param Request $request
+     * @return View
+     */
+    public function sellerProducts(Request $request): View
+    {
+        $productModel = new Product();
+
+        $idSeller = $request->session()->get('id_seller');
+        $products = $productModel->readSellerProducts($idSeller);
+
+        return view('site.seller.products', compact('products'));
+    }
+
+    /**
      * Display one chosen Product.
      *
      * @param int $idProduct
+     * @return View
      */
-    public function show(int $idProduct)
+    public function show(int $idProduct): View
     {
-        $product = Product::find($idProduct);
+        $productModel = new Product();
 
+        $product = $productModel->readProduct($idProduct);
         $this->formatProduct($product);
 
         return view('site.products.show', compact('product'));
@@ -69,13 +95,20 @@ class ProductController extends Controller
 
     /**
      * Display Product creation form
+     *
+     * @param Request $request
+     * @return View
      */
-    public function create()
+    public function create(Request $request): View
     {
-        $producers = Producer::all(['id_producer', 'name']);
-        $categories = Category::all(['id_category', 'name']);
-        $subcategories = Subcategory::all(['id_subcategory', 'name']);
-        $idSeller = Session::get('id_seller');
+        $producerModel = new Producer();
+        $categoryModel = new Category();
+        $subcategoryModel = new Subcategory();
+
+        $idSeller = $request->session()->get('id_seller');
+        $producers = $producerModel->readProducersNames();
+        $categories = $categoryModel->readCategoriesNames();
+        $subcategories = $subcategoryModel->readSubcategoriesNames();
 
         return view('site.products.create', compact('idSeller', 'producers', 'categories', 'subcategories'));
     }
@@ -106,20 +139,26 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('seller.my_products');
+        return redirect()->route('product.my_products');
     }
 
     /**
      * Display Product update form
      *
      * @param int $idProduct
+     * @return View
      */
-    public function edit(int $idProduct)
+    public function edit(int $idProduct): View
     {
-        $product = Product::find($idProduct);
-        $producers = Producer::all(['id_producer', 'name']);
-        $categories = Category::all(['id_category', 'name']);
-        $subcategories = Subcategory::all(['id_subcategory', 'name']);
+        $productModel = new Product();
+        $producerModel = new Producer();
+        $categoryModel = new Category();
+        $subcategoryModel = new Subcategory();
+
+        $product = $productModel->readProduct($idProduct);
+        $producers = $producerModel->readProducersNames();
+        $categories = $categoryModel->readCategoriesNames();
+        $subcategories = $subcategoryModel->readSubcategoriesNames();
 
         return view('site.products.update', compact('product', 'producers', 'categories', 'subcategories'));
     }
@@ -167,7 +206,7 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('seller.my_products');
+        return redirect()->route('product.my_products');
     }
 
     /**

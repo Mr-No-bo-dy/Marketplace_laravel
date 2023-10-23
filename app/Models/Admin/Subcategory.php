@@ -56,6 +56,16 @@ class Subcategory extends Model
     }
 
     /**
+     * Read all entities' ids & names from DB table Subcategories
+     *
+     * @return Collection
+     */
+    public function readSubcategoriesNames(): Collection
+    {
+        return self::all([$this->primaryKey, 'name']);
+    }
+
+    /**
      * Read one entity from DB table Subcategories
      *
      * @param int $idSubcategory

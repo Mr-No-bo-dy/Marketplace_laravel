@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\Product;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Resource\Traits\Cart;
@@ -21,10 +22,12 @@ class CartController extends Controller
     public function store(Request $request): RedirectResponse
     {
         if ($request->has('addToCart')) {
+            $productModel = new Product();
+
             $idProduct = $request->post('id_product');
             $price = $request->post('price');
-            $product = Product::find($idProduct);
-            $idMarketplace = $product->seller->id_marketplace;
+            $product = $productModel->readProduct($idProduct);
+            $idMarketplace = $productModel->readSellerProductMarket($idProduct);
             $cartProduct = $request->session()->get('cart.products.' . $idProduct);
 
             // Saving cart's Products data
@@ -72,8 +75,9 @@ class CartController extends Controller
      * Displaying & Updating a listing of the Cart
      *
      * @param Request $request
+     * @return View
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         if ($request->session()->missing('cart')) {
             return view('site.cart.index');

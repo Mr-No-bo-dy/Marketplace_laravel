@@ -2,11 +2,13 @@
 
 namespace App\Models\Site;
 
+use App\Http\Resource\Traits\Products;
 use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Seller;
 use App\Models\Site\Review;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +20,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Product extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia;
+    use SoftDeletes, InteractsWithMedia, Products;
 
     /**
      * The table associated with the model.
@@ -105,6 +107,42 @@ class Product extends Model implements HasMedia
     }
 
     /**
+     * Getting all Products based on filters.
+     *
+     * @param mixed $filters
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function readProducts(mixed $filters, int $perPage = 5): LengthAwarePaginator
+    {
+        $products = self::query();
+
+        if (!empty($filters['id_producer'])) {
+            $products->where('id_producer',$filters['id_producer']);
+        }
+        if (!empty($filters['id_category'])) {
+            $products->where('id_category',$filters['id_category']);
+        }
+        if (!empty($filters['id_subcategory'])) {
+            $products->where('id_subcategory',$filters['id_subcategory']);
+        }
+        if (!empty($filters['id_seller'])) {
+            $products->where('id_seller',$filters['id_seller']);
+        }
+        if (!empty($filters['name'])) {
+            $products->where('name','like', '%' . $filters['name'] . '%');
+        }
+        if (!empty($filters['price']['min'])) {
+            $products->where('price', '>=', $filters['price']['min']);
+        }
+        if (!empty($filters['price']['max'])) {
+            $products->where('price', '<=', $filters['price']['max']);
+        }
+
+        return $products->paginate($perPage);
+    }
+
+    /**
      * Read all entities from DB table Products with given Seller
      *
      * @param int $idSeller
@@ -116,6 +154,33 @@ class Product extends Model implements HasMedia
                     ->withTrashed()
                     ->where('id_seller', $idSeller)
                     ->get();
+    }
+
+    /**
+     * Read one entity from DB table Products
+     *
+     * @param int $idProduct
+     * @return object
+     */
+    public function readProduct(int $idProduct): object
+    {
+        return self::find($idProduct);
+    }
+
+
+    /**
+     * Read Product's 'id_marketplace' by given Product
+     *
+     * @param int $idProduct
+     * @return int
+     */
+    public function readSellerProductMarket(int $idProduct): int
+    {
+        return DB::table($this->table)
+                    ->select('s.id_marketplace')
+                    ->join('sellers as s', $this->table . '.id_seller', '=', 's.id_seller')
+                    ->where($this->table . '.id_product', $idProduct)
+                    ->first()->id_marketplace;
     }
 
     /**

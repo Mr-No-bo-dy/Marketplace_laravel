@@ -2,6 +2,8 @@
 
 namespace App\Http\Resource\Traits;
 
+use Illuminate\Contracts\View\View;
+
 trait Components
 {
     /**
@@ -10,8 +12,9 @@ trait Components
      * @param mixed $entities
      * @param string $type
      * @param array $filters
+     * @return View
      */
-    public function customSelectData(mixed $entities, string $type, array $filters = [])
+    public function customSelectData(mixed $entities, string $type, array $filters = []): View
     {
         if (!is_array($entities)) {
             $entities = $entities->toArray();

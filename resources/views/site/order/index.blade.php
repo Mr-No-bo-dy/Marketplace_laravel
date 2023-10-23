@@ -29,7 +29,7 @@
                                 </li>
                             @endforeach
                         </ul>
-                        <form action="{{ route('make_order') }}" method="post">
+                        <form action="{{ route('order.make') }}" method="post">
                             @csrf
 
                             <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">

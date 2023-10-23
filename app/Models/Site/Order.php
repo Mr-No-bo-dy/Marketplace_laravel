@@ -4,6 +4,7 @@ namespace App\Models\Site;
 
 use App\Models\Site\Client;
 use App\Models\Site\Seller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,5 +60,56 @@ class Order extends Model
     public function orderDetails(): HasOne
     {
         return $this->hasOne(OrderDetails::class, 'id_order', 'id_order');
+    }
+
+    /**
+     * Read all entities in DB table Orders by given Seller
+     *
+     * @param int $idSeller
+     * @return Collection
+     */
+    public function readSellerOrdersWithDetails(int $idSeller): Collection
+    {
+        return DB::table($this->table)
+                ->selectRaw('o.*,
+                    od.id_product,
+                    od.count,
+                    od.total,
+                    c.name as client_name,
+                    c.surname as client_surname,
+                    c.email as client_email,
+                    c.phone as client_phone')
+                ->distinct()
+                ->join('orders as o', 'o.id_seller', '=', $this->table . '.id_seller')
+                ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
+                ->join('clients as c', 'o.id_client', '=', 'c.id_client')
+                ->where($this->table . '.id_seller', $idSeller)
+                ->orderBy('o.created_at', 'desc')
+                ->get();
+    }
+
+    /**
+     * Read last entity's ID in DB table Orders
+     *
+     * @return int
+     */
+    public function getLastOrderId(): int
+    {
+        return DB::table($this->table)
+                ->latest()
+                ->first()->id_order;
+    }
+
+    /**
+     * Update entity in DB table Orders
+     *
+     * @param int $idOrder
+     * @param array $data
+     */
+    public function updateSellerOrders(int $idOrder, array $data): void
+    {
+        DB::table($this->table)
+            ->where($this->table . '.id_order', $idOrder)
+            ->update($data);
     }
 }

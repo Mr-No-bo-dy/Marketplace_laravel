@@ -24,26 +24,34 @@ class GeneralController extends Controller
 
     /**
      * Display site's Home page.
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         return view('index');
     }
 
     /**
      * Show the form for Registering a new Seller.
+     *
+     * @return View
      */
-    public function registerSeller()
+    public function registerSeller(): View
     {
-        $marketplaces = Marketplace::all(['id_marketplace', 'country']);
+        $marketplaceModel = new Marketplace();
+
+        $marketplaces = $marketplaceModel->readMarketplacesNames();
 
         return view('authenticate.register-seller', compact('marketplaces'));
     }
 
     /**
      * Show the form for Registering a new Client.
+     *
+     * @return View
      */
-    public function registerClient()
+    public function registerClient(): View
     {
         return view('authenticate.register-client');
     }
@@ -127,14 +135,14 @@ class GeneralController extends Controller
      */
     public function auth(Request $request): View|RedirectResponse
     {
-        $sellerModel = new Seller();
-        $clientModel = new Client();
-
         if ($request->session()->has('id_seller')) {
             return redirect()->route('seller.personal');
         } elseif ($request->session()->has('id_client')) {
             return redirect()->route('client.personal');
         }
+
+        $sellerModel = new Seller();
+        $clientModel = new Client();
 
         $route = view('authenticate.login');
 
@@ -147,21 +155,15 @@ class GeneralController extends Controller
             // Auth Seller
             $idAuthUser = $sellerModel->authSeller($loginData);
             if (!empty($idAuthUser)) {
-                $seller = Seller::withTrashed()->find($idAuthUser);
-                if (!$seller->trashed()) {
-                    $request->session()->put('id_seller', $idAuthUser);
-                    $route = redirect()->route('seller.personal');
-                }
+                $request->session()->put('id_seller', $idAuthUser);
+                $route = redirect()->route('seller.personal');
             }
 
             // Auth Client
             $idAuthUser = $clientModel->authClient($loginData);
             if (!empty($idAuthUser)) {
-                $client = Client::withTrashed()->find($idAuthUser);
-                if (!$client->trashed()) {
-                    $request->session()->put('id_client', $idAuthUser);
-                    $route = redirect()->route('client.personal');
-                }
+                $request->session()->put('id_client', $idAuthUser);
+                $route = redirect()->route('client.personal');
             }
         }
 

@@ -44,7 +44,7 @@ class Client extends Model
     }
 
     /**
-     * Check if loggining user exists in DB table Clients
+     * Check if loggining user exists& not soft-deleted in DB table Clients
      *
      * @param array $data
      * @return int|void
@@ -60,6 +60,7 @@ class Client extends Model
             $builder = DB::table($this->table)
                         ->select(['id_client', 'name', 'surname', 'email', 'phone'])
                         ->where($field, $data['login'])
+                        ->where('deleted_at', null)
                         ->get();
             foreach ($builder as $row) {
                 $client = $row;
@@ -182,7 +183,7 @@ class Client extends Model
     {
         DB::table('clients_passwords')
             ->where($this->primaryKey, $idClient)
-            ->update(['deleted_at' => NULL]);
+            ->update(['deleted_at' => null]);
 
         $client = self::onlyTrashed()->find($idClient);
         if ($client) {

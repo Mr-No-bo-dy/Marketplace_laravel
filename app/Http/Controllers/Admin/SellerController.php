@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -12,8 +13,10 @@ class SellerController extends Controller
 {
     /**
      * Display a listing of the Sellers.
+     *
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         $sellerModel = new Seller();
 

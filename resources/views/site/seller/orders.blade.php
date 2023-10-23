@@ -21,7 +21,7 @@
                                     <p><b>{{ __('seller_orders.date') }}</b> {{ $order->date }}</p>
                                 </div>
                                 @if($order->status != 'processed')
-                                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('seller.my_orders') }}" method="post">
+                                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('order.my_orders') }}" method="post">
                                         @csrf
 
                                         <input type="hidden" name="id_order" value="{{ $order->id_order }}">
@@ -31,7 +31,7 @@
                                         </button>
                                     </form>
                                 @else
-                                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('seller.my_orders') }}" method="post">
+                                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('order.my_orders') }}" method="post">
                                         @csrf
 
                                         <input type="hidden" name="id_order" value="{{ $order->id_order }}">

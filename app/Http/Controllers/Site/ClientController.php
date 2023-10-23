@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\Client;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,8 +15,9 @@ class ClientController extends Controller
      * Show one Client's personal page.
      *
      * @param Request $request
+     * @return View
      */
-    public function show(Request $request)
+    public function show(Request $request): View
     {
         $idClient = $request->session()->get('id_client');
         $clientModel = new Client();
@@ -29,8 +31,9 @@ class ClientController extends Controller
      * Show the form for editing the specified Client.
      *
      * @param int $idClient
+     * @return View
      */
-    public function edit(int $idClient)
+    public function edit(int $idClient): View
     {
         $clientModel = new Client();
 

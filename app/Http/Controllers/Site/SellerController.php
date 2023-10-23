@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Marketplace;
-use App\Models\Site\Client;
-use App\Models\Site\Order;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,94 +17,31 @@ class SellerController extends Controller
      * Show one Seller's personal page.
      *
      * @param Request $request
+     * @return View
      */
-    public function show(Request $request)
+    public function show(Request $request): View
     {
-        $idSeller = $request->session()->get('id_seller');
         $sellerModel = new Seller();
 
+        $idSeller = $request->session()->get('id_seller');
         $seller = $sellerModel->readSellerWithCountry($idSeller);
 
         return view('profile.seller-show', compact('seller'));
     }
 
     /**
-     * Display a listing of the Products from given Seller.
-     *
-     * @param Request $request
-     */
-    public function sellerProducts(Request $request)
-    {
-        $productModel = new Product();
-
-        $idSeller = $request->session()->get('id_seller');
-        $products = $productModel->readSellerProducts($idSeller);
-
-        return view('site.seller.products', compact('products'));
-    }
-
-    /**
-     * Display a listing of the Orders from given Seller.
-     *
-     * @param Request $request
-     */
-    public function sellerOrders(Request $request)
-    {
-        $idSeller = $request->session()->get('id_seller');
-        $seller = Seller::find($idSeller);
-        $orders = $seller->orders;
-
-        foreach ($orders as $order) {
-            if (isset($order->orderDetails)) {
-                $order->id_product = $order->orderDetails->id_product;
-                $order->count = $order->orderDetails->count;
-                $order->total = $order->orderDetails->total;
-            }
-
-            $idClient = $order->id_client;
-            $client = Client::find($idClient);
-            if ($client) {
-                $order->client_name = $client->name;
-                $order->client_surname = $client->surname;
-                $order->client_email = $client->email;
-                $order->client_phone = $client->phone;
-            }
-        }
-
-        return view('site.seller.orders', compact('seller', 'orders'));
-    }
-
-    /**
-     * Update active Orders from given Seller.
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function sellerOrdersUpdate(Request $request): RedirectResponse
-    {
-        $idOrder = $request->post('id_order');
-        if ($request->has('order_accept')) {
-            Order::where('id_order', $idOrder)
-                    ->update(['status' => 'processed']);
-        } elseif ($request->has('order_decline')) {
-            Order::where('id_order', $idOrder)
-                    ->update(['status' => 'declined']);
-        }
-
-        return redirect()->route('seller.my_orders');
-    }
-
-    /**
      * Show the form for editing the specified Seller.
      *
      * @param int $idSeller
+     * @return View
      */
-    public function edit($idSeller)
+    public function edit(int $idSeller): View
     {
         $sellerModel = new Seller();
+        $marketplaceModel = new Marketplace();
 
         $seller = $sellerModel->readSeller($idSeller);
-        $marketplaces = Marketplace::all(['id_marketplace', 'country']);
+        $marketplaces = $marketplaceModel->readMarketplacesNames();
 
         return view('profile.seller-update', compact('marketplaces', 'seller'));
     }

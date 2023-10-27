@@ -44,8 +44,9 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
-                <form class="me-3" action="{{ route('switchLanguage') }}" method="post">
+                <form class="me-3" action="{{ route('switchLanguage') }}" method="POST">
                     @csrf
+                    
                     <button class="inline-block me-2 font-medium text-gray-500 hover:text-gray-700"  type="submit" name="lang" value="uk">UK</button>
                     <button class="inline-block me-2 font-medium text-gray-500 hover:text-gray-700"  type="submit" name="lang" value="en">EN</button>
                 </form>

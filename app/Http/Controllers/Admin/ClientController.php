@@ -37,9 +37,6 @@ class ClientController extends Controller
 
             $idClient = $request->post('id_client');
             $clientModel->deleteClient($idClient);
-            if ($idClient == $request->session()->get('id_client')) {
-                $request->session()->forget('id_client');
-            }
         }
 
         return back();

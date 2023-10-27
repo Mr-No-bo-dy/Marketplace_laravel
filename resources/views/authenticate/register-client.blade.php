@@ -7,7 +7,7 @@
     </div>
 
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <form class="space-y-6" action="{{ route('registration_client') }}" method="post">
+        <form class="space-y-6" action="{{ route('registration_client') }}" method="POST">
             @csrf
 
             <div>

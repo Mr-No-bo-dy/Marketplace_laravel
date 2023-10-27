@@ -45,7 +45,13 @@ class OrderController extends Controller
     {
         $clientModel = new Client();
 
-        $client = $clientModel->readClient($request->session()->get('id_client'));
+        $idClient = $request->session()->get('id_client');
+        if ($idClient) {
+            $client = $clientModel->readClient($idClient);
+        } else {
+            $client = null;
+        }
+
         extract($this->getCartData($request));
 
         return view('site.order.index', compact('client', 'products', 'cartProductsData', 'cartMarketsData', 'totalQuantity'));
@@ -75,14 +81,14 @@ class OrderController extends Controller
             'email' => $request->post('email'),
         ],
         [
-            'phone' => $request->post('phone'),
+            'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
             'name' => $request->post('name'),
             'surname' => $request->post('surname'),
         ]);
 
         // Additionally, if the existing customer's data from the form is different, update it in the DB.
         $client->email = $request->post('email');
-        $client->phone = $request->post('phone');
+        $client->phone = preg_replace("#[^0-9]#", "", $request->post('tel'));
         $client->name = $request->post('name');
         $client->surname = $request->post('surname');
         if ($client->isDirty()) {

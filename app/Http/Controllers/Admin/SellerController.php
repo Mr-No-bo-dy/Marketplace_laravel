@@ -40,9 +40,6 @@ class SellerController extends Controller
             $idSeller = $request->post('id_seller');
             $productModel->deleteSellersProducts([$idSeller]);
             $sellerModel->deleteSeller($idSeller);
-            if ($idSeller == $request->session()->get('id_seller')) {
-                $request->session()->forget('id_seller');
-            }
         }
 
         return back();

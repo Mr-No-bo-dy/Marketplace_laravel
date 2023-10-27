@@ -82,33 +82,33 @@ Route::prefix('{locale}')->group(function () {
     Route::middleware('authClient')->group(function () {
         Route::controller(SiteClientController::class)->group(function () {
             Route::get('/client/personal', 'show')->name('client.personal');
-            Route::post('/client/update', 'update')->name('client.update');
-            Route::post('/client/delete', 'destroy')->name('client.delete');
+            Route::patch('/client/update', 'update')->name('client.update');
+            Route::delete('/client/delete', 'destroy')->name('client.delete');
         });
         Route::controller(SiteReviewController::class)->group(function () {
             Route::post('/review/add', 'store')->name('review.add');
-            Route::post('/review/update', 'update')->name('review.update');
-            Route::post('/review/destroy', 'destroy')->name('review.destroy');
+            Route::patch('/review/update', 'update')->name('review.update');
+            Route::delete('/review/destroy', 'destroy')->name('review.destroy');
         });
     });
 
     Route::middleware('authSeller')->group(function () {
         Route::controller(SiteSellerController::class)->group(function () {
             Route::get('/seller/personal', 'show')->name('seller.personal');
-            Route::post('/seller/update', 'update')->name('seller.update');
-            Route::post('/seller/delete', 'destroy')->name('seller.delete');
+            Route::patch('/seller/update', 'update')->name('seller.update');
+            Route::delete('/seller/delete', 'destroy')->name('seller.delete');
         });
         Route::controller(ProductController::class)->group(function () {
             Route::get('/product/my_products', 'sellerProducts')->name('product.my_products');
             Route::get('/product/create', 'create')->name('product.create');
             Route::post('/product/store', 'store')->name('product.store');
-            Route::post('/product/update', 'update')->name('product.update');
-            Route::post('/product/delete', 'destroy')->name('product.delete');
-            Route::post('/product/restore', 'restore')->name('product.restore');
+            Route::patch('/product/update', 'update')->name('product.update');
+            Route::delete('/product/delete', 'destroy')->name('product.delete');
+            Route::patch('/product/restore', 'restore')->name('product.restore');
         });
         Route::controller(OrderController::class)->group(function () {
             Route::get('/order/my_orders', 'index')->name('order.my_orders');
-            Route::post('/order/my_orders', 'update')->name('order.my_orders');
+            Route::patch('/order/my_orders', 'update')->name('order.my_orders');
         });
     });
 
@@ -128,47 +128,47 @@ Route::prefix('{locale}')->group(function () {
                 Route::get('/marketplace', 'index')->name('admin.marketplace');
                 Route::get('/marketplace/create', 'create')->name('admin.marketplace.create');
                 Route::post('/marketplace/store', 'store')->name('admin.marketplace.store');
-                Route::post('/marketplace/update', 'update')->name('admin.marketplace.update');
-                Route::post('/marketplace/delete', 'destroy')->name('admin.marketplace.delete');
-                Route::post('/marketplace/restore', 'restore')->name('admin.marketplace.restore');
+                Route::patch('/marketplace/update', 'update')->name('admin.marketplace.update');
+                Route::delete('/marketplace/delete', 'destroy')->name('admin.marketplace.delete');
+                Route::patch('/marketplace/restore', 'restore')->name('admin.marketplace.restore');
             });
             Route::controller(ProducerController::class)->group(function () {
                 Route::get('/producer', 'index')->name('admin.producer');
                 Route::get('/producer/create', 'create')->name('admin.producer.create');
                 Route::post('/producer/store', 'store')->name('admin.producer.store');
-                Route::post('/producer/update', 'update')->name('admin.producer.update');
-                Route::post('/producer/delete', 'destroy')->name('admin.producer.delete');
-                Route::post('/producer/restore', 'restore')->name('admin.producer.restore');
+                Route::patch('/producer/update', 'update')->name('admin.producer.update');
+                Route::delete('/producer/delete', 'destroy')->name('admin.producer.delete');
+                Route::patch('/producer/restore', 'restore')->name('admin.producer.restore');
             });
             Route::controller(CategoryController::class)->group(function () {
                 Route::get('/category', 'index')->name('admin.category');
                 Route::get('/category/create', 'create')->name('admin.category.create');
                 Route::post('/category/store', 'store')->name('admin.category.store');
-                Route::post('/category/update', 'update')->name('admin.category.update');
-                Route::post('/category/delete', 'destroy')->name('admin.category.delete');
-                Route::post('/category/restore', 'restore')->name('admin.category.restore');
+                Route::patch('/category/update', 'update')->name('admin.category.update');
+                Route::delete('/category/delete', 'destroy')->name('admin.category.delete');
+                Route::patch('/category/restore', 'restore')->name('admin.category.restore');
             });
             Route::controller(SubcategoryController::class)->group(function () {
                 Route::get('/subcategory', 'index')->name('admin.subcategory');
                 Route::get('/subcategory/create', 'create')->name('admin.subcategory.create');
                 Route::post('/subcategory/store', 'store')->name('admin.subcategory.store');
-                Route::post('/subcategory/update', 'update')->name('admin.subcategory.update');
-                Route::post('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
-                Route::post('/subcategory/restore', 'restore')->name('admin.subcategory.restore');
+                Route::patch('/subcategory/update', 'update')->name('admin.subcategory.update');
+                Route::delete('/subcategory/delete', 'destroy')->name('admin.subcategory.delete');
+                Route::patch('/subcategory/restore', 'restore')->name('admin.subcategory.restore');
             });
             Route::controller(AdminSellerController::class)->group(function () {
                 Route::get('/seller', 'index')->name('admin.seller');
-                Route::post('/seller/block', 'block')->name('admin.seller.block');
-                Route::post('/seller/unblock', 'unblock')->name('admin.seller.unblock');
+                Route::delete('/seller/block', 'block')->name('admin.seller.block');
+                Route::patch('/seller/unblock', 'unblock')->name('admin.seller.unblock');
             });
             Route::controller(AdminClientController::class)->group(function () {
                 Route::get('/client', 'index')->name('admin.client');
-                Route::post('/client/block', 'block')->name('admin.client.block');
-                Route::post('/client/unblock', 'unblock')->name('admin.client.unblock');
+                Route::delete('/client/block', 'block')->name('admin.client.block');
+                Route::patch('/client/unblock', 'unblock')->name('admin.client.unblock');
             });
             Route::controller(AdminReviewController::class)->group(function () {
                 Route::get('/reviews', 'index')->name('admin.reviews');
-                Route::post('/review/change', 'change')->name('admin.review.change');
+                Route::patch('/review/change', 'change')->name('admin.review.change');
             });
         });
     });

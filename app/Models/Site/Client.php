@@ -2,10 +2,10 @@
 
 namespace App\Models\Site;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -57,11 +57,9 @@ class Client extends Model
         ];
         $client = [];
         foreach ($checkData as $field) {
-            $builder = DB::table($this->table)
-                        ->select(['id_client', 'name', 'surname', 'email', 'phone'])
-                        ->where($field, $data['login'])
-                        ->where('deleted_at', null)
-                        ->get();
+            $builder = Client::select('id_client', 'name', 'surname', 'email', 'phone')
+                            ->where($field, $data['login'])
+                            ->get();
             foreach ($builder as $row) {
                 $client = $row;
             }
@@ -87,12 +85,16 @@ class Client extends Model
      */
     public function readAllClients(): Collection
     {
-        return DB::table($this->table)
-                ->selectRaw('SUM(od.count) as total_count, SUM(od.total) as total_amount, '.$this->table.'.*')
-                ->join('orders as o', $this->table.'.id_client', '=', 'o.id_client')
-                ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
-                ->groupBy($this->table.'.id_client')
-                ->get();
+        return Client::select(
+                        Client::raw('SUM(od.count) as total_count'),
+                        Client::raw('SUM(od.total) as total_amount'),
+                        $this->table.'.*'
+                    )
+                    ->join('orders as o', $this->table.'.id_client', '=', 'o.id_client')
+                    ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
+                    ->withTrashed()
+                    ->groupBy($this->table.'.'.$this->primaryKey)
+                    ->get();
     }
 
     /**
@@ -103,21 +105,18 @@ class Client extends Model
      */
     public function readClient(int $idClient): object
     {
-        return DB::table($this->table)
-                ->where('id_client', $idClient)
-                ->first();
+        return Client::find($idClient);
     }
 
     /**
      * Insert entity into DB table Clients
      *
      * @param array $data
-     * @return int
+     * @return object
      */
-    public function storeClient(array $data): int
+    public function storeClient(array $data): object
     {
-        return DB::table($this->table)
-                ->insertGetId($data);
+        return Client::create($data);
     }
 
     /**
@@ -139,9 +138,8 @@ class Client extends Model
      */
     public function updateClient(int $idClient, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idClient)
-            ->update($data);
+        Client::where($this->primaryKey, $idClient)
+                ->update($data);
     }
 
     /**
@@ -166,12 +164,10 @@ class Client extends Model
     {
         DB::table('clients_passwords')
             ->where($this->primaryKey, $idClient)
-            ->update(['deleted_at' => date('Y-m-d H:i:s')]);
+            ->update(['deleted_at' => now()]);
 
-        $client = self::find($idClient);
-        if ($client) {
-            $client->delete();
-        }
+        Client::findOrFail($idClient)
+                ->delete();
     }
 
     /**
@@ -185,9 +181,8 @@ class Client extends Model
             ->where($this->primaryKey, $idClient)
             ->update(['deleted_at' => null]);
 
-        $client = self::onlyTrashed()->find($idClient);
-        if ($client) {
-            $client->restore();
-        }
+        Client::onlyTrashed()
+                ->findOrFail($idClient)
+                ->restore();
     }
 }

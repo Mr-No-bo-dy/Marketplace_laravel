@@ -70,7 +70,7 @@ class MarketplaceController extends Controller
     {
         $marketplaceModel = new Marketplace();
 
-        $marketplace = $marketplaceModel->reaMarketplace($idMarketplace);
+        $marketplace = $marketplaceModel->readMarketplace($idMarketplace);
 
         return view('admin.marketplaces.update', compact('marketplace'));
     }

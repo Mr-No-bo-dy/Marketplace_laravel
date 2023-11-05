@@ -97,11 +97,10 @@
                                 </label>
                                 <label for="review"
                                     class="block mt-2 text-sm font-medium leading-6 text-gray-900">{{ __('products.writeReview') }}</label>
-                                <textarea id="review" name="comment" cols="30" rows="3" required
-                                    style="max-height: 200px;"
+                                <textarea id="review" name="comment" cols="30" rows="3" required style="max-height: 200px;"
                                     class="block w-full rounded-md border-0 py-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                         {{ $review->comment }}
-                                    </textarea>
+                                </textarea>
                                 <button type="submit" name="updateReview" value="1"
                                     class="rounded-md mt-2 px-3 py-1 text-sm font-semibold text-white bg-blue-500 shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                                     {{ __('products.update') }}</button>

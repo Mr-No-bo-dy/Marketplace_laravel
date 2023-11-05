@@ -2,10 +2,9 @@
 
 namespace App\Models\Admin;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Marketplace extends Model
 {
@@ -37,8 +36,7 @@ class Marketplace extends Model
      */
     public function readAllMarketplaces(): Collection
     {
-        return DB::table($this->table)
-                ->get();
+        return Marketplace::withTrashed()->get();
     }
 
     /**
@@ -48,10 +46,8 @@ class Marketplace extends Model
      */
     public function readMarketplacesNames(): Collection
     {
-        return DB::table($this->table)
-                ->select(['id_marketplace', 'country'])
-                ->where('deleted_at', null)
-                ->get();
+        return Marketplace::select('id_marketplace', 'country')
+                            ->get();
     }
 
     /**
@@ -60,22 +56,20 @@ class Marketplace extends Model
      * @param int $idProducer
      * @return object
      */
-    public function reaMarketplace(int $idProducer): object
+    public function readMarketplace(int $idProducer): object
     {
-        return DB::table($this->table)
-            ->where($this->primaryKey, $idProducer)
-            ->first();
+        return Marketplace::find($idProducer);
     }
 
     /**
      * Insert entity into DB table Marketplaces
      *
      * @param array $data
+     * @return object
      */
-    public function storeMarketplace(array $data): void
+    public function storeMarketplace(array $data): object
     {
-        DB::table($this->table)
-            ->insert($data);
+        return Marketplace::create($data);
     }
 
     /**
@@ -86,9 +80,8 @@ class Marketplace extends Model
      */
     public function updateMarketplace(int $idMarketplace, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idMarketplace)
-            ->update($data);
+        Marketplace::where($this->primaryKey, $idMarketplace)
+                    ->update($data);
     }
 
     /**
@@ -98,10 +91,8 @@ class Marketplace extends Model
      */
     public function deleteMarketplace(int $idMarketplace): void
     {
-        $marketplace = self::find($idMarketplace);
-        if ($marketplace) {
-            $marketplace->delete();
-        }
+        Marketplace::findOrFail($idMarketplace)
+                    ->delete();
     }
 
     /**
@@ -111,10 +102,9 @@ class Marketplace extends Model
      */
     public function restoreMarketplace(int $idMarketplace): void
     {
-        $marketplace = self::onlyTrashed()->find($idMarketplace);
-        if ($marketplace) {
-            $marketplace->restore();
-        }
+        Marketplace::onlyTrashed()
+                    ->findOrFail($idMarketplace)
+                    ->restore();
     }
 
     /**

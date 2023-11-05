@@ -2,10 +2,7 @@
 
 namespace App\Models\Site;
 
-use App\Models\Site\Client;
-use App\Models\Site\Seller;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -70,15 +67,15 @@ class Order extends Model
      */
     public function readSellerOrdersWithDetails(int $idSeller): Collection
     {
-        return DB::table($this->table)
-                ->selectRaw('o.*,
-                    od.id_product,
-                    od.count,
-                    od.total,
-                    c.name as client_name,
-                    c.surname as client_surname,
-                    c.email as client_email,
-                    c.phone as client_phone')
+        return Order::select(
+                    'o.*',
+                    'od.id_product',
+                    'od.count',
+                    'od.total',
+                    'c.name as client_name',
+                    'c.surname as client_surname',
+                    'c.email as client_email',
+                    'c.phone as client_phone')
                 ->distinct()
                 ->join('orders as o', 'o.id_seller', '=', $this->table . '.id_seller')
                 ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
@@ -95,9 +92,7 @@ class Order extends Model
      */
     public function getLastOrderId(): int
     {
-        return DB::table($this->table)
-                ->latest()
-                ->first()->id_order;
+        return Order::latest()->value('id_order');
     }
 
     /**
@@ -108,8 +103,7 @@ class Order extends Model
      */
     public function updateSellerOrders(int $idOrder, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->table . '.id_order', $idOrder)
+        Order::where($this->primaryKey, $idOrder)
             ->update($data);
     }
 }

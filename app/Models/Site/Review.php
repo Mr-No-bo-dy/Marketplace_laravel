@@ -4,7 +4,6 @@ namespace App\Models\Site;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
 
 class Review extends Model
 {
@@ -67,9 +66,7 @@ class Review extends Model
      */
     public function readReview(int $idReview): object
     {
-        return DB::table($this->table)
-                ->where($this->primaryKey, $idReview)
-                ->first();
+        return Review::find($idReview);
     }
 
     /**
@@ -79,8 +76,7 @@ class Review extends Model
      */
     public function storeReview(array $data): void
     {
-        DB::table($this->table)
-            ->insert($data);
+        Review::create($data);
     }
 
     /**
@@ -91,9 +87,8 @@ class Review extends Model
      */
     public function updateReview(int $idReview, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idReview)
-            ->update($data);
+        Review::where($this->primaryKey, $idReview)
+                ->update($data);
     }
 
     /**
@@ -103,8 +98,7 @@ class Review extends Model
      */
     public function destroyReview(int $idReview): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idReview)
-            ->delete();
+        Review::where($this->primaryKey, $idReview)
+                ->delete();
     }
 }

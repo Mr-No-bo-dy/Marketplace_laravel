@@ -111,6 +111,14 @@
             <a href="{{ route('product') }}"
                 class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
                 aria-current="page">{{ __('site-nav.products') }}</a>
+            @if(isset($seller_id))
+                <a href="{{ route('product.my_products') }}"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                    aria-current="page">{{ __('site_profile.myProducts') }}</a>
+                <a href="{{ route('order.my_orders') }}"
+                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
+                    aria-current="page">{{ __('site_profile.myOrders') }}</a>
+            @endif
         </div>
     </div>
 </nav>

@@ -3,11 +3,11 @@
 namespace App\Models\Site;
 
 use App\Models\Admin\Marketplace;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -80,11 +80,9 @@ class Seller extends Model
         ];
         $seller = [];
         foreach ($checkData as $field) {
-            $builder = DB::table($this->table)
-                        ->select(['id_seller', 'id_marketplace', 'name', 'surname', 'email', 'phone'])
-                        ->where($field, $data['login'])
-                        ->where('deleted_at', null)
-                        ->get();
+            $builder = Seller::select('id_seller', 'id_marketplace', 'name', 'surname', 'email', 'phone')
+                            ->where($field, $data['login'])
+                            ->get();
             foreach ($builder as $row) {
                 $seller = $row;
             }
@@ -110,10 +108,11 @@ class Seller extends Model
      */
     public function readAllSellers(): Collection
     {
-        return DB::table($this->table)
-                ->selectRaw('m.country, '.$this->table.'.*')
-                ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
-                ->get();
+        return Seller::select('m.country', $this->table . '.*')
+                    ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
+                    ->orderBy('id_seller')
+                    ->withTrashed()
+                    ->get();
     }
 
     /**
@@ -124,11 +123,10 @@ class Seller extends Model
      */
     public function readSellerWithCountry(int $idSeller): object
     {
-        return DB::table($this->table)
-                ->selectRaw('m.country, '.$this->table.'.*')
-                ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
-                ->where($this->primaryKey, $idSeller)
-                ->first();
+        return Seller::select('m.country', $this->table . '.*')
+                    ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
+                    ->where($this->primaryKey, $idSeller)
+                    ->first();
     }
 
     /**
@@ -149,21 +147,18 @@ class Seller extends Model
      */
     public function readSeller(int $idSeller): object
     {
-        return DB::table($this->table)
-                ->where($this->primaryKey, $idSeller)
-                ->first();
+        return Seller::find($idSeller);
     }
 
     /**
      * Insert entity into DB table Sellers
      *
      * @param array $data
-     * @return int
+     * @return object
      */
-    public function storeSeller(array $data): int
+    public function storeSeller(array $data): object
     {
-        return DB::table($this->table)
-                ->insertGetId($data);
+        return Seller::create($data);
     }
 
     /**
@@ -185,9 +180,8 @@ class Seller extends Model
      */
     public function updateSeller(int $idSeller, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idSeller)
-            ->update($data);
+        Seller::where($this->primaryKey, $idSeller)
+                ->update($data);
     }
 
     /**
@@ -212,12 +206,10 @@ class Seller extends Model
     {
         DB::table('sellers_passwords')
             ->where($this->primaryKey, $idSeller)
-            ->update(['deleted_at' => date('Y-m-d H:i:s')]);
+            ->update(['deleted_at' => now()]);
 
-        $seller = self::find($idSeller);
-        if ($seller) {
-            $seller->delete();
-        }
+        Seller::findOrFail($idSeller)
+                ->delete();
     }
 
     /**
@@ -228,17 +220,14 @@ class Seller extends Model
      */
     public function deleteMarketplaceSellers(int $idMarketplace): array
     {
-        $idsSellerStds = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->where('id_marketplace', $idMarketplace)
-            ->get();
+        $idsSellerStds = Seller::select($this->primaryKey)
+                                ->where('id_marketplace', $idMarketplace)
+                                ->get();
         $idsSellers = [];
         foreach ($idsSellerStds as $std) {
             $idsSellers[] = $std->id_seller;
-            $seller = self::find($std->id_seller);
-            if ($seller) {
-                $seller->delete();
-            }
+            Seller::findOrFail($std->id_seller)
+                    ->delete();
         }
 
         return $idsSellers;
@@ -255,10 +244,9 @@ class Seller extends Model
             ->where($this->primaryKey, $idSeller)
             ->update(['deleted_at' => null]);
 
-        $seller = self::onlyTrashed()->find($idSeller);
-        if ($seller) {
-            $seller->restore();
-        }
+        Seller::onlyTrashed()
+                ->findOrFail($idSeller)
+                ->restore();
     }
 
     /**
@@ -269,17 +257,15 @@ class Seller extends Model
      */
     public function restoreMarketplaceSellers(int $idMarketplace): array
     {
-        $idsSellerStds = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->where('id_marketplace', $idMarketplace)
-            ->get();
+        $idsSellerStds = Seller::select($this->primaryKey)
+                                ->where('id_marketplace', $idMarketplace)
+                                ->get();
         $idsSellers = [];
         foreach ($idsSellerStds as $std) {
             $idsSellers[] = $std->id_seller;
-            $seller = self::onlyTrashed()->find($std->id_seller);
-            if ($seller) {
-                $seller->restore();
-            }
+            Seller::onlyTrashed()
+                    ->find($std->id_seller)
+                    ->restore();
         }
 
         return $idsSellers;

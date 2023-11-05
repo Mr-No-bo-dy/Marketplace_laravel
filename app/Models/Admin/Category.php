@@ -4,8 +4,7 @@ namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 
 class Category extends Model
 {
@@ -36,8 +35,7 @@ class Category extends Model
      */
     public function readAllCategories(): Collection
     {
-        return DB::table($this->table)
-                ->get();
+        return Category::withTrashed()->get();
     }
 
     /**
@@ -47,7 +45,7 @@ class Category extends Model
      */
     public function readCategoriesNames(): Collection
     {
-        return self::all([$this->primaryKey, 'name']);
+        return Category::all([$this->primaryKey, 'name']);
     }
 
     /**
@@ -58,20 +56,18 @@ class Category extends Model
      */
     public function readCategory(int $idCategory): object
     {
-        return DB::table($this->table)
-                    ->where($this->primaryKey, $idCategory)
-                    ->first();
+        return Category::find($idCategory);
     }
 
     /**
      * Insert entity into DB table Categories
      *
      * @param array $data
+     * @return object
      */
-    public function storeCategory(array $data): void
+    public function storeCategory(array $data): object
     {
-        DB::table($this->table)
-            ->insert($data);
+        return Category::create($data);
     }
 
     /**
@@ -82,9 +78,8 @@ class Category extends Model
      */
     public function updateCategory(int $idCategory, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idCategory)
-            ->update($data);
+        Category::where($this->primaryKey, $idCategory)
+                ->update($data);
     }
 
     /**
@@ -94,10 +89,8 @@ class Category extends Model
      */
     public function deleteCategory(int $idCategory): void
     {
-        $category = self::find($idCategory);
-        if ($category) {
-            $category->delete();
-        }
+        Category::findOrFail($idCategory)
+                ->delete();
     }
 
     /**
@@ -107,9 +100,8 @@ class Category extends Model
      */
     public function restoreCategory(int $idCategory): void
     {
-        $category = self::onlyTrashed()->find($idCategory);
-        if ($category) {
-            $category->restore();
-        }
+        Category::onlyTrashed()
+                ->findOrFail($idCategory)
+                ->restore();
     }
 }

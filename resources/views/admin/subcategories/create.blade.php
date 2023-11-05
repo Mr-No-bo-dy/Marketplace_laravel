@@ -9,7 +9,7 @@
                 <form action="{{ route('admin.subcategory.store') }}" method="POST">
                     @csrf
 
-                    <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
                         <div class="sm:col-span-2">
                             <label for="category"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/subcategories.category') }}</label>

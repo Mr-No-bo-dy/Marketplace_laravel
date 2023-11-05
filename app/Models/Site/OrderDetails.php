@@ -2,8 +2,6 @@
 
 namespace App\Models\Site;
 
-use App\Models\Site\Order;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -46,7 +44,6 @@ class OrderDetails extends Model
      */
     public function storeOrderDetails(array $orderDetails): void
     {
-        DB::table($this->table)
-            ->insert($orderDetails);
+        OrderDetails::create($orderDetails);
     }
 }

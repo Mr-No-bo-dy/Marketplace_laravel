@@ -6,15 +6,12 @@ use App\Http\Resource\Traits\Products;
 use App\Models\Admin\Category;
 use App\Models\Admin\Producer;
 use App\Models\Admin\Subcategory;
-use App\Models\Site\Seller;
-use App\Models\Site\Review;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -115,7 +112,7 @@ class Product extends Model implements HasMedia
      */
     public function readProducts(mixed $filters, int $perPage = 5): LengthAwarePaginator
     {
-        $products = self::query();
+        $products = Product::query();
 
         if (!empty($filters['id_producer'])) {
             $products->where('id_producer',$filters['id_producer']);
@@ -150,9 +147,9 @@ class Product extends Model implements HasMedia
      */
     public function readSellerProducts(int $idSeller): Collection
     {
-        return self::query()
-                    ->withTrashed()
+        return Product::query()
                     ->where('id_seller', $idSeller)
+                    ->withTrashed()
                     ->get();
     }
 
@@ -164,7 +161,7 @@ class Product extends Model implements HasMedia
      */
     public function readProduct(int $idProduct): object
     {
-        return self::find($idProduct);
+        return Product::findOrFail($idProduct);
     }
 
 
@@ -172,15 +169,14 @@ class Product extends Model implements HasMedia
      * Read Product's 'id_marketplace' by given Product
      *
      * @param int $idProduct
-     * @return int
+     * @return object
      */
-    public function readSellerProductMarket(int $idProduct): int
+    public function readSellerProductMarket(int $idProduct): object
     {
-        return DB::table($this->table)
-                    ->select('s.id_marketplace')
+        return Product::select('s.id_marketplace')
                     ->join('sellers as s', $this->table . '.id_seller', '=', 's.id_seller')
                     ->where($this->table . '.id_product', $idProduct)
-                    ->first()->id_marketplace;
+                    ->first();
     }
 
     /**
@@ -190,10 +186,8 @@ class Product extends Model implements HasMedia
      */
     public function deleteProduct(int $idProduct): void
     {
-        $product = self::find($idProduct);
-        if ($product) {
-            $product->delete();
-        }
+        Product::findOrFail($idProduct)
+                ->delete();
     }
 
     /**
@@ -203,15 +197,12 @@ class Product extends Model implements HasMedia
      */
     public function deleteSellersProducts(array $idsSeller): void
     {
-        $idsProductStds = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->whereIn('id_seller', $idsSeller)
-            ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->whereIn('id_seller', $idsSeller)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::find($std->id_product);
-            if ($product) {
-                $product->delete();
-            }
+            Product::findOrFail($std->id_product)
+                    ->delete();
         }
     }
 
@@ -222,15 +213,12 @@ class Product extends Model implements HasMedia
      */
     public function deleteSubcategoryProducts(int $idSubcategory): void
     {
-        $idsProductStds = DB::table($this->table)
-                        ->select($this->primaryKey)
-                        ->where('id_subcategory', $idSubcategory)
-                        ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->where('id_subcategory', $idSubcategory)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::find($std->id_product);
-            if ($product) {
-                $product->delete();
-            }
+            Product::findOrFail($std->id_product)
+                    ->delete();
         }
     }
 
@@ -241,15 +229,12 @@ class Product extends Model implements HasMedia
      */
     public function deleteCategoryProducts(int $idCategory): void
     {
-        $idsProductStds = DB::table($this->table)
-                        ->select($this->primaryKey)
-                        ->where('id_category', $idCategory)
-                        ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->where('id_category', $idCategory)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::find($std->id_product);
-            if ($product) {
-                $product->delete();
-            }
+            Product::findOrFail($std->id_product)
+                    ->delete();
         }
     }
 
@@ -260,15 +245,12 @@ class Product extends Model implements HasMedia
      */
     public function deleteProducerProducts(int $idProducer): void
     {
-        $idsProductStds = DB::table($this->table)
-                        ->select($this->primaryKey)
-                        ->where('id_producer', $idProducer)
-                        ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->where('id_producer', $idProducer)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::find($std->id_product);
-            if ($product) {
-                $product->delete();
-            }
+            Product::findOrFail($std->id_product)
+                    ->delete();
         }
     }
 
@@ -279,10 +261,9 @@ class Product extends Model implements HasMedia
      */
     public function restoreProduct(int $idProduct): void
     {
-        $product = self::onlyTrashed()->find($idProduct);
-        if ($product) {
-            $product->restore();
-        }
+        Product::onlyTrashed()
+                ->findOrFail($idProduct)
+                ->restore();
     }
 
     /**
@@ -292,15 +273,13 @@ class Product extends Model implements HasMedia
      */
     public function restoreSellerProducts(array $idsSeller): void
     {
-        $idsProductStds = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->whereIn('id_seller', $idsSeller)
-            ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->whereIn('id_seller', $idsSeller)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::onlyTrashed()->find($std->id_product);
-            if ($product) {
-                $product->restore();
-            }
+            Product::onlyTrashed()
+                    ->findOrFail($std->id_product)
+                    ->restore();
         }
     }
 
@@ -311,15 +290,13 @@ class Product extends Model implements HasMedia
      */
     public function restoreSubcategoryProducts(int $idSubcategory): void
     {
-        $idsProductStds = DB::table($this->table)
-                        ->select($this->primaryKey)
-                        ->where('id_subcategory', $idSubcategory)
-                        ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->where('id_subcategory', $idSubcategory)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::onlyTrashed()->find($std->id_product);
-            if ($product) {
-                $product->restore();
-            }
+            Product::onlyTrashed()
+                    ->findOrFail($std->id_product)
+                    ->restore();
         }
     }
 
@@ -330,15 +307,13 @@ class Product extends Model implements HasMedia
      */
     public function restoreCategoryProducts(int $idCategory): void
     {
-        $idsProductStds = DB::table($this->table)
-                        ->select($this->primaryKey)
-                        ->where('id_category', $idCategory)
-                        ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->where('id_category', $idCategory)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::onlyTrashed()->find($std->id_product);
-            if ($product) {
-                $product->restore();
-            }
+            Product::onlyTrashed()
+                    ->findOrFail($std->id_product)
+                    ->restore();
         }
     }
 
@@ -349,15 +324,13 @@ class Product extends Model implements HasMedia
      */
     public function restoreProducerProducts(int $idProducer): void
     {
-        $idsProductStds = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->where('id_producer', $idProducer)
-            ->get();
+        $idsProductStds = Product::select($this->primaryKey)
+                                ->where('id_producer', $idProducer)
+                                ->get();
         foreach ($idsProductStds as $std) {
-            $product = self::onlyTrashed()->find($std->id_product);
-            if ($product) {
-                $product->restore();
-            }
+            Product::onlyTrashed()
+                    ->find($std->id_product)
+                    ->restore();
         }
     }
 }

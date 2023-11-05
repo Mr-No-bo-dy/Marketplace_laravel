@@ -2,10 +2,9 @@
 
 namespace App\Models\Admin;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Producer extends Model
 {
@@ -37,8 +36,7 @@ class Producer extends Model
      */
     public function readAllProducers(): Collection
     {
-        return DB::table($this->table)
-                ->get();
+        return Producer::withTrashed()->get();
     }
 
     /**
@@ -48,7 +46,7 @@ class Producer extends Model
      */
     public function readProducersNames(): Collection
     {
-        return self::all([$this->primaryKey, 'name']);
+        return Producer::all([$this->primaryKey, 'name']);
     }
 
     /**
@@ -59,20 +57,18 @@ class Producer extends Model
      */
     public function readProducer(int $idProducer): object
     {
-        return DB::table($this->table)
-            ->where($this->primaryKey, $idProducer)
-            ->first();
+        return Producer::find($idProducer);
     }
 
     /**
      * Insert entity into DB table Producers
      *
      * @param array $data
+     * @return object
      */
-    public function storeProducer(array $data): void
+    public function storeProducer(array $data): object
     {
-        DB::table($this->table)
-            ->insert($data);
+        return Producer::create($data);
     }
 
     /**
@@ -83,9 +79,8 @@ class Producer extends Model
      */
     public function updateProducer(int $idProducer, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idProducer)
-            ->update($data);
+        Producer::where($this->primaryKey, $idProducer)
+                ->update($data);
     }
 
     /**
@@ -95,10 +90,8 @@ class Producer extends Model
      */
     public function deleteProducer(int $idProducer): void
     {
-        $producer = self::find($idProducer);
-        if ($producer) {
-            $producer->delete();
-        }
+        Producer::findOrFail($idProducer)
+                ->delete();
     }
 
     /**
@@ -108,9 +101,8 @@ class Producer extends Model
      */
     public function restoreMarketplace(int $idProducer): void
     {
-        $producer = self::onlyTrashed()->find($idProducer);
-        if ($producer) {
-            $producer->restore();
-        }
+        Producer::onlyTrashed()
+                ->findOrFail($idProducer)
+                ->restore();
     }
 }

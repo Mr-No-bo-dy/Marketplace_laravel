@@ -2,12 +2,10 @@
 
 namespace App\Models\Admin;
 
-use App\Models\Admin\Category;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subcategory extends Model
 {
@@ -49,10 +47,10 @@ class Subcategory extends Model
      */
     public function readAllSubcategories(): Collection
     {
-        return DB::table($this->table)
-            ->selectRaw('c.name as category, '.$this->table.'.*')
-            ->join('categories as c', $this->table.'.id_category', '=', 'c.id_category')
-            ->get();
+        return Subcategory::select('c.name as category', $this->table . '.*')
+                            ->join('categories as c', $this->table . '.id_category', '=', 'c.id_category')
+                            ->withTrashed()
+                            ->get();
     }
 
     /**
@@ -62,7 +60,7 @@ class Subcategory extends Model
      */
     public function readSubcategoriesNames(): Collection
     {
-        return self::all([$this->primaryKey, 'name']);
+        return Subcategory::all([$this->primaryKey, 'name']);
     }
 
     /**
@@ -73,20 +71,18 @@ class Subcategory extends Model
      */
     public function readSubcategory(int $idSubcategory): object
     {
-        return DB::table($this->table)
-                ->where($this->primaryKey, $idSubcategory)
-                ->first();
+        return Subcategory::find($idSubcategory);
     }
 
     /**
      * Insert entity into DB table Subcategories
      *
      * @param array $data
+     * @return object
      */
-    public function storeSubcategory(array $data): void
+    public function storeSubcategory(array $data): object
     {
-        DB::table($this->table)
-            ->insert($data);
+        return Subcategory::create($data);
     }
 
     /**
@@ -97,9 +93,8 @@ class Subcategory extends Model
      */
     public function updateSubcategory(int $idSubcategory, array $data): void
     {
-        DB::table($this->table)
-            ->where($this->primaryKey, $idSubcategory)
-            ->update($data);
+        Subcategory::where($this->primaryKey, $idSubcategory)
+                    ->update($data);
     }
 
     /**
@@ -109,10 +104,8 @@ class Subcategory extends Model
      */
     public function deleteSubcategory(int $idSubcategory): void
     {
-        $subcategory = self::find($idSubcategory);
-        if ($subcategory) {
-            $subcategory->delete();
-        }
+        Subcategory::findOrFail($idSubcategory)
+                    ->delete();
     }
 
     /**
@@ -122,15 +115,12 @@ class Subcategory extends Model
      */
     public function deleteCategorySubcategories(int $idCategory): void
     {
-        $idsSubcategories = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->where('id_category', $idCategory)
-            ->get();
+        $idsSubcategories = Subcategory::select($this->primaryKey)
+                                        ->where('id_category', $idCategory)
+                                        ->get();
         foreach ($idsSubcategories as $std) {
-            $subcategory = self::find($std->id_subcategory);
-            if ($subcategory) {
-                $subcategory->delete();
-            }
+            Subcategory::findOrFail($std->id_subcategory)
+                        ->delete();
         }
     }
 
@@ -141,10 +131,9 @@ class Subcategory extends Model
      */
     public function restoreSubcategory(int $idSubcategory): void
     {
-        $subcategory = self::onlyTrashed()->find($idSubcategory);
-        if ($subcategory) {
-            $subcategory->restore();
-        }
+        Subcategory::onlyTrashed()
+                    ->findOrFail($idSubcategory)
+                    ->restore();
     }
 
     /**
@@ -154,15 +143,13 @@ class Subcategory extends Model
      */
     public function restoreCategorySubcategories(int $idCategory): void
     {
-        $idsSubcategories = DB::table($this->table)
-            ->select($this->primaryKey)
-            ->where('id_category', $idCategory)
-            ->get();
+        $idsSubcategories = Subcategory::select($this->primaryKey)
+                                        ->where('id_category', $idCategory)
+                                        ->get();
         foreach ($idsSubcategories as $std) {
-            $subcategory = self::onlyTrashed()->find($std->id_subcategory);
-            if ($subcategory) {
-                $subcategory->restore();
-            }
+            Subcategory::onlyTrashed()
+                        ->findOrFail($std->id_subcategory)
+                        ->restore();
         }
     }
 }

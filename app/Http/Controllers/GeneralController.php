@@ -76,7 +76,7 @@ class GeneralController extends Controller
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
-            $idNewSeller = $sellerModel->storeSeller($seller);
+            $idNewSeller = $sellerModel->storeSeller($seller)->id_seller;
 
             $setSellerPasswordData = [
                 'id_seller' => $idNewSeller,
@@ -111,7 +111,7 @@ class GeneralController extends Controller
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
-            $idNewClient = $clientModel->storeClient($setClientData);
+            $idNewClient = $clientModel->storeClient($setClientData)->id_client;
 
             $setClientPasswordData = [
                 'id_client' => $idNewClient,

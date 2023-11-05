@@ -27,7 +27,7 @@ class CartController extends Controller
             $idProduct = $request->post('id_product');
             $price = $request->post('price');
             $product = $productModel->readProduct($idProduct);
-            $idMarketplace = $productModel->readSellerProductMarket($idProduct);
+            $idMarketplace = $productModel->readSellerProductMarket($idProduct)->id_marketplace;
             $cartProduct = $request->session()->get('cart.products.' . $idProduct);
 
             // Saving cart's Products data

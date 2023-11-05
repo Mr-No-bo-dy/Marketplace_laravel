@@ -34,13 +34,18 @@ class ProductRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get custom attributes for validator errors when storing Products.
+     *
+     * @return array
+     */
     public function attributes(): array
     {
         return [
-            'name' => 'Назва',
-            'description' => 'Опис',
-            'price' => 'Ціна',
-            'amount' => 'Кількість',
+            'name' => trans('products.name'),
+            'description' => trans('products.description'),
+            'price' => trans('products.price'),
+            'amount' => trans('products.amount'),
         ];
     }
 }

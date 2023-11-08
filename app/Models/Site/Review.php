@@ -2,6 +2,7 @@
 
 namespace App\Models\Site;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -66,7 +67,17 @@ class Review extends Model
      */
     public function readReview(int $idReview): object
     {
-        return Review::find($idReview);
+        return Review::findOrFail($idReview);
+    }
+
+    /**
+     * Read all entities from DB table Reviews
+     *
+     * @return Collection
+     */
+    public function readAllReview(): Collection
+    {
+        return Review::all();
     }
 
     /**

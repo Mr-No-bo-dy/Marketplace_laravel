@@ -126,8 +126,8 @@ class ProductController extends Controller
         if ($request->has('createProduct')) {
             $productModel = new Product();
 
-            $productModel->fill($request->validated());
-            $productModel->save();
+            // Create Product
+            $productModel->storeProduct($request->validated());
 
             // Save Media
             if ($request->hasFile('images')) {
@@ -174,18 +174,9 @@ class ProductController extends Controller
         if ($request->has('updateProduct')) {
             $productModel = new Product();
 
+            // Update Product
             $idProduct = $request->post('id_product');
-            $setProductData = [
-                'id_producer' => $request->post('id_producer'),
-                'id_category' => $request->post('id_category'),
-                'id_subcategory' => $request->post('id_subcategory'),
-                'name' => ucfirst($request->post('name')),
-                'description' => ucfirst($request->post('description')),
-                'price' => $request->post('price'),
-                'amount' => $request->post('amount'),
-            ];
-            $productModel->fill($request->validated());
-            $productModel->where('id_product', $idProduct)->update($setProductData);
+            $productModel->updateProduct($idProduct, $request->validated());
 
             // Update Media
             if ($request->hasFile('images')) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SubcategoryRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
@@ -43,22 +44,15 @@ class SubcategoryController extends Controller
     /**
      * Create Subcategory
      *
-     * @param Request $request
+     * @param SubcategoryRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(SubcategoryRequest $request): RedirectResponse
     {
         if ($request->has('createSubcategory')) {
             $subcategoryModel = new Subcategory();
 
-            $setSubcategoryData = [
-                'id_category' => $request->post('id_category'),
-                'name' => $request->post('name'),
-                'description' => $request->post('description'),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $subcategoryModel->storeSubcategory($setSubcategoryData);
+            $subcategoryModel->storeSubcategory($request->validated());
 
         }
 
@@ -85,21 +79,15 @@ class SubcategoryController extends Controller
     /**
      * Update Subcategory
      *
-     * @param Request $request
+     * @param SubcategoryRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(SubcategoryRequest $request): RedirectResponse
     {
         if ($request->has('updateSubcategory')) {
             $subcategoryModel = new Subcategory();
 
-            $setSubcategoryData = [
-                'id_category' => $request->post('id_category'),
-                'name' => $request->post('name'),
-                'description' => $request->post('description'),
-            ];
-            $idSubcategory = $request->post('id_subcategory');
-            $subcategoryModel->updateSubcategory($idSubcategory, $setSubcategoryData);
+            $subcategoryModel->updateSubcategory($request->post('id_subcategory'), $request->validated());
         }
 
         return redirect()->route('admin.subcategory');

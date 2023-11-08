@@ -58,7 +58,7 @@ class Marketplace extends Model
      */
     public function readMarketplace(int $idProducer): object
     {
-        return Marketplace::find($idProducer);
+        return Marketplace::findOrFail($idProducer);
     }
 
     /**
@@ -103,7 +103,7 @@ class Marketplace extends Model
     public function restoreMarketplace(int $idMarketplace): void
     {
         Marketplace::onlyTrashed()
-                    ->findOrFail($idMarketplace)
+                    ->find($idMarketplace)
                     ->restore();
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientRequest;
+use App\Http\Requests\SellerRequest;
 use App\Models\Admin\Marketplace;
 use App\Models\Site\Client;
 use App\Models\Site\Seller;
@@ -59,30 +61,21 @@ class GeneralController extends Controller
     /**
      * Store a newly created Seller in storage.
      *
-     * @param Request $request
+     * @param SellerRequest $request
      * @return RedirectResponse
      */
-    public function storeSeller(Request $request): RedirectResponse
+    public function storeSeller(SellerRequest $request): RedirectResponse
     {
         if ($request->has('createSeller')) {
             $sellerModel = new Seller();
 
-            $seller = [
-                'id_marketplace' => $request->post('id_marketplace'),
-                'name' => $request->post('name'),
-                'surname' => $request->post('surname'),
-                'email' => $request->post('email'),
-                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $idNewSeller = $sellerModel->storeSeller($seller)->id_seller;
+            $idNewSeller = $sellerModel->storeSeller($request->safe()->except('password'))->id_seller;
 
             $setSellerPasswordData = [
                 'id_seller' => $idNewSeller,
-                'password' => Hash::make($request->post('password')),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'password' => Hash::make($request->safe()->only('password')['password']),
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
             $sellerModel->storeSellerPassword($setSellerPasswordData);
 
@@ -95,29 +88,21 @@ class GeneralController extends Controller
     /**
      * Store a newly created Client in storage.
      *
-     * @param Request $request
+     * @param ClientRequest $request
      * @return RedirectResponse
      */
-    public function storeClient(Request $request): RedirectResponse
+    public function storeClient(ClientRequest $request): RedirectResponse
     {
         if ($request->has('createClient')) {
             $clientModel = new Client();
 
-            $setClientData = [
-                'name' => $request->post('name'),
-                'surname' => $request->post('surname'),
-                'email' => $request->post('email'),
-                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $idNewClient = $clientModel->storeClient($setClientData)->id_client;
+            $idNewClient = $clientModel->storeClient($request->safe()->except('password'))->id_client;
 
             $setClientPasswordData = [
                 'id_client' => $idNewClient,
-                'password' => Hash::make($request->post('password')),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'password' => Hash::make($request->safe()->only('password')['password']),
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
             $clientModel->storeClientPassword($setClientPasswordData);
 
@@ -147,20 +132,20 @@ class GeneralController extends Controller
         $route = view('authenticate.login');
 
         if (!empty($request->post())) {
-            $loginData = [
-                'login' => $request->post('login'),
-                'password' => $request->post('password'),
-            ];
+            $validated = $request->validate([
+                'login' => ['required', 'string', 'max:255'],
+                'password' => ['required', 'string', 'max:255'],
+            ]);
 
             // Auth Seller
-            $idAuthUser = $sellerModel->authSeller($loginData);
+            $idAuthUser = $sellerModel->authSeller($validated);
             if (!empty($idAuthUser)) {
                 $request->session()->put('id_seller', $idAuthUser);
                 $route = redirect()->route('seller.personal');
             }
 
             // Auth Client
-            $idAuthUser = $clientModel->authClient($loginData);
+            $idAuthUser = $clientModel->authClient($validated);
             if (!empty($idAuthUser)) {
                 $request->session()->put('id_client', $idAuthUser);
                 $route = redirect()->route('client.personal');

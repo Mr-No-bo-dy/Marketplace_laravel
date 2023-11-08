@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Subcategory;
 use App\Models\Site\Product;
@@ -39,21 +40,15 @@ class CategoryController extends Controller
     /**
      * Create Category
      *
-     * @param Request $request
+     * @param CategoryRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CategoryRequest $request): RedirectResponse
     {
         if ($request->has('createCategory')) {
             $categoryModel = new Category();
 
-            $setCategoryData = [
-                'name' => ucfirst($request->post('name')),
-                'description' => $request->post('description'),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $categoryModel->storeCategory($setCategoryData);
+            $categoryModel->storeCategory($request->validated());
         }
 
         return redirect()->route('admin.category');
@@ -77,20 +72,15 @@ class CategoryController extends Controller
     /**
      * Update Category
      *
-     * @param Request $request
+     * @param CategoryRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(CategoryRequest $request): RedirectResponse
     {
         if ($request->has('updateCategory')) {
             $categoryModel = new Category();
 
-            $setCategoryData = [
-                'name' => $request->post('name'),
-                'description' => $request->post('description'),
-            ];
-            $idCategory = $request->post('id_category');
-            $categoryModel->updateCategory($idCategory, $setCategoryData);
+            $categoryModel->updateCategory($request->post('id_category'), $request->validated());
         }
 
         return redirect()->route('admin.category');

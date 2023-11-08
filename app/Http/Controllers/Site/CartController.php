@@ -24,8 +24,8 @@ class CartController extends Controller
         if ($request->has('addToCart')) {
             $productModel = new Product();
 
-            $idProduct = $request->post('id_product');
-            $price = $request->post('price');
+            $idProduct = $request->validate(['id_product' => ['int']])['id_product'];
+            $price = $request->validate(['price' => ['int']])['price'];
             $product = $productModel->readProduct($idProduct);
             $idMarketplace = $productModel->readSellerProductMarket($idProduct)->id_marketplace;
             $cartProduct = $request->session()->get('cart.products.' . $idProduct);
@@ -84,7 +84,7 @@ class CartController extends Controller
         }
 
         if ($request->has('id_product')) {
-            $idProduct = $request->post('id_product');
+            $idProduct = $request->validate(['id_product' => ['int']])['id_product'];
             $product = $request->session()->get('cart.products.' . $idProduct);
 
             if (!is_null($product)) {
@@ -101,7 +101,7 @@ class CartController extends Controller
                 // Setting cart product's data
                 $newQuantity = $product['quantity'];
                 if ($request->has('quantity')) {
-                    $newQuantity = $request->post('quantity');
+                    $newQuantity = $request->validate(['quantity' => ['int']])['quantity'];
                 } elseif ($request->has('plus')) {
                     $newQuantity += 1;
                 } elseif ($request->has('minus') && $product['quantity'] > 1) {

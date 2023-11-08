@@ -52,6 +52,11 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::controller(GeneralController::class)->group(function () {
+    Route::get('/auth', 'auth')->name('auth');
+    Route::post('/auth', 'auth')->name('auth');
+});
+
 // Site
 Route::prefix('{locale}')->group(function () {
     Route::controller(GeneralController::class)->group(function () {
@@ -61,8 +66,8 @@ Route::prefix('{locale}')->group(function () {
         Route::post('/registration_seller', 'storeSeller')->name('registration_seller');
         Route::get('/registration_client', 'registerClient')->name('registration_client');
         Route::post('/registration_client', 'storeClient')->name('registration_client');
-        Route::get('/auth', 'auth')->name('auth');
-        Route::post('/auth', 'auth')->name('auth');
+//        Route::get('/auth', 'auth')->name('auth');
+//        Route::post('/auth', 'auth')->name('auth');
         Route::post('/log_out', 'logout')->name('log_out');
     });
     Route::controller(ProductController::class)->group(function () {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ClientRequest;
 use App\Http\Resource\Traits\Cart;
 use App\Models\Site\Client;
 use App\Models\Site\Order;
@@ -38,10 +37,10 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new Order.
      *
-     * @param ClientRequest $request
+     * @param Request $request
      * @return View
      */
-    public function create(ClientRequest $request): View
+    public function create(Request $request): View
     {
         $clientModel = new Client();
 
@@ -60,10 +59,10 @@ class OrderController extends Controller
     /**
      * Store a newly created Order in storage.
      *
-     * @param ClientRequest $request
+     * @param Request $request
      * @return View
      */
-    public function store(ClientRequest $request): View
+    public function store(Request $request): View
     {
         $orderModel = new Order();
         $orderDetailsModel = new OrderDetails();
@@ -72,25 +71,19 @@ class OrderController extends Controller
          * If a customer with the given email doesn't exist, create a new one;
          * otherwise, only retrieve the ID of the existing customer.
          */
-        /**
-         * Тут проблема в тому, що новий клієнт реєструється в БД без аккаунта, але з імейлом.
-         * В такому випадку без функціоналу зв'язку з імейлом
-         * не можливо зареєструвати аккаунт клієнта на вже зайнятий імейл.
-         */
         $client = Client::firstOrCreate([
-            'email' => $request->post('email'),
+            'email' => $request->validate(['email' => ['string', 'email']])['email'],
         ],
         [
-            'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
-            'name' => $request->post('name'),
-            'surname' => $request->post('surname'),
+            'phone' => $request->validate(['phone' => ['int', 'regex:/^[0-9]{10,14}$/']])['phone'],
+            'name' => $request->validate(['name' => ['string', 'max:255']])['name'],
+            'surname' => $request->validate(['surname' => ['string', 'max:255']])['surname'],
         ]);
-
         // Additionally, if the existing customer's data from the form is different, update it in the DB.
-        $client->email = $request->post('email');
-        $client->phone = preg_replace("#[^0-9]#", "", $request->post('tel'));
-        $client->name = $request->post('name');
-        $client->surname = $request->post('surname');
+        $client->email = $request->validate(['email' => ['string', 'email']])['email'];
+        $client->phone = $request->validate(['phone' => ['int', 'regex:/^[0-9]{10,14}$/']])['phone'];
+        $client->name = $request->validate(['name' => ['string', 'max:255']])['name'];
+        $client->surname = $request->validate(['surname' => ['string', 'max:255']])['surname'];
         if ($client->isDirty()) {
             $client->save();
         }
@@ -104,19 +97,15 @@ class OrderController extends Controller
                     'id_client' => $idClient,
                     'id_seller' => $product['id_seller'],
                     'status' => 'new',
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => now(),
                 ];
-                $orderModel->fill($orderData)
-                            ->save();
+                $idNewOrder = $orderModel->storeOrder($orderData)->id_order;
 
-                $idNewOrder = $orderModel->getLastOrderId();
                 $orderDetailsData = [
                     'id_order' => $idNewOrder,
                     'id_product' => $product['id_product'],
                     'count' => $product['quantity'],
                     'total' => $product['total'],
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
                 $orderDetailsModel->storeOrderDetails($orderDetailsData);
             }
@@ -136,7 +125,7 @@ class OrderController extends Controller
     {
         $orderModel = new Order();
 
-        $idOrder = $request->post('id_order');
+        $idOrder = $request->validate(['id_order' => ['int']])['id_order'];
         if ($request->has('order_accept')) {
             $orderModel->updateSellerOrders($idOrder, ['status' => 'processed']);
         } elseif ($request->has('order_decline')) {

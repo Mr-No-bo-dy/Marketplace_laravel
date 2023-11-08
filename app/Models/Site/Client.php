@@ -105,7 +105,7 @@ class Client extends Model
      */
     public function readClient(int $idClient): object
     {
-        return Client::find($idClient);
+        return Client::findOrFail($idClient);
     }
 
     /**

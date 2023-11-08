@@ -58,8 +58,8 @@ class SellerController extends Controller
             $productModel = new Product();
 
             $idSeller = $request->post('id_seller');
-            $productModel->restoreSellerProducts([$idSeller]);
             $sellerModel->restoreSeller($idSeller);
+            $productModel->restoreSellerProducts([$idSeller]);
         }
 
         return back();

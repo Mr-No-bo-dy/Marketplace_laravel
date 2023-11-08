@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReviewRequest;
 use App\Models\Site\Review;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,10 +13,10 @@ class ReviewController extends Controller
     /**
      * Create Review
      *
-     * @param Request $request
+     * @param ReviewRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(ReviewRequest $request): RedirectResponse
     {
         if (!$request->session()->has('id_client')) {
             return back();
@@ -24,15 +25,11 @@ class ReviewController extends Controller
         if ($request->has('addReview')) {
             $reviewModel = new Review();
 
-            $setReviewData = [
+            $additionalReviewData = [
                 'id_client' => $request->session()->get('id_client'),
                 'id_product' => $request->post('id_product'),
-                'comment' => $request->post('comment'),
-                'rating' => $request->post('rating'),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
             ];
-            $reviewModel->storeReview($setReviewData);
+            $reviewModel->storeReview(array_merge($additionalReviewData, $request->validated()));
         }
 
         return back();
@@ -53,11 +50,12 @@ class ReviewController extends Controller
         } elseif ($request->has('updateReview')) {
             $reviewModel = new Review();
 
-            $setReviewData = [
-                'comment' => $request->post('comment'),
-                'rating' => $request->post('rating'),
-            ];
-            $reviewModel->updateReview($idReview, $setReviewData);
+            $validatedReview = $request->validate([
+                'comment' => ['required', 'string', 'max:511'],
+                'rating' => ['required', 'int', 'min:1', 'max:5'],
+            ]);
+            $reviewModel->updateReview($idReview, array_merge($validatedReview, ['status' => 1]));
+
             $request->session()->forget('editReviewId');
 
         } elseif ($request->has('cancelReview')) {

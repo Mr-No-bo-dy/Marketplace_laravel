@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProducerRequest;
 use App\Models\Admin\Producer;
 use App\Models\Site\Product;
 use Illuminate\Contracts\View\View;
@@ -38,22 +39,15 @@ class ProducerController extends Controller
     /**
      * Create Producer
      *
-     * @param Request $request
+     * @param ProducerRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(ProducerRequest $request): RedirectResponse
     {
         if ($request->has('createProducer')) {
             $producerModel = new Producer();
 
-            $setProducerData = [
-                'name' => ucfirst($request->post('name')),
-                'address' => ucfirst($request->post('address')),
-                'contacts' => $request->post('contacts'),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $producerModel->storeProducer($setProducerData);
+            $producerModel->storeProducer($request->validated());
         }
 
         return redirect()->route('admin.producer');
@@ -77,21 +71,15 @@ class ProducerController extends Controller
     /**
      * Update Producer
      *
-     * @param Request $request
+     * @param ProducerRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(ProducerRequest $request): RedirectResponse
     {
         if ($request->has('updateProducer')) {
             $producerModel = new Producer();
 
-            $setProducerData = [
-                'name' => ucfirst($request->post('name')),
-                'address' => ucfirst($request->post('address')),
-                'contacts' => $request->post('contacts'),
-            ];
-            $idProducer = $request->post('id_producer');
-            $producerModel->updateProducer($idProducer, $setProducerData);
+            $producerModel->updateProducer($request->post('id_producer'), $request->validated());
         }
 
         return redirect()->route('admin.producer');

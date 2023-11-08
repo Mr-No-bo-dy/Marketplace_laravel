@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ClientRequest extends FormRequest
+class SellerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,15 +16,16 @@ class ClientRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request for storing Client.
+     * Get the validation rules that apply to the request for storing Seller.
      *
      * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'name' => ['string', 'max:255'],
-            'surname' => ['string', 'max:255'],
+            'id_marketplace' => ['int'],
+            'name' => ['required', 'string', 'max:255'],
+            'surname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'phone' => ['required', 'int', 'regex:/^[0-9]{10,14}$/'],
             'password' => ['required', 'string', 'min:8', 'max:255'],
@@ -32,7 +33,7 @@ class ClientRequest extends FormRequest
     }
 
     /**
-     * Get custom attributes for validator errors when storing Client.
+     * Get custom attributes for validator errors when storing Seller.
      *
      * @return array
      */

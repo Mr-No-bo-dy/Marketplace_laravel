@@ -86,13 +86,14 @@ class Order extends Model
     }
 
     /**
-     * Read last entity's ID in DB table Orders
+     * Storing data into DB table Order.
      *
-     * @return int
+     * @param array $data
+     * @return object
      */
-    public function getLastOrderId(): int
+    public function storeOrder(array $data): object
     {
-        return Order::latest()->value('id_order');
+        return Order::create($data);
     }
 
     /**

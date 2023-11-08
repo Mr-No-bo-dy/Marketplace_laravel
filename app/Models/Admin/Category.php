@@ -56,7 +56,7 @@ class Category extends Model
      */
     public function readCategory(int $idCategory): object
     {
-        return Category::find($idCategory);
+        return Category::findOrFail($idCategory);
     }
 
     /**
@@ -101,7 +101,7 @@ class Category extends Model
     public function restoreCategory(int $idCategory): void
     {
         Category::onlyTrashed()
-                ->findOrFail($idCategory)
+                ->find($idCategory)
                 ->restore();
     }
 }

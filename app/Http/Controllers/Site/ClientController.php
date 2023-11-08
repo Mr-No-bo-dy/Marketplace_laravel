@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientRequest;
 use App\Models\Site\Client;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -19,9 +20,9 @@ class ClientController extends Controller
      */
     public function show(Request $request): View
     {
-        $idClient = $request->session()->get('id_client');
         $clientModel = new Client();
 
+        $idClient = $request->session()->get('id_client');
         $client = $clientModel->readClient($idClient);
 
         return view('profile.client-show', compact('client'));
@@ -45,27 +46,20 @@ class ClientController extends Controller
     /**
      * Update the specified Client in storage.
      *
-     * @param Request $request
+     * @param ClientRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(ClientRequest $request): RedirectResponse
     {
         if ($request->has('updateClient')) {
             $clientModel = new Client();
 
-            $setClientData = [
-                'name' => $request->post('name'),
-                'surname' => $request->post('surname'),
-                'email' => $request->post('email'),
-                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
             $idClient = $request->post('id_client');
-            $clientModel->updateClient($idClient, $setClientData);
+            $clientModel->updateClient($idClient, $request->safe()->except('password'));
 
             $setClientPasswordData = [
-                'password' => Hash::make($request->post('password')),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'password' => Hash::make($request->safe()->only('password')['password']),
+                'updated_at' => now(),
             ];
             $clientModel->updateClientPassword($idClient, $setClientPasswordData);
         }

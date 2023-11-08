@@ -71,7 +71,7 @@ class Subcategory extends Model
      */
     public function readSubcategory(int $idSubcategory): object
     {
-        return Subcategory::find($idSubcategory);
+        return Subcategory::findOrFail($idSubcategory);
     }
 
     /**
@@ -115,11 +115,11 @@ class Subcategory extends Model
      */
     public function deleteCategorySubcategories(int $idCategory): void
     {
-        $idsSubcategories = Subcategory::select($this->primaryKey)
-                                        ->where('id_category', $idCategory)
-                                        ->get();
-        foreach ($idsSubcategories as $std) {
-            Subcategory::findOrFail($std->id_subcategory)
+        $idsSubcategories = Subcategory::where('id_category', $idCategory)
+                                        ->pluck($this->primaryKey)
+                                        ->all();
+        foreach ($idsSubcategories as $id) {
+            Subcategory::find($id)
                         ->delete();
         }
     }
@@ -132,7 +132,7 @@ class Subcategory extends Model
     public function restoreSubcategory(int $idSubcategory): void
     {
         Subcategory::onlyTrashed()
-                    ->findOrFail($idSubcategory)
+                    ->find($idSubcategory)
                     ->restore();
     }
 
@@ -143,12 +143,13 @@ class Subcategory extends Model
      */
     public function restoreCategorySubcategories(int $idCategory): void
     {
-        $idsSubcategories = Subcategory::select($this->primaryKey)
-                                        ->where('id_category', $idCategory)
-                                        ->get();
-        foreach ($idsSubcategories as $std) {
+        $idsSubcategories = Subcategory::where('id_category', $idCategory)
+                                        ->onlyTrashed()
+                                        ->pluck($this->primaryKey)
+                                        ->all();
+        foreach ($idsSubcategories as $id) {
             Subcategory::onlyTrashed()
-                        ->findOrFail($std->id_subcategory)
+                        ->find($id)
                         ->restore();
         }
     }

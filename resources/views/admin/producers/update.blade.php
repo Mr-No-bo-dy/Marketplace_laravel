@@ -15,28 +15,37 @@
                             <label for="name"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/producers.name') }}</label>
                             <div class="mt-2">
-                                <input type="text" name="name" value="{{ $producer->name }}" required id="name"
+                                <input type="text" name="name" value="{{ old('name', $producer->name) }}" required id="name"
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('name')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label for="address"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/producers.address') }}</label>
                             <div class="mt-2">
-                                <input type="text" name="address" value="{{ $producer->address }}" id="address"
+                                <input type="text" name="address" value="{{ old('address', $producer->address) }}" id="address"
                                     autocomplete="given-name" required
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('address')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label for="contacts"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('admin/producers.contacts') }}</label>
                             <div class="mt-2">
-                                <input type="text" name="contacts" value="{{ $producer->contacts }}" id="contacts"
+                                <input type="text" name="contacts" value="{{ old('contacts', $producer->contacts) }}" id="contacts"
                                     autocomplete="given-name" required
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('contacts')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <input type="hidden" name="id_producer" value="{{ $producer->id_producer }}">

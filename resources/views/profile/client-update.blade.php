@@ -15,37 +15,49 @@
                             <label for="name"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.name') }}</label>
                             <div class="mt-2">
-                                <input type="text" id="name" name="name" value="{{ $client->name }}"
+                                <input type="text" id="name" name="name" value="{{ old('name', $client->name) }}"
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('name')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="sm:col-span-3">
                             <label for="surname"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.surname') }}</label>
                             <div class="mt-2">
-                                <input type="text" id="surname" name="surname" value="{{ $client->surname }}"
+                                <input type="text" id="surname" name="surname" value="{{ old('surname', $client->surname) }}"
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('surname')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label for="email"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.email') }}</label>
                             <div class="mt-2">
-                                <input type="text" id="email" name="email" value="{{ $client->email }}" required
+                                <input type="text" id="email" name="email" value="{{ old('email', $client->email) }}" required
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('email')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label for="tel"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('site_profile.phone') }}</label>
                             <div class="mt-2">
-                                <input type="text" id="tel" name="tel" value="{{ $client->phone }}" required
+                                <input type="text" id="tel" name="phone" value="{{ old('phone', $client->phone) }}" required
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('phone')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label for="password"
@@ -54,6 +66,9 @@
                                 <input type="password" id="password" name="password" required
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
+                            @error('password')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 

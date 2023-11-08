@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SellerRequest;
 use App\Models\Admin\Marketplace;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
@@ -49,28 +50,20 @@ class SellerController extends Controller
     /**
      * Update the specified Seller in storage.
      *
-     * @param Request $request
+     * @param SellerRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(SellerRequest $request): RedirectResponse
     {
-        $sellerModel = new Seller();
-
         if ($request->has('updateSeller')) {
-            $setSellerData = [
-                'id_marketplace' => $request->post('id_marketplace'),
-                'name' => $request->post('name'),
-                'surname' => $request->post('surname'),
-                'email' => $request->post('email'),
-                'phone' => preg_replace("#[^0-9]#", "", $request->post('tel')),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
+            $sellerModel = new Seller();
+
             $idSeller = $request->post('id_seller');
-            $sellerModel->updateSeller($idSeller, $setSellerData);
+            $sellerModel->updateSeller($idSeller, $request->safe()->except('password'));
 
             $setSellerPasswordData = [
-                'password' => Hash::make($request->post('password')),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'password' => Hash::make($request->safe()->only('password')['password']),
+                'updated_at' => now(),
             ];
             $sellerModel->updateSellerPassword($idSeller, $setSellerPasswordData);
         }

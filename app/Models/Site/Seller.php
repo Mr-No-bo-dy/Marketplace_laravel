@@ -147,7 +147,7 @@ class Seller extends Model
      */
     public function readSeller(int $idSeller): object
     {
-        return Seller::find($idSeller);
+        return Seller::findOrFail($idSeller);
     }
 
     /**
@@ -220,13 +220,12 @@ class Seller extends Model
      */
     public function deleteMarketplaceSellers(int $idMarketplace): array
     {
-        $idsSellerStds = Seller::select($this->primaryKey)
-                                ->where('id_marketplace', $idMarketplace)
-                                ->get();
-        $idsSellers = [];
-        foreach ($idsSellerStds as $std) {
-            $idsSellers[] = $std->id_seller;
-            Seller::findOrFail($std->id_seller)
+        $idsSellers = Seller::where('id_marketplace', $idMarketplace)
+                            ->pluck($this->primaryKey)
+                            ->all();
+
+        foreach ($idsSellers as $id) {
+            Seller::find($id)
                     ->delete();
         }
 
@@ -245,7 +244,7 @@ class Seller extends Model
             ->update(['deleted_at' => null]);
 
         Seller::onlyTrashed()
-                ->findOrFail($idSeller)
+                ->find($idSeller)
                 ->restore();
     }
 
@@ -257,14 +256,14 @@ class Seller extends Model
      */
     public function restoreMarketplaceSellers(int $idMarketplace): array
     {
-        $idsSellerStds = Seller::select($this->primaryKey)
-                                ->where('id_marketplace', $idMarketplace)
-                                ->get();
-        $idsSellers = [];
-        foreach ($idsSellerStds as $std) {
-            $idsSellers[] = $std->id_seller;
+        $idsSellers = Seller::where('id_marketplace', $idMarketplace)
+                            ->onlyTrashed()
+                            ->pluck($this->primaryKey)
+                            ->all();
+
+        foreach ($idsSellers as $id) {
             Seller::onlyTrashed()
-                    ->find($std->id_seller)
+                    ->find($id)
                     ->restore();
         }
 

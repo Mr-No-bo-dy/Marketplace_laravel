@@ -90,17 +90,27 @@
                                 @csrf
 
                                 <input type="hidden" name="id_review" value="{{ $review->id_review }}">
-                                <label class="block">
-                                    @for($i = 1; $i <= 5; $i++) <input type="radio" name="rating" value="{{ $i }}"
-                                        {{($review->rating == $i) ? 'checked' : '' }} class="inline-block w-5 h-5">
-                                        @endfor
-                                </label>
+                                <div class="flex">
+                                    @for($i = 1; $i <= 5; $i++)
+                                    <div class="me-2">
+                                        <label for="rating_{{ $i }}" class="block w-5 h-5 font-semibold text-center">{{ $i }}</label>
+                                        <input id="rating_{{ $i }}" type="radio" name="rating"
+                                               value="{{ $i }}" {{ (old('rating', $review->rating) == $i) ? 'checked' : '' }} class="inline-block w-5 h-5">
+                                    </div>
+                                    @endfor
+                                </div>
+                                @error('rating')
+                                <div class="text-red-400">{{ $message }}</div>
+                                @enderror
                                 <label for="review"
                                     class="block mt-2 text-sm font-medium leading-6 text-gray-900">{{ __('products.writeReview') }}</label>
                                 <textarea id="review" name="comment" cols="30" rows="3" required style="max-height: 200px;"
                                     class="block w-full rounded-md border-0 py-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        {{ $review->comment }}
+                                        {{ old('comment', $review->comment) }}
                                 </textarea>
+                                @error('comment')
+                                <div class="text-red-400">{{ $message }}</div>
+                                @enderror
                                 <button type="submit" name="updateReview" value="1"
                                     class="rounded-md mt-2 px-3 py-1 text-sm font-semibold text-white bg-blue-500 shadow-sm hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                                     {{ __('products.update') }}</button>
@@ -112,32 +122,33 @@
                         </li>
                         @endforeach
                     </ul>
-                    @if(isset($client_id))
+                    @if(isset($client_id) && (!isset($editReviewId) || ($editReviewId != $review->id_review)))
                     <form action="{{ route('review.add') }}" method="POST">
                         @csrf
 
                         <div class="mt-3">
                             <p>{{ __('products.rateProduct') }}</p>
-                            <div>
-                                <label class="inline-block w-5 h-5 font-semibold text-center" for="rating_1">1</label>
-                                <label class="inline-block w-5 h-5 font-semibold text-center" for="rating_2">2</label>
-                                <label class="inline-block w-5 h-5 font-semibold text-center" for="rating_3">3</label>
-                                <label class="inline-block w-5 h-5 font-semibold text-center" for="rating_4">4</label>
-                                <label class="inline-block w-5 h-5 font-semibold text-center" for="rating_5">5</label>
+                            <div class="flex">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <div class="me-2">
+                                        <label for="rating_{{ $i }}" class="block w-5 h-5 font-semibold text-center">{{ $i }}</label>
+                                        <input id="rating_{{ $i }}" type="radio" name="rating" value="{{ $i }}"
+                                        {{ ($i == old('rating')) ? 'checked' : '' }} class="inline-block w-5 h-5">
+                                    </div>
+                                @endfor
                             </div>
-                            <div>
-                                <input class="inline-block w-5 h-5" id="rating_1" type="radio" name="rating" value="1">
-                                <input class="inline-block w-5 h-5" id="rating_2" type="radio" name="rating" value="2">
-                                <input class="inline-block w-5 h-5" id="rating_3" type="radio" name="rating" value="3">
-                                <input class="inline-block w-5 h-5" id="rating_4" type="radio" name="rating" value="4">
-                                <input class="inline-block w-5 h-5" id="rating_5" type="radio" name="rating" value="5">
-                            </div>
+                            @error('rating')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-span-full">
                             <label for="review"
                                 class="mt-2 block text-sm font-medium leading-6 text-gray-900">{{ __('products.writeReview') }}</label>
                             <textarea id="review" name="comment" cols="30" rows="3" required style="max-height: 200px;"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{{ old('comment') }}</textarea>
+                            @error('comment')
+                            <div class="text-red-400">{{ $message }}</div>
+                            @enderror
                         </div>
                         <input type="hidden" name="id_product" value="{{ $product->id_product }}">
                         <button type="submit" name="addReview" value="1"

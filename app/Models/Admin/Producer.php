@@ -102,7 +102,7 @@ class Producer extends Model
     public function restoreMarketplace(int $idProducer): void
     {
         Producer::onlyTrashed()
-                ->findOrFail($idProducer)
+                ->find($idProducer)
                 ->restore();
     }
 }

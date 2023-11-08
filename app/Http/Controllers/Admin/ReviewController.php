@@ -17,7 +17,9 @@ class ReviewController extends Controller
      */
     public function index(): View
     {
-        $reviews = Review::all();
+        $reviewModel = new Review();
+
+        $reviews = $reviewModel->readAllReview();
 
         $statuses = [
             1 => trans('admin/reviews.status1'),
@@ -37,8 +39,6 @@ class ReviewController extends Controller
                 $review->product_id = $review->product->id_product;
                 $review->product_name = $review->product->name;
                 $review->product_url = route('product.show', $review->product->id_product);
-//            } else {
-//                unset($reviews[$id]);   // If Product soft-deleted do NOT show its Review
             }
         }
 

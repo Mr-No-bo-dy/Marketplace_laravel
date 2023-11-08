@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MarketplaceRequest;
 use App\Models\Admin\Marketplace;
 use App\Models\Site\Product;
 use App\Models\Site\Seller;
@@ -39,22 +40,15 @@ class MarketplaceController extends Controller
     /**
      * Create Marketplace
      *
-     * @param Request $request
+     * @param MarketplaceRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(MarketplaceRequest $request): RedirectResponse
     {
         if ($request->has('createMarketplace')) {
             $marketplaceModel = new Marketplace();
 
-            $setMarketplaceData = [
-                'country_code' => strtoupper($request->post('country_code')),
-                'country' => ucfirst($request->post('country')),
-                'currency' => strtoupper($request->post('currency')),
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $marketplaceModel->storeMarketplace($setMarketplaceData);
+            $marketplaceModel->storeMarketplace($request->validated());
         }
 
         return redirect()->route('admin.marketplace');
@@ -78,21 +72,15 @@ class MarketplaceController extends Controller
     /**
      * Update Marketplace
      *
-     * @param Request $request
+     * @param MarketplaceRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(MarketplaceRequest $request): RedirectResponse
     {
         if ($request->has('updateMarketplace')) {
             $marketplaceModel = new Marketplace();
 
-            $setMarketplaceData = [
-                'country_code' => strtoupper($request->post('country_code')),
-                'country' => ucfirst($request->post('country')),
-                'currency' => strtoupper($request->post('currency')),
-            ];
-            $idMarketplace = $request->post('id_marketplace');
-            $marketplaceModel->updateMarketplace($idMarketplace, $setMarketplaceData);
+            $marketplaceModel->updateMarketplace($request->post('id_marketplace'), $request->validated());
         }
 
         return redirect()->route('admin.marketplace');
@@ -139,9 +127,9 @@ class MarketplaceController extends Controller
             $productModel = new Product();
 
             $idMarketplace = $request->post('id_marketplace');
+            $marketplaceModel->restoreMarketplace($idMarketplace);
             $idsSeller = $sellerModel->restoreMarketplaceSellers($idMarketplace);
             $productModel->restoreSellerProducts($idsSeller);
-            $marketplaceModel->restoreMarketplace($idMarketplace);
         }
 
         return back();

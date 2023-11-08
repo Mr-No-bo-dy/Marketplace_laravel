@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProductRequest extends FormRequest
+class SubcategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,36 +16,30 @@ class ProductRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request for storing Product.
+     * Get the validation rules that apply to the request for storing Subcategory.
      *
      * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'id_producer' => ['int'],
             'id_category' => ['int'],
-            'id_subcategory' => ['int'],
-            'id_seller' => ['int'],
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:511'],
-            'price' => ['required', 'int'],
-            'amount' => ['int'],
+            'description' => ['required', 'string', 'max:255'],
         ];
     }
 
     /**
-     * Get custom attributes for validator errors when storing Product.
+     * Get custom attributes for validator errors when storing Subcategory.
      *
      * @return array
      */
     public function attributes(): array
     {
         return [
-            'name' => trans('products.name'),
-            'description' => trans('products.description'),
-            'price' => trans('products.price'),
-            'amount' => trans('products.amount'),
+            'id_category' => trans('admin/subcategories.idCategory'),
+            'name' => trans('admin/subcategories.name'),
+            'description' => trans('admin/subcategories.description'),
         ];
     }
 }

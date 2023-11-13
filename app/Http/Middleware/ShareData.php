@@ -21,12 +21,12 @@ class ShareData
     public function handle(Request $request, Closure $next): Response
     {
         // Active User's data
-        if ($request->session()->get('id_seller')) {
+        if ($request->session()->has('id_seller')) {
             $idSeller = $request->session()->get('id_seller');
             $sellerName = Seller::find($idSeller)->name;
             View::share('seller_id', $idSeller);
             View::share('seller_name', $sellerName);
-        } elseif ($request->session()->get('id_client')) {
+        } elseif ($request->session()->has('id_client')) {
             $idClient = $request->session()->get('id_client');
             $clientName = Client::find($idClient)->name;
             View::share('client_id', $idClient);

@@ -1,6 +1,8 @@
-@extends('layouts.site')
+{{--@extends('layouts.site')--}}
+<x-site-layout>
+    <x-slot name="slot">
 
-@section('content')
+{{--@section('content')--}}
 <div class="py-6">
     <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -82,4 +84,6 @@
         </div>
     </div>
 </div>
-@endsection
+{{--@endsection--}}
+    </x-slot>
+</x-site-layout>

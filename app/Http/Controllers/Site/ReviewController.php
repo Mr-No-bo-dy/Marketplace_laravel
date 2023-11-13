@@ -19,7 +19,7 @@ class ReviewController extends Controller
     public function store(ReviewRequest $request): RedirectResponse
     {
         if (!$request->session()->has('id_client')) {
-            return back();
+            return redirect()->route('auth');
         }
 
         if ($request->has('addReview')) {
@@ -50,13 +50,20 @@ class ReviewController extends Controller
         } elseif ($request->has('updateReview')) {
             $reviewModel = new Review();
 
-            $validatedReview = $request->validate([
-                'comment' => ['required', 'string', 'max:511'],
-                'rating' => ['required', 'int', 'min:1', 'max:5'],
-            ]);
-            $reviewModel->updateReview($idReview, array_merge($validatedReview, ['status' => 1]));
+            if ($request->session()->has('id_client') &&
+                $request->session()->get('id_client') == $reviewModel->readReview($idReview)->id_client) {
 
-            $request->session()->forget('editReviewId');
+                $validatedReview = $request->validate([
+                    'comment' => ['required', 'string', 'max:511'],
+                    'rating' => ['required', 'int', 'min:1', 'max:5'],
+                ]);
+                $reviewModel->updateReview($idReview, array_merge($validatedReview, ['status' => 1]));
+
+                $request->session()->forget('editReviewId');
+
+            } else {
+                abort(403, 'Unauthorized action.');
+            }
 
         } elseif ($request->has('cancelReview')) {
             $request->session()->forget('editReviewId');
@@ -77,7 +84,13 @@ class ReviewController extends Controller
             $reviewModel = new Review();
 
             $idReview = $request->post('id_review');
-            $reviewModel->destroyReview($idReview);
+            if ($request->session()->has('id_client') &&
+                $request->session()->get('id_client') == $reviewModel->readReview($idReview)->id_client) {
+
+                $reviewModel->destroyReview($idReview);
+            } else {
+                abort(403, 'Unauthorized action.');
+            }
         }
 
         return back();

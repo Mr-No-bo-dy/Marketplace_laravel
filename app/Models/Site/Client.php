@@ -44,6 +44,16 @@ class Client extends Model
     }
 
     /**
+     * Setting relationship with DB table Orders.
+     *
+     * @return HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'id_client', 'id_client');
+    }
+
+    /**
      * Check if loggining user exists& not soft-deleted in DB table Clients
      *
      * @param array $data

@@ -10,9 +10,12 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     @foreach ($admins as $admin)
-                    <p><b>{{ __('admin/admins.id') }}:</b> {{ $admin->id }}</p>
-                    <p><b>{{ __('admin/admins.name') }}:</b> {{ $admin->name }}</p>
-                    <p><b>{{ __('admin/admins.email') }}:</b> {{ $admin->email }}</p>
+                    <div class="mt-4">
+                        <p><b>{{ __('admin/admins.id') }}:</b> {{ $admin->id }}</p>
+                        <p><b>{{ __('admin/admins.name') }}:</b> {{ $admin->name }}</p>
+                        <p><b>{{ __('admin/admins.surname') }}:</b> {{ $admin->surname }}</p>
+                        <p><b>{{ __('admin/admins.phone') }}:</b> {{ $admin->phone }}</p>
+                    </div>
                     @endforeach
                 </div>
             </div>

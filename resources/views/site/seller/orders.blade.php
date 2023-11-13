@@ -11,8 +11,7 @@
 
                 <ul role="list">
                     @foreach ($orders as $order)
-                    <li
-                        class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 ...">
+                    <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 @if($order->status == 'new') bg-green-100 @endif ...">
                         <div class="sm:col-span-7">
                             <p><b>{{ __('seller_orders.client') }}</b>
                                 {{ $order->client_surname . ' ' . $order->client_name }}</p>

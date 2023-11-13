@@ -25,9 +25,9 @@ use App\Http\Controllers\Site\SellerController as SiteSellerController;
 | and all of them will be assigned to the "web" middleware group.
 */
 
-//Route::get('/welcome', function () {
-//    return view('welcome');
-//});
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 
 // Automated Redirect of Homepage with localization:
 Route::get('/', function () {
@@ -52,11 +52,6 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::controller(GeneralController::class)->group(function () {
-    Route::get('/auth', 'auth')->name('auth');
-    Route::post('/auth', 'auth')->name('auth');
-});
-
 // Site
 Route::prefix('{locale}')->group(function () {
     Route::controller(GeneralController::class)->group(function () {
@@ -66,8 +61,8 @@ Route::prefix('{locale}')->group(function () {
         Route::post('/registration_seller', 'storeSeller')->name('registration_seller');
         Route::get('/registration_client', 'registerClient')->name('registration_client');
         Route::post('/registration_client', 'storeClient')->name('registration_client');
-//        Route::get('/auth', 'auth')->name('auth');
-//        Route::post('/auth', 'auth')->name('auth');
+        Route::get('/auth', 'auth')->name('auth');
+        Route::post('/auth', 'auth')->name('auth');
         Route::post('/log_out', 'logout')->name('log_out');
     });
     Route::controller(ProductController::class)->group(function () {

@@ -7,4 +7,7 @@ return [
     'surname' => 'Surname',
     'email' => 'Email',
     'phone' => 'Phone',
+    'new' => 'New Admin',
+    'delete' => 'Delete',
+    'restore' => 'Restore',
 ];

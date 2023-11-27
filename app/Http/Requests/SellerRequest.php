@@ -23,11 +23,11 @@ class SellerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_marketplace' => ['int'],
+            'id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Admin\Marketplace'],
             'name' => ['required', 'string', 'max:255'],
             'surname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
-            'phone' => ['required', 'int', 'regex:/^[0-9]{10,14}$/'],
+            'phone' => ['required', 'regex:/^[0-9]{10,14}$/'],
             'password' => ['required', 'string', 'min:8', 'max:255'],
         ];
     }

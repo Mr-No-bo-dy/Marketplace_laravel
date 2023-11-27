@@ -136,7 +136,7 @@ class Seller extends Model
      */
     public function readSellersNames(): Collection
     {
-        return self::all([$this->primaryKey, 'name', 'surname']);
+        return Seller::all([$this->primaryKey, 'name', 'surname']);
     }
 
     /**
@@ -225,7 +225,7 @@ class Seller extends Model
                             ->all();
 
         foreach ($idsSellers as $id) {
-            Seller::find($id)
+            Seller::findOrFail($id)
                     ->delete();
         }
 

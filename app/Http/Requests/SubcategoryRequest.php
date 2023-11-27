@@ -23,7 +23,7 @@ class SubcategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_category' => ['int'],
+            'id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Admin\Category'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
         ];

@@ -25,13 +25,16 @@ use App\Http\Controllers\Site\SellerController as SiteSellerController;
 | and all of them will be assigned to the "web" middleware group.
 */
 
-Route::get('/welcome', function () {
-    return view('welcome');
-});
+// Route::get('/welcome', function () {
+//     return view('welcome');
+// });
 
-// Automated Redirect of Homepage with localization:
+// Automated Redirect of Homepage / Admin_Panel with localization:
 Route::get('/', function () {
     return redirect(app()->getLocale());
+});
+Route::get('/admin', function () {
+    return redirect(app()->getLocale() . '/admin');
 });
 
 // Routes without '{locale}' because of get-parameter conflict:
@@ -122,6 +125,8 @@ Route::prefix('{locale}')->group(function () {
             Route::controller(AdminController::class)->group(function () {
                 Route::get('/', 'dashboard')->name('admin.dashboard');
                 Route::get('/admins', 'admins')->name('admin.admins');
+                Route::delete('/admins/delete', 'destroy')->name('admin.admins.delete');
+                Route::patch('/admins/restore', 'restore')->name('admin.admins.restore');
             });
 
             Route::controller(MarketplaceController::class)->group(function () {

@@ -23,14 +23,14 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_producer' => ['int'],
-            'id_category' => ['int'],
-            'id_subcategory' => ['int'],
-            'id_seller' => ['int'],
+            'id_producer' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Admin\Producer'],
+            'id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Admin\Category'],
+            'id_subcategory' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Admin\Subcategory'],
+            'id_seller' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Site\Seller'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:511'],
-            'price' => ['required', 'int'],
-            'amount' => ['int'],
+            'price' => ['required', 'numeric', 'min:1', 'max:999999.99'],
+            'amount' => ['integer', 'min:1', 'max:2147483647'],
         ];
     }
 

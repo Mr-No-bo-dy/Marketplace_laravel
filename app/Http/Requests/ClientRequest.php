@@ -25,9 +25,9 @@ class ClientRequest extends FormRequest
         return [
             'name' => ['string', 'max:255'],
             'surname' => ['string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'phone' => ['required', 'int', 'regex:/^[0-9]{10,14}$/'],
-            'password' => ['required', 'string', 'min:8', 'max:255'],
+            'email' => ['bail', 'required', 'string', 'email', 'max:255'],
+            'phone' => ['bail', 'required', 'regex:/^[0-9]{10,14}$/'],
+            'password' => ['bail', 'required', 'string', 'min:8', 'max:255'],
         ];
     }
 

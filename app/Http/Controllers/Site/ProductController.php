@@ -31,10 +31,6 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $productModel = new Product();
-        $producerModel = new Producer();
-        $categoryModel = new Category();
-        $subcategoryModel = new Subcategory();
-        $sellerModel = new Seller();
 
         // Using the filters for Products
         $filters = $this->getFilters($request);
@@ -48,10 +44,10 @@ class ProductController extends Controller
         }
 
         // Getting additional data
-        $producers = $producerModel->readProducersNames();
-        $categories = $categoryModel->readCategoriesNames();
-        $subcategories = $subcategoryModel->readSubcategoriesNames();
-        $sellers = $sellerModel->readSellersNames();
+        $producers = Producer::all(['id_producer', 'name']);
+        $categories = Category::all(['id_category', 'name']);
+        $subcategories = Subcategory::all(['id_subcategory', 'name']);
+        $sellers = Seller::all(['id_seller', 'name', 'surname']);
 
         $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
         $categoriesSelect = new HtmlString($this->customSelectData($categories, 'category', $filters));
@@ -85,9 +81,7 @@ class ProductController extends Controller
      */
     public function show(int $idProduct): View
     {
-        $productModel = new Product();
-
-        $product = $productModel->readProduct($idProduct);
+        $product = Product::findOrFail($idProduct);
         $this->formatProduct($product);
 
         return view('site.products.show', compact('product'));
@@ -101,14 +95,10 @@ class ProductController extends Controller
      */
     public function create(Request $request): View
     {
-        $producerModel = new Producer();
-        $categoryModel = new Category();
-        $subcategoryModel = new Subcategory();
-
         $idSeller = $request->session()->get('id_seller');
-        $producers = $producerModel->readProducersNames();
-        $categories = $categoryModel->readCategoriesNames();
-        $subcategories = $subcategoryModel->readSubcategoriesNames();
+        $producers = Producer::all(['id_producer', 'name']);
+        $categories = Category::all(['id_category', 'name']);
+        $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
         return view('site.products.create', compact('idSeller', 'producers', 'categories', 'subcategories'));
     }
@@ -123,19 +113,14 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): RedirectResponse
     {
-        if ($request->has('createProduct')) {
-            $productModel = new Product();
+        // Create Product
+        $product = Product::create($request->validated());
 
-            // Create Product
-            $productModel->storeProduct($request->validated());
-
-            // Save Media
-            if ($request->hasFile('images')) {
-                $images = $request->file('images');
-                foreach ($images as $image) {
-                    $productModel->addMedia($image)
-                        ->toMediaCollection('products');
-                }
+        // Save Media
+        if ($request->hasFile('images')) {
+            $images = $request->file('images');
+            foreach ($images as $image) {
+                $product->addMedia($image)->toMediaCollection('products');
             }
         }
 
@@ -150,15 +135,10 @@ class ProductController extends Controller
      */
     public function edit(int $idProduct): View
     {
-        $productModel = new Product();
-        $producerModel = new Producer();
-        $categoryModel = new Category();
-        $subcategoryModel = new Subcategory();
-
-        $product = $productModel->readProduct($idProduct);
-        $producers = $producerModel->readProducersNames();
-        $categories = $categoryModel->readCategoriesNames();
-        $subcategories = $subcategoryModel->readSubcategoriesNames();
+        $product = Product::findOrFail($idProduct);
+        $producers = Producer::all(['id_producer', 'name']);
+        $categories = Category::all(['id_category', 'name']);
+        $subcategories = Subcategory::all(['id_subcategory', 'name']);
 
         return view('site.products.update', compact('product', 'producers', 'categories', 'subcategories'));
     }
@@ -171,29 +151,27 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request): RedirectResponse
     {
-        if ($request->has('updateProduct')) {
-            $productModel = new Product();
+        // Update Product
+        $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
+        $product = Product::findOrFail($idProduct);
+        $product->fill($request->validated());
+        if ($product->isDirty()) {
+            $product->save();
+        }
 
-            // Update Product
-            $idProduct = $request->post('id_product');
-            $productModel->updateProduct($idProduct, $request->validated());
-
-            // Update Media
-            if ($request->hasFile('images')) {
-                $product = $productModel->find($idProduct);
-                // Optional Delete old media
-                if ($request->post('delete_media')) {
-                    $medias = $product->media;
-                    foreach ($medias as $media) {
-                        $media->delete($media->id);
-                    }
+        // Update Media
+        if ($request->hasFile('images')) {
+            // Optional Delete old media
+            if ($request->has('delete_media')) {
+                $medias = $product->media;
+                foreach ($medias as $media) {
+                    $media->delete($media->id);
                 }
-                // Save new Media
-                $images = $request->file('images');
-                foreach ($images as $image) {
-                    $product->addMedia($image)
-                        ->toMediaCollection('products');
-                }
+            }
+            // Save new Media
+            $images = $request->file('images');
+            foreach ($images as $image) {
+                $product->addMedia($image)->toMediaCollection('products');
             }
         }
 
@@ -209,10 +187,8 @@ class ProductController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteProduct')) {
-            $productModel = new Product();
-
-            $idProduct = $request->post('id_product');
-            $productModel->deleteProduct($idProduct);
+            $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
+            Product::findOrFail($idProduct)->delete();
         }
 
         return back();
@@ -227,10 +203,8 @@ class ProductController extends Controller
     public function restore(Request $request): RedirectResponse
     {
         if ($request->has('restoreProduct')) {
-            $productModel = new Product();
-
-            $idProduct = $request->post('id_product');
-            $productModel->restoreProduct($idProduct);
+            $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
+            Product::onlyTrashed()->findOrFail($idProduct)->restore();
         }
 
         return back();

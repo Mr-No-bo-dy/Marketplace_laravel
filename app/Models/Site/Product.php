@@ -110,21 +110,21 @@ class Product extends Model implements HasMedia
      * @param int $perPage
      * @return LengthAwarePaginator
      */
-    public function readProducts(mixed $filters, int $perPage = 5): LengthAwarePaginator
+    public function readProducts(mixed $filters, int $perPage = 8): LengthAwarePaginator
     {
         $products = Product::query();
 
         if (!empty($filters['id_producer'])) {
-            $products->where('id_producer',$filters['id_producer']);
+            $products->where('id_producer', $filters['id_producer']);
         }
         if (!empty($filters['id_category'])) {
-            $products->where('id_category',$filters['id_category']);
+            $products->where('id_category', $filters['id_category']);
         }
         if (!empty($filters['id_subcategory'])) {
-            $products->where('id_subcategory',$filters['id_subcategory']);
+            $products->where('id_subcategory', $filters['id_subcategory']);
         }
         if (!empty($filters['id_seller'])) {
-            $products->where('id_seller',$filters['id_seller']);
+            $products->where('id_seller', $filters['id_seller']);
         }
         if (!empty($filters['name'])) {
             $products->where('name','like', '%' . $filters['name'] . '%');
@@ -147,22 +147,16 @@ class Product extends Model implements HasMedia
      */
     public function readSellerProducts(int $idSeller): Collection
     {
-        return Product::where('id_seller', $idSeller)
-                    ->withTrashed()
-                    ->get();
-    }
+        $products = Product::where('id_seller', $idSeller)
+                            ->withTrashed()
+                            ->get();
 
-    /**
-     * Read one entity from DB table Products
-     *
-     * @param int $idProduct
-     * @return object
-     */
-    public function readProduct(int $idProduct): object
-    {
-        return Product::findOrFail($idProduct);
-    }
+        foreach ($products as $product) {
+            $product->url = route('product.show', $product->id_product);
+        }
 
+        return $products;
+    }
 
     /**
      * Read Product's 'id_marketplace' by given Product
@@ -175,41 +169,7 @@ class Product extends Model implements HasMedia
         return Product::select('s.id_marketplace')
                     ->join('sellers as s', $this->table . '.id_seller', '=', 's.id_seller')
                     ->where($this->table . '.id_product', $idProduct)
-                    ->first();
-    }
-
-    /**
-     * Insert entity into DB table Products
-     *
-     * @param array $data
-     * @return object
-     */
-    public function storeProduct(array $data): object
-    {
-        return Product::create($data);
-    }
-
-    /**
-     * Insert entity into DB table Products
-     *
-     * @param int $idProduct
-     * @param array $data
-     */
-    public function updateProduct(int $idProduct, array $data): void
-    {
-        Product::where($this->primaryKey, $idProduct)
-                ->update($data);
-    }
-
-    /**
-     * Soft-Delete entity in DB table Products
-     *
-     * @param int $idProduct
-     */
-    public function deleteProduct(int $idProduct): void
-    {
-        Product::findOrFail($idProduct)
-                ->delete();
+                    ->firstOrFail();
     }
 
     /**
@@ -274,18 +234,6 @@ class Product extends Model implements HasMedia
             Product::find($id)
                     ->delete();
         }
-    }
-
-    /**
-     * Restore entity in DB table Products
-     *
-     * @param int $idProduct
-     */
-    public function restoreProduct(int $idProduct): void
-    {
-        Product::onlyTrashed()
-                ->find($idProduct)
-                ->restore();
     }
 
     /**

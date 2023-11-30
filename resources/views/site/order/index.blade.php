@@ -40,7 +40,7 @@
                             <label for="name"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('order.name') }}</label>
                             <div class="mt-2">
-                                <input id="name" type="text" name="name" value="{{ $client->name ?? '' }}"
+                                <input id="name" type="text" name="name" value="{{ old('name', $client['name']) }}"
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
@@ -52,7 +52,7 @@
                             <label for="surname"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('order.surname') }}</label>
                             <div class="mt-2">
-                                <input id="surname" type="text" name="surname" value="{{ $client->surname ?? '' }}"
+                                <input id="surname" type="text" name="surname" value="{{ old('surname', $client['surname']) }}"
                                     autocomplete="given-name"
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
@@ -64,7 +64,7 @@
                             <label for="email"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('order.email') }}</label>
                             <div class="mt-2">
-                                <input id="email" type="text" name="email" value="{{ $client->email ?? '' }}"
+                                <input id="email" type="text" name="email" value="{{ old('email', $client['email']) }}"
                                     autocomplete="given-name" required
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>
@@ -76,7 +76,7 @@
                             <label for="tel"
                                 class="block text-sm font-medium leading-6 text-gray-900">{{ __('order.phone') }}</label>
                             <div class="mt-2">
-                                <input id="tel" type="text" name="phone" value="{{ $client->phone ?? '' }}"
+                                <input id="tel" type="text" name="phone" value="{{ old('phone', $client['phone']) }}"
                                     autocomplete="given-name" required
                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                             </div>

@@ -41,9 +41,7 @@ class GeneralController extends Controller
      */
     public function registerSeller(): View
     {
-        $marketplaceModel = new Marketplace();
-
-        $marketplaces = $marketplaceModel->readMarketplacesNames();
+        $marketplaces = Marketplace::all(['id_marketplace', 'country']);
 
         return view('authenticate.register-seller', compact('marketplaces'));
     }
@@ -66,21 +64,19 @@ class GeneralController extends Controller
      */
     public function storeSeller(SellerRequest $request): RedirectResponse
     {
-        if ($request->has('createSeller')) {
-            $sellerModel = new Seller();
+        $sellerModel = new Seller();
 
-            $idNewSeller = $sellerModel->storeSeller($request->safe()->except('password'))->id_seller;
+        $idNewSeller = $sellerModel::create($request->safe()->except('password'))->id_seller;
 
-            $setSellerPasswordData = [
-                'id_seller' => $idNewSeller,
-                'password' => Hash::make($request->safe()->only('password')['password']),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            $sellerModel->storeSellerPassword($setSellerPasswordData);
+        $setSellerPasswordData = [
+            'id_seller' => $idNewSeller,
+            'password' => Hash::make($request->validated('password')),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        $sellerModel->storeSellerPassword($setSellerPasswordData);
 
-            $request->session()->put('id_seller', $idNewSeller);
-        }
+        $request->session()->put('id_seller', $idNewSeller);
 
         return redirect()->route('auth');
     }
@@ -93,21 +89,19 @@ class GeneralController extends Controller
      */
     public function storeClient(ClientRequest $request): RedirectResponse
     {
-        if ($request->has('createClient')) {
-            $clientModel = new Client();
+        $clientModel = new Client();
 
-            $idNewClient = $clientModel->storeClient($request->safe()->except('password'))->id_client;
+        $idNewClient = $clientModel::create($request->safe()->except('password'))->id_client;
 
-            $setClientPasswordData = [
-                'id_client' => $idNewClient,
-                'password' => Hash::make($request->safe()->only('password')['password']),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            $clientModel->storeClientPassword($setClientPasswordData);
+        $setClientPasswordData = [
+            'id_client' => $idNewClient,
+            'password' => Hash::make($request->validated('password')),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        $clientModel->storeClientPassword($setClientPasswordData);
 
-            $request->session()->put('id_client', $idNewClient);
-        }
+        $request->session()->put('id_client', $idNewClient);
 
         return redirect()->route('auth');
     }

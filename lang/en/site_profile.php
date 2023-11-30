@@ -24,5 +24,10 @@ return [
     'already' => 'Already a member?',
     'cancel' => 'Cancel',
     'update' => 'Update',
+    'changePassword' => 'Change password',
+    'newPassword' => 'New password',
+    'wrongPassword' => 'Wrong password',
+    'differentPasswords' => 'New passwords do NOT match',
+    'profileUpdated' => 'Profile updated',
     'deleteAccount' => 'Delete Account',
 ];

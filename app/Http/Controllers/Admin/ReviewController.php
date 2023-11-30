@@ -17,9 +17,7 @@ class ReviewController extends Controller
      */
     public function index(): View
     {
-        $reviewModel = new Review();
-
-        $reviews = $reviewModel->readAllReview();
+        $reviews = Review::all();
 
         $statuses = [
             1 => trans('admin/reviews.status1'),
@@ -53,21 +51,20 @@ class ReviewController extends Controller
      */
     public function change(Request $request): RedirectResponse
     {
-        $reviewModel = new Review();
+        $idReview = $request->validate(['id_review' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_review'];
+        $review = Review::findOrFail($idReview);
 
-        $idReview = $request->post('id_review');
-        $reviewStatus = $reviewModel->readReview($idReview)->status;
             // Approve
-        if ($request->has('approveReview') && $reviewStatus == 1) {
-            $reviewModel->updateReview($idReview,['status' => 2]);
+        if ($request->has('approveReview') && $review->status == 1) {
+            $review->update(['status' => 2]);
 
             // Disapprove
-        } elseif ($request->has('disapproveReview') && $reviewStatus == 2) {
-            $reviewModel->updateReview($idReview,['status' => 1]);
+        } elseif ($request->has('disapproveReview') && $review->status == 2) {
+            $review->update(['status' => 1]);
 
             // Delete
         } elseif ($request->has('deleteReview')) {
-            $reviewModel->destroyReview($idReview);
+            $review->forceDelete();
         }
 
         return back();

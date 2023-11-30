@@ -24,5 +24,10 @@ return [
     'already' => 'Вже зарєсстворані?',
     'cancel' => 'Скасувати',
     'update' => 'Оновити',
+    'changePassword' => 'Змінити пароль',
+    'newPassword' => 'Новий пароль',
+    'wrongPassword' => 'Неправильний пароль',
+    'differentPasswords' => 'Нові паролі НЕ сходяться',
+    'profileUpdated' => 'Профіль оновлено',
     'deleteAccount' => 'Видалити Акаунт',
 ];

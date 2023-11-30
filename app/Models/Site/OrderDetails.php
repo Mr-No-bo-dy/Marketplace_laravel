@@ -36,14 +36,4 @@ class OrderDetails extends Model
     {
         return $this->belongsTo(Order::class, 'id_order', 'id_order');
     }
-
-    /**
-     * Storing order's data into DB table OrderDetails.
-     *
-     * @param array $orderDetails
-     */
-    public function storeOrderDetails(array $orderDetails): void
-    {
-        OrderDetails::create($orderDetails);
-    }
 }

@@ -24,11 +24,10 @@ class OrderController extends Controller
      */
     public function index(Request $request): View
     {
-        $sellerModel = new Seller();
         $orderModel = new Order();
 
         $idSeller = $request->session()->get('id_seller');
-        $seller = $sellerModel->readSeller($idSeller);
+        $seller = Seller::findOrFail($idSeller);
         $orders = $orderModel->readSellerOrdersWithDetails($idSeller);
 
         return view('site.seller.orders', compact('seller', 'orders'));
@@ -42,13 +41,10 @@ class OrderController extends Controller
      */
     public function create(Request $request): View
     {
-        $clientModel = new Client();
-
+        $client = ['name' => '', 'surname' => '', 'email' => '', 'phone' => ''];
         $idClient = $request->session()->get('id_client');
         if ($idClient) {
-            $client = $clientModel->readClient($idClient);
-        } else {
-            $client = null;
+            $client = Client::findOrFail($idClient)->toArray();
         }
 
         extract($this->getCartData($request));
@@ -64,9 +60,6 @@ class OrderController extends Controller
      */
     public function store(Request $request): View
     {
-        $orderModel = new Order();
-        $orderDetailsModel = new OrderDetails();
-
         /** Register new client or use existing:
          * If a customer with the given email doesn't exist, create a new one;
          * otherwise, only retrieve the ID of the existing customer.
@@ -87,19 +80,18 @@ class OrderController extends Controller
         if ($client->isDirty()) {
             $client->save();
         }
-        $idClient = $client->id_client;
 
         // Forming Order's data
         $cartData = $request->session()->get('cart');
         if (!empty($cartData) && $request->has('makeOrder')) {
             foreach ($cartData['products'] as $product) {
                 $orderData = [
-                    'id_client' => $idClient,
+                    'id_client' => $client->id_client,
                     'id_seller' => $product['id_seller'],
                     'status' => 'new',
                     'date' => now(),
                 ];
-                $idNewOrder = $orderModel->storeOrder($orderData)->id_order;
+                $idNewOrder = Order::create($orderData)->id_order;
 
                 $orderDetailsData = [
                     'id_order' => $idNewOrder,
@@ -107,7 +99,7 @@ class OrderController extends Controller
                     'count' => $product['quantity'],
                     'total' => $product['total'],
                 ];
-                $orderDetailsModel->storeOrderDetails($orderDetailsData);
+                OrderDetails::create($orderDetailsData);
             }
             $request->session()->forget('cart');
         }
@@ -123,13 +115,11 @@ class OrderController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $orderModel = new Order();
-
         $idOrder = $request->validate(['id_order' => ['int']])['id_order'];
         if ($request->has('order_accept')) {
-            $orderModel->updateSellerOrders($idOrder, ['status' => 'processed']);
+            Order::findOrFail($idOrder)->update(['status' => 'processed']);
         } elseif ($request->has('order_decline')) {
-            $orderModel->updateSellerOrders($idOrder, ['status' => 'declined']);
+            Order::findOrFail($idOrder)->update(['status' => 'declined']);
         }
 
         return redirect()->route('order.my_orders');

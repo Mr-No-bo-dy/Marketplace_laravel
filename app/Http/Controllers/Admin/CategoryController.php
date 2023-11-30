@@ -20,9 +20,7 @@ class CategoryController extends Controller
      */
     public function index(): View
     {
-        $categoryModel = new Category();
-
-        $categories = $categoryModel->readAllCategories();
+        $categories = Category::withTrashed()->get();
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -45,11 +43,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request): RedirectResponse
     {
-        if ($request->has('createCategory')) {
-            $categoryModel = new Category();
-
-            $categoryModel->storeCategory($request->validated());
-        }
+        Category::create($request->validated());
 
         return redirect()->route('admin.category');
     }
@@ -62,9 +56,7 @@ class CategoryController extends Controller
      */
     public function edit(int $idCategory): View
     {
-        $categoryModel = new Category();
-
-        $category = $categoryModel->readCategory($idCategory);
+        $category = Category::findOrFail($idCategory);
 
         return view('admin.categories.update', compact('category'));
     }
@@ -77,10 +69,11 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request): RedirectResponse
     {
-        if ($request->has('updateCategory')) {
-            $categoryModel = new Category();
-
-            $categoryModel->updateCategory($request->post('id_category'), $request->validated());
+        $idCategory = $request->validate(['id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_category'];
+        $category = Category::findOrFail($idCategory);
+        $category->fill($request->validated());
+        if ($category->isDirty()) {
+            $category->save();
         }
 
         return redirect()->route('admin.category');
@@ -95,14 +88,13 @@ class CategoryController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteCategory')) {
-            $categoryModel = new Category();
             $subcategoryModel = new Subcategory();
             $productModel = new Product();
 
-            $idCategory = $request->post('id_category');
+            $idCategory = $request->validate(['id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_category'];
             $productModel->deleteCategoryProducts($idCategory);
             $subcategoryModel->deleteCategorySubcategories($idCategory);
-            $categoryModel->deleteCategory($idCategory);
+            Category::findOrFail($idCategory)->delete();
         }
 
         return back();
@@ -117,14 +109,13 @@ class CategoryController extends Controller
     public function restore(Request $request): RedirectResponse
     {
         if ($request->has('restoreCategory')) {
-            $categoryModel = new Category();
             $subcategoryModel = new Subcategory();
             $productModel = new Product();
 
-            $idCategory = $request->post('id_category');
+            $idCategory = $request->validate(['id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_category'];
             $productModel->restoreCategoryProducts($idCategory);
             $subcategoryModel->restoreCategorySubcategories($idCategory);
-            $categoryModel->restoreCategory($idCategory);
+            Category::onlyTrashed()->findOrFail($idCategory)->restore();
         }
 
         return back();

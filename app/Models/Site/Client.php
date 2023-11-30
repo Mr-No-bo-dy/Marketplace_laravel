@@ -89,7 +89,30 @@ class Client extends Model
     }
 
     /**
-     * Read all entities from DB table Clients
+     * Check if Client has entered the right Password
+     *
+     * @param int $idClient
+     * @param string $password
+     * @return boolean
+     */
+    public function passwordCheck(int $idClient, string $password): bool
+    {
+        $result = false;
+
+        $hashedDBPassword = DB::table('clients_passwords')
+                            ->where('id_client', $idClient)
+                            ->pluck('password')
+                            ->firstOrFail();
+
+        if (Hash::check($password, $hashedDBPassword)) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Read all entities from DB table Clients that make at least 1 order
      *
      * @return Collection
      */
@@ -103,30 +126,8 @@ class Client extends Model
                     ->join('orders as o', $this->table.'.id_client', '=', 'o.id_client')
                     ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
                     ->withTrashed()
-                    ->groupBy($this->table.'.'.$this->primaryKey)
+                    ->groupBy($this->table . '.' . $this->primaryKey)
                     ->get();
-    }
-
-    /**
-     * Read one entity from DB table Clients
-     *
-     * @param int $idClient
-     * @return object
-     */
-    public function readClient(int $idClient): object
-    {
-        return Client::findOrFail($idClient);
-    }
-
-    /**
-     * Insert entity into DB table Clients
-     *
-     * @param array $data
-     * @return object
-     */
-    public function storeClient(array $data): object
-    {
-        return Client::create($data);
     }
 
     /**
@@ -138,18 +139,6 @@ class Client extends Model
     {
         DB::table('clients_passwords')
             ->insert($data);
-    }
-
-    /**
-     * Update entity into DB table Clients
-     *
-     * @param int $idClient
-     * @param array $data
-     */
-    public function updateClient(int $idClient, array $data): void
-    {
-        Client::where($this->primaryKey, $idClient)
-                ->update($data);
     }
 
     /**

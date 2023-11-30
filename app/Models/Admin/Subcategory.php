@@ -54,61 +54,6 @@ class Subcategory extends Model
     }
 
     /**
-     * Read all entities' ids & names from DB table Subcategories
-     *
-     * @return Collection
-     */
-    public function readSubcategoriesNames(): Collection
-    {
-        return Subcategory::all([$this->primaryKey, 'name']);
-    }
-
-    /**
-     * Read one entity from DB table Subcategories
-     *
-     * @param int $idSubcategory
-     * @return object
-     */
-    public function readSubcategory(int $idSubcategory): object
-    {
-        return Subcategory::findOrFail($idSubcategory);
-    }
-
-    /**
-     * Insert entity into DB table Subcategories
-     *
-     * @param array $data
-     * @return object
-     */
-    public function storeSubcategory(array $data): object
-    {
-        return Subcategory::create($data);
-    }
-
-    /**
-     * Insert entity into DB table Subcategories
-     *
-     * @param int $idSubcategory
-     * @param array $data
-     */
-    public function updateSubcategory(int $idSubcategory, array $data): void
-    {
-        Subcategory::where($this->primaryKey, $idSubcategory)
-                    ->update($data);
-    }
-
-    /**
-     * Soft-Delete entity in DB table Subcategories
-     *
-     * @param int $idSubcategory
-     */
-    public function deleteSubcategory(int $idSubcategory): void
-    {
-        Subcategory::findOrFail($idSubcategory)
-                    ->delete();
-    }
-
-    /**
      * Soft-Delete entities in DB table Subcategories by given Category
      *
      * @param int $idCategory
@@ -122,18 +67,6 @@ class Subcategory extends Model
             Subcategory::find($id)
                         ->delete();
         }
-    }
-
-    /**
-     * Restore entity in DB table Subcategories
-     *
-     * @param int $idSubcategory
-     */
-    public function restoreSubcategory(int $idSubcategory): void
-    {
-        Subcategory::onlyTrashed()
-                    ->find($idSubcategory)
-                    ->restore();
     }
 
     /**

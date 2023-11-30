@@ -22,7 +22,7 @@
                                 alt="{{ $product->name . '-pic' }}">
                         </div>
                         <div class="sm:col-span-5">
-                            <b class="text-xl">{{ $product->name }}</b>
+                            <h2 class="text-xl text-blue-800"><a class="hover:text-blue-600" href="{{ $product->url }}">{{ $product->name }}</a></h2>
                             <p><b>{{ __('products.description') }}:</b> {{ $product->description }}</p>
                             <p><b>{{ __('products.price') }}:</b> {{ $product->price }}</p>
                             <p><b>{{ __('products.amount') }}:</b> {{ $product->amount }}</p>

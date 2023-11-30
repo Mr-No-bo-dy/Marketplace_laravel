@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PasswordRequest;
 use App\Http\Requests\SellerRequest;
 use App\Models\Admin\Marketplace;
 use App\Models\Site\Product;
@@ -38,11 +39,8 @@ class SellerController extends Controller
      */
     public function edit(int $idSeller): View
     {
-        $sellerModel = new Seller();
-        $marketplaceModel = new Marketplace();
-
-        $seller = $sellerModel->readSeller($idSeller);
-        $marketplaces = $marketplaceModel->readMarketplacesNames();
+        $seller = Seller::findOrFail($idSeller);
+        $marketplaces = Marketplace::all(['id_marketplace', 'country']);
 
         return view('profile.seller-update', compact('marketplaces', 'seller'));
     }
@@ -55,20 +53,51 @@ class SellerController extends Controller
      */
     public function update(SellerRequest $request): RedirectResponse
     {
-        if ($request->has('updateSeller')) {
-            $sellerModel = new Seller();
+        $sellerModel = new Seller();
 
-            $idSeller = $request->post('id_seller');
-            $sellerModel->updateSeller($idSeller, $request->safe()->except('password'));
-
-            $setSellerPasswordData = [
-                'password' => Hash::make($request->safe()->only('password')['password']),
-                'updated_at' => now(),
-            ];
-            $sellerModel->updateSellerPassword($idSeller, $setSellerPasswordData);
+        $status = false;
+        $idSeller = $request->session()->get('id_seller');
+        if ($sellerModel->passwordCheck($idSeller, $request->validated('password'))) {
+            $seller = $sellerModel::findOrFail($idSeller);
+            $seller->fill($request->safe()->except('password'));
+            if ($seller->isDirty()) {
+                $seller->save();
+            }
+            $status = true;
         }
 
-        return redirect()->route('seller.personal');
+        return $status ? back()->with('status', 'profileUpdated')
+                        : back()->withErrors(['password' => trans('site_profile.wrongPassword')]);
+    }
+
+    /**
+     * Update the specified Client's Password in storage.
+     *
+     * @param PasswordRequest $request
+     * @return RedirectResponse
+     */
+    public function updatePass(PasswordRequest $request): RedirectResponse
+    {
+        $sellerModel = new Seller();
+
+        $status = 'wrongPassword';
+        $idSeller = $request->session()->get('id_seller');
+        if ($sellerModel->passwordCheck($idSeller, $request->validated('old_password'))) {
+            if ($request->validated('new_password') == $request->validated('new_password2')) {
+                $setClientPasswordData = [
+                    'password' => Hash::make($request->validated('new_password')),
+                    'updated_at' => now(),
+                ];
+                $sellerModel->updateSellerPassword($idSeller, $setClientPasswordData);
+                $status = 'success';
+            } else {
+                $status = 'differentPasswords';
+            }
+        }
+
+        return $status == 'success' ? back()->with('status', 'passwordUpdated')
+            : ($status == 'wrongPassword' ? back()->withErrors(['old_password' => trans('site_profile.wrongPassword')])
+            : back()->withErrors(['new_password' => trans('site_profile.differentPasswords')]));
     }
 
     /**
@@ -79,16 +108,22 @@ class SellerController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $status = false;
         if ($request->has('deleteSeller')) {
             $sellerModel = new Seller();
             $productModel = new Product();
 
-            $idSeller = $request->post('id_seller');
-            $productModel->deleteSellersProducts([$idSeller]);
-            $sellerModel->deleteSeller($idSeller);
-            $request->session()->forget('id_seller');
+            $password = $request->validate(['passwordForDelete' => ['bail', 'required', 'string', 'min:8', 'max:255']])['passwordForDelete'];
+            $idSeller = $request->session()->get('id_seller');
+            if ($sellerModel->passwordCheck($idSeller, $password)) {
+                $productModel->deleteSellersProducts([$idSeller]);
+                $sellerModel->deleteSeller($idSeller);
+                $request->session()->forget('id_seller');
+                $status = true;
+            }
         }
 
-        return redirect()->route('index');
+        return $status ? redirect()->route('index')
+                        : back()->withErrors(['passwordForDelete' => trans('site_profile.wrongPassword')]);
     }
 }

@@ -34,9 +34,7 @@ class SubcategoryController extends Controller
      */
     public function create(): View
     {
-        $categoryModel = new Category();
-
-        $categories = $categoryModel->readCategoriesNames();
+        $categories = Category::all(['id_category', 'name']);
 
         return view('admin.subcategories.create', compact('categories'));
     }
@@ -49,12 +47,7 @@ class SubcategoryController extends Controller
      */
     public function store(SubcategoryRequest $request): RedirectResponse
     {
-        if ($request->has('createSubcategory')) {
-            $subcategoryModel = new Subcategory();
-
-            $subcategoryModel->storeSubcategory($request->validated());
-
-        }
+        Subcategory::create($request->validated());
 
         return redirect()->route('admin.subcategory');
     }
@@ -67,11 +60,8 @@ class SubcategoryController extends Controller
      */
     public function edit(int $idSubcategory): View
     {
-        $categoryModel = new Category();
-        $subcategoryModel = new Subcategory();
-
-        $categories = $categoryModel->readCategoriesNames();
-        $subcategory = $subcategoryModel->readSubcategory($idSubcategory);
+        $categories = Category::all(['id_category', 'name']);
+        $subcategory = Subcategory::findOrFail($idSubcategory);
 
         return view('admin.subcategories.update', compact('categories', 'subcategory'));
     }
@@ -84,10 +74,11 @@ class SubcategoryController extends Controller
      */
     public function update(SubcategoryRequest $request): RedirectResponse
     {
-        if ($request->has('updateSubcategory')) {
-            $subcategoryModel = new Subcategory();
-
-            $subcategoryModel->updateSubcategory($request->post('id_subcategory'), $request->validated());
+        $idSubcategory = $request->validate(['id_subcategory' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_subcategory'];
+        $subcategory = Subcategory::findOrFail($idSubcategory);
+        $subcategory->fill($request->validated());
+        if ($subcategory->isDirty()) {
+            $subcategory->save();
         }
 
         return redirect()->route('admin.subcategory');
@@ -102,12 +93,11 @@ class SubcategoryController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteSubcategory')) {
-            $subcategoryModel = new Subcategory();
             $productModel = new Product();
 
-            $idSubcategory = $request->post('id_subcategory');
+            $idSubcategory = $request->validate(['id_subcategory' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_subcategory'];
             $productModel->deleteSubcategoryProducts($idSubcategory);
-            $subcategoryModel->deleteSubcategory($idSubcategory);
+            Subcategory::findOrFail($idSubcategory)->delete();
         }
 
         return back();
@@ -122,12 +112,12 @@ class SubcategoryController extends Controller
     public function restore(Request $request): RedirectResponse
     {
         if ($request->has('restoreSubcategory')) {
-            $subcategoryModel = new Subcategory();
             $productModel = new Product();
 
-            $idSubcategory = $request->post('id_subcategory');
+
+            $idSubcategory = $request->validate(['id_subcategory' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_subcategory'];
             $productModel->restoreSubcategoryProducts($idSubcategory);
-            $subcategoryModel->restoreSubcategory($idSubcategory);
+            Subcategory::onlyTrashed()->findOrFail($idSubcategory)->restore();
         }
 
         return back();

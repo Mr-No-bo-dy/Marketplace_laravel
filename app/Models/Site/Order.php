@@ -84,27 +84,4 @@ class Order extends Model
                 ->orderBy('o.created_at', 'desc')
                 ->get();
     }
-
-    /**
-     * Storing data into DB table Order.
-     *
-     * @param array $data
-     * @return object
-     */
-    public function storeOrder(array $data): object
-    {
-        return Order::create($data);
-    }
-
-    /**
-     * Update entity in DB table Orders
-     *
-     * @param int $idOrder
-     * @param array $data
-     */
-    public function updateSellerOrders(int $idOrder, array $data): void
-    {
-        Order::where($this->primaryKey, $idOrder)
-            ->update($data);
-    }
 }

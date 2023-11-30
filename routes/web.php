@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ClientController as AdminClientController;
 use App\Http\Controllers\Admin\MarketplaceController;
@@ -86,6 +86,7 @@ Route::prefix('{locale}')->group(function () {
         Route::controller(SiteClientController::class)->group(function () {
             Route::get('/client/personal', 'show')->name('client.personal');
             Route::patch('/client/update', 'update')->name('client.update');
+            Route::patch('/client/updatePass', 'updatePass')->name('client.updatePass');
             Route::delete('/client/delete', 'destroy')->name('client.delete');
         });
         Route::controller(SiteReviewController::class)->group(function () {
@@ -99,6 +100,7 @@ Route::prefix('{locale}')->group(function () {
         Route::controller(SiteSellerController::class)->group(function () {
             Route::get('/seller/personal', 'show')->name('seller.personal');
             Route::patch('/seller/update', 'update')->name('seller.update');
+            Route::patch('/seller/updatePass', 'updatePass')->name('seller.updatePass');
             Route::delete('/seller/delete', 'destroy')->name('seller.delete');
         });
         Route::controller(ProductController::class)->group(function () {
@@ -122,7 +124,7 @@ Route::prefix('{locale}')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         Route::prefix('admin')->group(function () {
-            Route::controller(AdminController::class)->group(function () {
+            Route::controller(UserController::class)->group(function () {
                 Route::get('/', 'dashboard')->name('admin.dashboard');
                 Route::get('/admins', 'admins')->name('admin.admins');
                 Route::delete('/admins/delete', 'destroy')->name('admin.admins.delete');

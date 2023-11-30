@@ -102,6 +102,29 @@ class Seller extends Model
     }
 
     /**
+     * Check if Seller has entered the right Password
+     *
+     * @param int $idSeller
+     * @param string $password
+     * @return boolean
+     */
+    public function passwordCheck(int $idSeller, string $password): bool
+    {
+        $result = false;
+
+        $hashedDBPassword = DB::table('sellers_passwords')
+                            ->where('id_seller', $idSeller)
+                            ->pluck('password')
+                            ->firstOrFail();
+
+        if (Hash::check($password, $hashedDBPassword)) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * Read all entities from DB table Sellers
      *
      * @return Collection
@@ -109,7 +132,7 @@ class Seller extends Model
     public function readAllSellers(): Collection
     {
         return Seller::select('m.country', $this->table . '.*')
-                    ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
+                    ->join('marketplaces as m', $this->table . '.id_marketplace', '=', 'm.id_marketplace')
                     ->orderBy('id_seller')
                     ->withTrashed()
                     ->get();
@@ -124,41 +147,9 @@ class Seller extends Model
     public function readSellerWithCountry(int $idSeller): object
     {
         return Seller::select('m.country', $this->table . '.*')
-                    ->join('marketplaces as m', $this->table.'.id_marketplace', '=', 'm.id_marketplace')
+                    ->join('marketplaces as m', $this->table . '.id_marketplace', '=', 'm.id_marketplace')
                     ->where($this->primaryKey, $idSeller)
-                    ->first();
-    }
-
-    /**
-     * Read all entities' ids, names & surnames from DB table Sellers
-     *
-     * @return Collection
-     */
-    public function readSellersNames(): Collection
-    {
-        return Seller::all([$this->primaryKey, 'name', 'surname']);
-    }
-
-    /**
-     * Read selected entity from DB table Sellers
-     *
-     * @param int $idSeller
-     * @return object
-     */
-    public function readSeller(int $idSeller): object
-    {
-        return Seller::findOrFail($idSeller);
-    }
-
-    /**
-     * Insert entity into DB table Sellers
-     *
-     * @param array $data
-     * @return object
-     */
-    public function storeSeller(array $data): object
-    {
-        return Seller::create($data);
+                    ->firstOrFail();
     }
 
     /**
@@ -170,18 +161,6 @@ class Seller extends Model
     {
         DB::table('sellers_passwords')
             ->insert($data);
-    }
-
-    /**
-     * Update entity into DB table Sellers
-     *
-     * @param int $idSeller
-     * @param array $data
-     */
-    public function updateSeller(int $idSeller, array $data): void
-    {
-        Seller::where($this->primaryKey, $idSeller)
-                ->update($data);
     }
 
     /**
@@ -244,7 +223,7 @@ class Seller extends Model
             ->update(['deleted_at' => null]);
 
         Seller::onlyTrashed()
-                ->find($idSeller)
+                ->findOrFail($idSeller)
                 ->restore();
     }
 

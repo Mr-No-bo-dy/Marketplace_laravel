@@ -20,9 +20,7 @@ class MarketplaceController extends Controller
      */
     public function index(): View
     {
-        $marketplaceModel = new Marketplace();
-
-        $marketplaces = $marketplaceModel->readAllMarketplaces();
+        $marketplaces = Marketplace::withTrashed()->get();
 
         return view('admin.marketplaces.index', compact('marketplaces'));
     }
@@ -45,11 +43,7 @@ class MarketplaceController extends Controller
      */
     public function store(MarketplaceRequest $request): RedirectResponse
     {
-        if ($request->has('createMarketplace')) {
-            $marketplaceModel = new Marketplace();
-
-            $marketplaceModel->storeMarketplace($request->validated());
-        }
+        Marketplace::create($request->validated());
 
         return redirect()->route('admin.marketplace');
     }
@@ -62,9 +56,7 @@ class MarketplaceController extends Controller
      */
     public function edit(int $idMarketplace): View
     {
-        $marketplaceModel = new Marketplace();
-
-        $marketplace = $marketplaceModel->readMarketplace($idMarketplace);
+        $marketplace = Marketplace::findOrFail($idMarketplace);
 
         return view('admin.marketplaces.update', compact('marketplace'));
     }
@@ -77,10 +69,11 @@ class MarketplaceController extends Controller
      */
     public function update(MarketplaceRequest $request): RedirectResponse
     {
-        if ($request->has('updateMarketplace')) {
-            $marketplaceModel = new Marketplace();
-
-            $marketplaceModel->updateMarketplace($request->post('id_marketplace'), $request->validated());
+        $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_marketplace'];
+        $marketplace = Marketplace::findOrFail($idMarketplace);
+        $marketplace->fill($request->validated());
+        if ($marketplace->isDirty()) {
+            $marketplace->save();
         }
 
         return redirect()->route('admin.marketplace');
@@ -95,19 +88,13 @@ class MarketplaceController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteMarketplace')) {
-            $marketplaceModel = new Marketplace();
             $sellerModel = new Seller();
             $productModel = new Product();
 
-            $idMarketplace = $request->post('id_marketplace');
+            $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_marketplace'];
             $idsSeller = $sellerModel->deleteMarketplaceSellers($idMarketplace);
-            foreach ($idsSeller as $idSeller) {
-                if ($idSeller == $request->session()->get('id_seller')) {
-                    $request->session()->forget('id_seller');
-                }
-            }
             $productModel->deleteSellersProducts($idsSeller);
-            $marketplaceModel->deleteMarketplace($idMarketplace);
+            Marketplace::findOrFail($idMarketplace)->delete();
         }
 
         return back();
@@ -122,12 +109,11 @@ class MarketplaceController extends Controller
     public function restore(Request $request): RedirectResponse
     {
         if ($request->has('restoreMarketplace')) {
-            $marketplaceModel = new Marketplace();
             $sellerModel = new Seller();
             $productModel = new Product();
 
-            $idMarketplace = $request->post('id_marketplace');
-            $marketplaceModel->restoreMarketplace($idMarketplace);
+            $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_marketplace'];
+            Marketplace::onlyTrashed()->findOrFail($idMarketplace)->restore();
             $idsSeller = $sellerModel->restoreMarketplaceSellers($idMarketplace);
             $productModel->restoreSellerProducts($idsSeller);
         }

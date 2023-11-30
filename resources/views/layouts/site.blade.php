@@ -35,9 +35,6 @@
             @endif
         </main>
     </div>
-
-    <!-- Scripts -->
-    <script src="{{ URL::asset('js/scripts.js') }}"></script>
 </body>
 
 </html>

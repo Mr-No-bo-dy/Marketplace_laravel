@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\Client;
+use App\Models\Site\Review;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,8 +35,10 @@ class ClientController extends Controller
     {
         if ($request->has('blockClient')) {
             $clientModel = new Client();
+            $reviewModel = new Review();
 
-            $idClient = $request->post('id_client');
+            $idClient = $request->validate(['id_client' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_client'];
+            $reviewModel->deleteClientReviews($idClient);
             $clientModel->deleteClient($idClient);
         }
 
@@ -52,9 +55,11 @@ class ClientController extends Controller
     {
         if ($request->has('unblockClient')) {
             $clientModel = new Client();
+            $reviewModel = new Review();
 
-            $idClient = $request->post('id_client');
+            $idClient = $request->validate(['id_client' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_client'];
             $clientModel->restoreClient($idClient);
+            $reviewModel->restoreClientReviews($idClient);
         }
 
         return back();

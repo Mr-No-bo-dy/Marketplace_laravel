@@ -19,9 +19,7 @@ class ProducerController extends Controller
      */
     public function index(): View
     {
-        $producerModel = new Producer();
-
-        $producers = $producerModel->readAllProducers();
+        $producers = Producer::withTrashed()->get();
 
         return view('admin.producers.index', compact('producers'));
     }
@@ -44,11 +42,7 @@ class ProducerController extends Controller
      */
     public function store(ProducerRequest $request): RedirectResponse
     {
-        if ($request->has('createProducer')) {
-            $producerModel = new Producer();
-
-            $producerModel->storeProducer($request->validated());
-        }
+        Producer::create($request->validated());
 
         return redirect()->route('admin.producer');
     }
@@ -61,9 +55,7 @@ class ProducerController extends Controller
      */
     public function edit(int $idProducer): View
     {
-        $producerModel = new Producer();
-
-        $producer = $producerModel->readProducer($idProducer);
+        $producer = Producer::findOrFail($idProducer);
 
         return view('admin.producers.update', compact('producer'));
     }
@@ -76,10 +68,11 @@ class ProducerController extends Controller
      */
     public function update(ProducerRequest $request): RedirectResponse
     {
-        if ($request->has('updateProducer')) {
-            $producerModel = new Producer();
-
-            $producerModel->updateProducer($request->post('id_producer'), $request->validated());
+        $idProducer = $request->validate(['id_producer' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_producer'];
+        $producer = Producer::findOrFail($idProducer);
+        $producer->fill($request->validated());
+        if ($producer->isDirty()) {
+            $producer->save();
         }
 
         return redirect()->route('admin.producer');
@@ -94,12 +87,11 @@ class ProducerController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteProducer')) {
-            $producerModel = new Producer();
             $productModel = new Product();
 
-            $idProducer = $request->post('id_producer');
+            $idProducer = $request->validate(['id_producer' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_producer'];
             $productModel->deleteProducerProducts($idProducer);
-            $producerModel->deleteProducer($idProducer);
+            Producer::findOrFail($idProducer)->delete();
         }
 
         return back();
@@ -114,12 +106,11 @@ class ProducerController extends Controller
     public function restore(Request $request): RedirectResponse
     {
         if ($request->has('restoreProducer')) {
-            $producerModel = new Producer();
             $productModel = new Product();
 
-            $idProducer = $request->post('id_producer');
+            $idProducer = $request->validate(['id_producer' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_producer'];
             $productModel->restoreProducerProducts($idProducer);
-            $producerModel->restoreMarketplace($idProducer);
+            Producer::onlyTrashed()->findOrFail($idProducer)->restore();
         }
 
         return back();

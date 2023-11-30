@@ -37,7 +37,7 @@ class SellerController extends Controller
             $sellerModel = new Seller();
             $productModel = new Product();
 
-            $idSeller = $request->post('id_seller');
+            $idSeller = $request->validate(['id_seller' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_seller'];
             $productModel->deleteSellersProducts([$idSeller]);
             $sellerModel->deleteSeller($idSeller);
         }
@@ -57,7 +57,7 @@ class SellerController extends Controller
             $sellerModel = new Seller();
             $productModel = new Product();
 
-            $idSeller = $request->post('id_seller');
+            $idSeller = $request->validate(['id_seller' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_seller'];
             $sellerModel->restoreSeller($idSeller);
             $productModel->restoreSellerProducts([$idSeller]);
         }

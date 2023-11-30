@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a Dashboard page.
@@ -45,8 +45,8 @@ class AdminController extends Controller
             abort(403);
         }
 
-        User::findOrFail($request->post('id'))
-            ->delete();
+        $id = $request->validate(['id' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id'];
+        User::findOrFail($id)->delete();
 
         return back();
     }
@@ -63,9 +63,8 @@ class AdminController extends Controller
             abort(403);
         }
 
-        User::onlyTrashed()
-            ->findOrFail($request->post('id'))
-            ->restore();
+        $id = $request->validate(['id' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id'];
+        User::onlyTrashed()->findOrFail($id)->restore();
 
         return back();
     }

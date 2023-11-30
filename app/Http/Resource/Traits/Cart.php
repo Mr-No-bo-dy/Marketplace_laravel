@@ -41,7 +41,7 @@ trait Cart
             $cartMarketsData[$idM] = [
                 'totalFormatted' => number_format($cartM['total'], 0, '.', ' '),
             ];
-            $market = $markets->where('id_marketplace', $idM)->first();
+            $market = $markets->where('id_marketplace', $idM)->firstOrFail();
             if ($market) {
                 $cartMarketsData[$idM]['totalFormatted'] .= ' ' . $market->getCurrency($market->currency);
             }

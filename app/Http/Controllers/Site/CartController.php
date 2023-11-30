@@ -24,9 +24,9 @@ class CartController extends Controller
         if ($request->has('addToCart')) {
             $productModel = new Product();
 
-            $idProduct = $request->validate(['id_product' => ['int']])['id_product'];
-            $price = $request->validate(['price' => ['int']])['price'];
-            $product = $productModel->readProduct($idProduct);
+            $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Site\Product']])['id_product'];
+            $price = $request->validate(['price' => ['required', 'numeric', 'min:1', 'max:999999.99']])['price'];
+            $product = $productModel::findOrFail($idProduct);
             $idMarketplace = $productModel->readSellerProductMarket($idProduct)->id_marketplace;
             $cartProduct = $request->session()->get('cart.products.' . $idProduct);
 
@@ -79,7 +79,7 @@ class CartController extends Controller
      */
     public function index(Request $request): View
     {
-        if ($request->session()->missing('cart')) {
+        if (!$request->session()->has('cart')) {
             return view('site.cart.index');
         }
 

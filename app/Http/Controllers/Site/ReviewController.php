@@ -22,15 +22,12 @@ class ReviewController extends Controller
             return redirect()->route('auth');
         }
 
-        if ($request->has('addReview')) {
-            $reviewModel = new Review();
-
-            $additionalReviewData = [
-                'id_client' => $request->session()->get('id_client'),
-                'id_product' => $request->post('id_product'),
-            ];
-            $reviewModel->storeReview(array_merge($additionalReviewData, $request->validated()));
-        }
+        $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
+        $additionalReviewData = [
+            'id_client' => $request->session()->get('id_client'),
+            'id_product' => $idProduct,
+        ];
+        Review::create(array_merge($additionalReviewData, $request->validated()));
 
         return back();
     }
@@ -43,22 +40,24 @@ class ReviewController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $idReview = $request->post('id_review');
+        $idReview = $request->validate(['id_review' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_review'];
         if ($request->has('editReview')) {
             $request->session()->put('editReviewId', $idReview);
 
         } elseif ($request->has('updateReview')) {
-            $reviewModel = new Review();
+            $review = Review::findOrFail($idReview);
 
             if ($request->session()->has('id_client') &&
-                $request->session()->get('id_client') == $reviewModel->readReview($idReview)->id_client) {
+                $request->session()->get('id_client') == $review->id_client) {
 
                 $validatedReview = $request->validate([
                     'comment' => ['required', 'string', 'max:511'],
                     'rating' => ['required', 'int', 'min:1', 'max:5'],
                 ]);
-                $reviewModel->updateReview($idReview, array_merge($validatedReview, ['status' => 1]));
-
+                $review->fill(array_merge($validatedReview, ['status' => 1]));
+                if ($review->isDirty()) {
+                    $review->save();
+                }
                 $request->session()->forget('editReviewId');
 
             } else {
@@ -81,13 +80,13 @@ class ReviewController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         if ($request->has('deleteReview')) {
-            $reviewModel = new Review();
+            $idReview = $request->validate(['id_review' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_review'];
+            $review = Review::findOrFail($idReview);
 
-            $idReview = $request->post('id_review');
             if ($request->session()->has('id_client') &&
-                $request->session()->get('id_client') == $reviewModel->readReview($idReview)->id_client) {
+                $request->session()->get('id_client') == $review->id_client) {
+                $review->delete();
 
-                $reviewModel->destroyReview($idReview);
             } else {
                 abort(403, 'Unauthorized action.');
             }

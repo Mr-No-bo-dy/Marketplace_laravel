@@ -5,7 +5,7 @@
     <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
-                <div class="flex justify-between items-center px-8">
+                <div class="flex justify-between items-center gap-2 px-0 sm:px-4 lg:px-8">
                     <h1 class="font-bold text-2xl">{{ $product->name }}</h1>
                     <div class="sm:col-span-1 justify-self-end self-center">
                         <a class="inline-block my-2 rounded-md bg-gray-400 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
@@ -14,12 +14,13 @@
                 </div>
                 <div class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 ...">
                     <div class="sm:col-span-2">
-                        @foreach($product->getMedia('products') as $item)
-                        <img class="h-48 w-48 object-contain" src="{{ $item->getUrl() }}"
-                            alt="{{ $product->name . '-pic' }}">
-                        @endforeach
+                        @forelse($product->getMedia('products') as $item)
+                            <img class="h-48 w-48 object-contain" src="{{ $item->getUrl() }}" alt="{{ $product->name . '-pic' }}">
+                        @empty
+                            <img class="h-48 w-48 object-contain" src="{{ $product->img_url }}" alt="{{ $product->name . '-pic' }}">
+                        @endforelse
                     </div>
-                    <div class="sm:col-span-5 py-2">
+                    <div class="sm:col-span-4 py-2">
                         <p><b>{{ __('products.producer') }}:</b> {{ $product->producer->name }}</p>
                         <p><b>{{ __('products.category') }}: </b>{{ ucfirst($product->category->name) }}</p>
                         <p><b>{{ __('products.seller') }}:</b> {{ $product->seller->name }}
@@ -29,24 +30,22 @@
                             {{ ($product->avgRating != 0.00) ? $product->avgRating : __('products.noReviews') }}</p>
                         <p><b>{{ __('products.price') }}:</b> {{ $product->priceFormatted }}</p>
                     </div>
-                    <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('cart_store') }}"
+                    <form class="sm:col-span-2 justify-self-end self-center" action="{{ route('cart.add') }}"
                         method="POST">
                         @csrf
 
-                        <input type="hidden" name="id_product" value="{{ $product->id_product }}">
-                        <input type="hidden" name="price" value="{{ $product->price }}">
-                        <button type="submit" name="addToCart" value="1"
+                        <button type="submit" name="id_product" value="{{ $product->id_product }}"
                             class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                             {{ __('products.addToCart') }}
                         </button>
                     </form>
                 </div>
 
-                {{--                    Reviews--}}
+                <!-- Reviews -->
                 <div class="mt-4">
                     <h2 class="text-xl font-bold leading-6 text-gray-900">{{ __('products.reviews') }}</h2>
                     <ul role="list" class="divide-y divide-gray-100">
-                        @foreach($product->reviews as $review)
+                        @foreach($product->approvedReviews as $review)
                         <li class="flex justify-between gap-x-6 py-3 shadow-sm">
                             @if(!isset($editReviewId) || ($editReviewId != $review->id_review))
                             <div class="flex min-w-0 gap-x-4">
@@ -105,9 +104,7 @@
                                 <label for="review"
                                     class="block mt-2 text-sm font-medium leading-6 text-gray-900">{{ __('products.writeReview') }}</label>
                                 <textarea id="review" name="comment" cols="30" rows="3" required style="max-height: 200px;"
-                                    class="block w-full rounded-md border-0 py-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        {{ old('comment', $review->comment) }}
-                                </textarea>
+                                    class="block w-full rounded-md border-0 py-1.5 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{{ old('comment', $review->comment) }}</textarea>
                                 @error('comment')
                                 <div class="text-red-400">{{ $message }}</div>
                                 @enderror

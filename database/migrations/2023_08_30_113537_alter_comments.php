@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::rename('comments', 'reviews');
-        Schema::table('reviews', function (Blueprint $table) {
+        Schema::table('comments', function (Blueprint $table) {
             $table->renameColumn('id_comment', 'id_review');
-            $table->integer('status')->default(1)->comment('1 = new, 2 = accepted')->after('rating');
+        });
+
+        Schema::rename('comments', 'reviews');
+
+        Schema::table('reviews', function (Blueprint $table) {
+            $table->integer('status')->default(2)->comment('1 = disapproved, 2 = approved')->after('rating');
         });
     }
 
@@ -23,7 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropColumns('reviews', 'status');
+        Schema::table('reviews', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
+
         Schema::rename('reviews', 'comments');
+
+        Schema::table('comments', function (Blueprint $table) {
+            $table->renameColumn('id_review', 'id_comment');
+        });
     }
 };

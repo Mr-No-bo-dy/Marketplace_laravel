@@ -166,6 +166,11 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'images.*' => [
+            'image' => 'Файл у позиції :position повинен бути зображенням.',
+            'mimes' => 'Файл у позиції :position повинен бути одного з наступних типів: :values.',
+            'max' => 'Файл у позиції :position не може бути більшим за :max кілобайт.',
+        ],
     ],
 
     /*

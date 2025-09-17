@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\User;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -30,7 +30,7 @@ class UserController extends Controller
     {
         $admins = User::withTrashed()->get();
 
-        return view('admin.admins.admins', compact('admins'));
+        return view('admin.admins.index', compact('admins'));
     }
 
     /**
@@ -45,8 +45,8 @@ class UserController extends Controller
             abort(403);
         }
 
-        $id = $request->validate(['id' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id'];
-        User::findOrFail($id)->delete();
+        $id = $request->validate(['id' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id'];
+        if ($id != 1) User::findOrFail($id)->delete();
 
         return back();
     }
@@ -63,7 +63,7 @@ class UserController extends Controller
             abort(403);
         }
 
-        $id = $request->validate(['id' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id'];
+        $id = $request->validate(['id' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id'];
         User::onlyTrashed()->findOrFail($id)->restore();
 
         return back();

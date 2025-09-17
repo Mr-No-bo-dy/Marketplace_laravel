@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Site\Client;
-use App\Models\Site\Review;
+use App\Models\Client;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,14 +32,9 @@ class ClientController extends Controller
      */
     public function block(Request $request): RedirectResponse
     {
-        if ($request->has('blockClient')) {
-            $clientModel = new Client();
-            $reviewModel = new Review();
-
-            $idClient = $request->validate(['id_client' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_client'];
-            $reviewModel->deleteClientReviews($idClient);
-            $clientModel->deleteClient($idClient);
-        }
+        $idClient = $request->validate(['id_client' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_client'];
+        $request->session()->forget('id_client');
+        Client::findOrFail($idClient)->delete();
 
         return back();
     }
@@ -53,14 +47,8 @@ class ClientController extends Controller
      */
     public function unblock(Request $request): RedirectResponse
     {
-        if ($request->has('unblockClient')) {
-            $clientModel = new Client();
-            $reviewModel = new Review();
-
-            $idClient = $request->validate(['id_client' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_client'];
-            $clientModel->restoreClient($idClient);
-            $reviewModel->restoreClientReviews($idClient);
-        }
+        $idClient = $request->validate(['id_client' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_client'];
+        Client::onlyTrashed()->findOrFail($idClient)->restore();
 
         return back();
     }

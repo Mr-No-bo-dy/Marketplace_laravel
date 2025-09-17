@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Order extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'orders';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $primaryKey = 'id_order';
+    protected $fillable = [
+        'id_client',
+        'id_seller',
+        'status',
+    ];
+
+    /**
+     * Setting relationship with DB table Seller.
+     *
+     * @return BelongsTo
+     */
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(Seller::class, 'id_seller', 'id_seller');
+    }
+
+    /**
+     * Setting relationship with DB table Client.
+     *
+     * @return BelongsTo
+     */
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class, 'id_client', 'id_client');
+    }
+
+    /**
+     * Read all entities in DB table Orders by given Seller
+     *
+     * @param int $idSeller
+     * @return Collection
+     */
+    public function readSellerOrdersWithDetails(int $idSeller): Collection
+    {
+        return Order::select(
+                    'o.*',
+                    'od.id_product',
+                    'od.count',
+                    'od.total',
+                    'c.name as client_name',
+                    'c.surname as client_surname',
+                    'c.email as client_email',
+                    'c.phone as client_phone')
+                ->distinct()
+                ->join('orders as o', 'o.id_seller', '=', $this->table . '.id_seller')
+                ->join('order_details as od', 'o.id_order', '=', 'od.id_order')
+                ->join('clients as c', 'o.id_client', '=', 'c.id_client')
+                ->where($this->table . '.id_seller', $idSeller)
+                ->orderBy('o.created_at', 'desc')
+                ->get();
+    }
+}

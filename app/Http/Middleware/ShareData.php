@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Site\Client;
-use App\Models\Site\Seller;
+use App\Models\Client;
+use App\Models\Seller;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -15,7 +15,7 @@ class ShareData
      * Always show User's data in all view pages
      *
      * @param Request $request
-     * @param Closure(Request): (Response) $next
+     * @param Closure  $next
      * @return Response
      */
     public function handle(Request $request, Closure $next): Response
@@ -31,13 +31,10 @@ class ShareData
             $clientName = Client::find($idClient)->name;
             View::share('client_id', $idClient);
             View::share('client_name', $clientName);
+
+            // Key for Edit Review
+            View::share('editReviewId', $request->session()->get('editReviewId'));
         }
-
-        // Total number of products in Cart
-        View::share('cartNum', $request->session()->get('cart.total_quantity'));
-
-        // Key for Edit Review
-        View::share('editReviewId', $request->session()->get('editReviewId'));
 
         return $next($request);
     }

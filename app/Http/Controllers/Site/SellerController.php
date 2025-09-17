@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PasswordRequest;
 use App\Http\Requests\SellerRequest;
-use App\Models\Admin\Marketplace;
-use App\Models\Site\Product;
-use App\Models\Site\Seller;
+use App\Models\Marketplace;
+use App\Models\Seller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,9 +34,9 @@ class SellerController extends Controller
      * Show the form for editing the specified Seller.
      *
      * @param int $idSeller
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(int $idSeller): View
+    public function edit(int $idSeller): View|RedirectResponse
     {
         $seller = Seller::findOrFail($idSeller);
         $marketplaces = Marketplace::all(['id_marketplace', 'country']);
@@ -49,16 +48,14 @@ class SellerController extends Controller
      * Update the specified Seller in storage.
      *
      * @param SellerRequest $request
+     * @param Seller $seller
      * @return RedirectResponse
      */
-    public function update(SellerRequest $request): RedirectResponse
+    public function update(SellerRequest $request, Seller $seller): RedirectResponse
     {
-        $sellerModel = new Seller();
-
         $status = false;
         $idSeller = $request->session()->get('id_seller');
-        if ($sellerModel->passwordCheck($idSeller, $request->validated('password'))) {
-            $seller = $sellerModel::findOrFail($idSeller);
+        if ($seller->passwordCheck($idSeller, $request->validated('password'))) {
             $seller->fill($request->safe()->except('password'));
             if ($seller->isDirty()) {
                 $seller->save();
@@ -67,37 +64,34 @@ class SellerController extends Controller
         }
 
         return $status ? back()->with('status', 'profileUpdated')
-                        : back()->withErrors(['password' => trans('site_profile.wrongPassword')]);
+                        : back()->withErrors(['password' => trans('site_profile.wrongPassword')])->withInput();
     }
 
     /**
      * Update the specified Client's Password in storage.
      *
      * @param PasswordRequest $request
+     * @param Seller $seller
      * @return RedirectResponse
      */
-    public function updatePass(PasswordRequest $request): RedirectResponse
+    public function updatePass(PasswordRequest $request, Seller $seller): RedirectResponse
     {
-        $sellerModel = new Seller();
-
-        $status = 'wrongPassword';
         $idSeller = $request->session()->get('id_seller');
-        if ($sellerModel->passwordCheck($idSeller, $request->validated('old_password'))) {
-            if ($request->validated('new_password') == $request->validated('new_password2')) {
-                $setClientPasswordData = [
-                    'password' => Hash::make($request->validated('new_password')),
-                    'updated_at' => now(),
-                ];
-                $sellerModel->updateSellerPassword($idSeller, $setClientPasswordData);
-                $status = 'success';
-            } else {
-                $status = 'differentPasswords';
-            }
+
+        if (!$seller->passwordCheck($idSeller, $request->validated('old_password'))) {
+            return back()->withErrors(['old_password' => trans('site_profile.wrongPassword')]);
         }
 
-        return $status == 'success' ? back()->with('status', 'passwordUpdated')
-            : ($status == 'wrongPassword' ? back()->withErrors(['old_password' => trans('site_profile.wrongPassword')])
-            : back()->withErrors(['new_password' => trans('site_profile.differentPasswords')]));
+        if ($request->validated('new_password') !== $request->validated('new_password2')) {
+            return back()->withErrors(['new_password' => trans('site_profile.differentPasswords')]);
+        }
+
+        $seller->updateSellerPassword($idSeller, [
+            'password'   => Hash::make($request->validated('new_password')),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('status', 'passwordUpdated');
     }
 
     /**
@@ -108,19 +102,15 @@ class SellerController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $status = false;
-        if ($request->has('deleteSeller')) {
-            $sellerModel = new Seller();
-            $productModel = new Product();
+        $sellerModel = new Seller();
 
-            $password = $request->validate(['passwordForDelete' => ['bail', 'required', 'string', 'min:8', 'max:255']])['passwordForDelete'];
-            $idSeller = $request->session()->get('id_seller');
-            if ($sellerModel->passwordCheck($idSeller, $password)) {
-                $productModel->deleteSellersProducts([$idSeller]);
-                $sellerModel->deleteSeller($idSeller);
-                $request->session()->forget('id_seller');
-                $status = true;
-            }
+        $status = false;
+        $password = $request->validate(['passwordForDelete' => ['bail', 'required', 'string', 'min:8', 'max:255']])['passwordForDelete'];
+        $idSeller = $request->session()->get('id_seller');
+        if ($sellerModel->passwordCheck($idSeller, $password)) {
+            $sellerModel->query()->findOrFail($idSeller)->delete();
+            $request->session()->forget('id_seller');
+            $status = true;
         }
 
         return $status ? redirect()->route('index')

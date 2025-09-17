@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Site\Product;
-use App\Models\Site\Seller;
+use App\Models\Seller;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,14 +32,9 @@ class SellerController extends Controller
      */
     public function block(Request $request): RedirectResponse
     {
-        if ($request->has('blockSeller')) {
-            $sellerModel = new Seller();
-            $productModel = new Product();
-
-            $idSeller = $request->validate(['id_seller' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_seller'];
-            $productModel->deleteSellersProducts([$idSeller]);
-            $sellerModel->deleteSeller($idSeller);
-        }
+        $idSeller = $request->validate(['id_seller' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_seller'];
+        Seller::findOrFail($idSeller)->delete();
+        $request->session()->forget('id_seller');
 
         return back();
     }
@@ -53,14 +47,8 @@ class SellerController extends Controller
      */
     public function unblock(Request $request): RedirectResponse
     {
-        if ($request->has('unblockSeller')) {
-            $sellerModel = new Seller();
-            $productModel = new Product();
-
-            $idSeller = $request->validate(['id_seller' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_seller'];
-            $sellerModel->restoreSeller($idSeller);
-            $productModel->restoreSellerProducts([$idSeller]);
-        }
+        $idSeller = $request->validate(['id_seller' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_seller'];
+        Seller::onlyTrashed()->findOrFail($idSeller)->restore();
 
         return back();
     }

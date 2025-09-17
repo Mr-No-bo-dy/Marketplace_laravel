@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('sellers', function (Blueprint $table) {
             $table->id('id_seller');
-            $table->foreignId('id_marketplace')->constrained('marketplaces', 'id_marketplace');
+            $table->foreignId('id_marketplace')->constrained('marketplaces', 'id_marketplace')->cascadeOnDelete();
             $table->string('name');
             $table->string('surname');
             $table->string('email')->unique();
-            $table->bigInteger('phone');
+            $table->string('phone')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

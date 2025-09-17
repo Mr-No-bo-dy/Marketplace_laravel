@@ -4,23 +4,25 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
-use App\Http\Resource\Traits\Components;
-use App\Http\Resource\Traits\Products;
-use App\Models\Admin\Category;
-use App\Models\Admin\Producer;
-use App\Models\Admin\Subcategory;
-use App\Models\Site\Product;
-use App\Models\Site\Seller;
+use App\Http\Services\ProductPresenter;
+use App\Models\Category;
+use App\Models\Producer;
+use App\Models\Product;
+use App\Models\Subcategory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\HtmlString;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class ProductController extends Controller
 {
-    use Components, Products;
+    private ProductPresenter $productPresenter;
+
+    public function __construct(ProductPresenter $productPresenter)
+    {
+        $this->productPresenter = $productPresenter;
+    }
 
     /**
     * Display a listing of the Products.
@@ -33,26 +35,15 @@ class ProductController extends Controller
         $productModel = new Product();
 
         // Using the filters for Products
-        $filters = $this->getFilters($request);
+        $filters = $this->productPresenter->getFilters($request);
 
-        // Getting Products based on filters
-        $products = $productModel->readProducts($filters, 4);
+        // Getting Products based on filters & Preparing Products for view
+        $products = $productModel->readProducts($filters, 12);
+        $products->getCollection()->transform(function ($product) {
+            return $this->productPresenter->formatProduct($product);
+        });
 
-        // Preparing Product for view
-        foreach ($products as $product) {
-            $this->formatProduct($product);
-        }
-
-        // Getting additional data
-        $producers = Producer::all(['id_producer', 'name']);
-        $categories = Category::all(['id_category', 'name']);
-        $subcategories = Subcategory::all(['id_subcategory', 'name']);
-        $sellers = Seller::all(['id_seller', 'name', 'surname']);
-
-        $producersSelect = new HtmlString($this->customSelectData($producers, 'producer', $filters));
-        $categoriesSelect = new HtmlString($this->customSelectData($categories, 'category', $filters));
-        $subcategoriesSelect = new HtmlString($this->customSelectData($subcategories, 'subcategory', $filters));
-        $sellersSelect = new HtmlString($this->customSelectData($sellers, 'seller', $filters));
+        extract($this->productPresenter->getComponents($filters));
 
         return view('site.products.index', compact('products', 'producersSelect', 'categoriesSelect', 'subcategoriesSelect', 'sellersSelect', 'filters'));
     }
@@ -77,12 +68,12 @@ class ProductController extends Controller
      * Display one chosen Product.
      *
      * @param int $idProduct
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function show(int $idProduct): View
+    public function show(int $idProduct): View|RedirectResponse
     {
-        $product = Product::findOrFail($idProduct);
-        $this->formatProduct($product);
+        $product = Product::with(['reviews', 'seller', 'seller.marketplace', 'media'])->findOrFail($idProduct);
+        $this->productPresenter->formatProduct($product);
 
         return view('site.products.show', compact('product'));
     }
@@ -118,10 +109,7 @@ class ProductController extends Controller
 
         // Save Media
         if ($request->hasFile('images')) {
-            $images = $request->file('images');
-            foreach ($images as $image) {
-                $product->addMedia($image)->toMediaCollection('products');
-            }
+            $this->saveImages($request, $product, $request->file('images'));
         }
 
         return redirect()->route('product.my_products');
@@ -131,9 +119,9 @@ class ProductController extends Controller
      * Display Product update form
      *
      * @param int $idProduct
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(int $idProduct): View
+    public function edit(int $idProduct): View|RedirectResponse
     {
         $product = Product::findOrFail($idProduct);
         $producers = Producer::all(['id_producer', 'name']);
@@ -147,13 +135,14 @@ class ProductController extends Controller
      * Update Product
      *
      * @param ProductRequest $request
+     * @param Product $product
      * @return RedirectResponse
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
      */
-    public function update(ProductRequest $request): RedirectResponse
+    public function update(ProductRequest $request, Product $product): RedirectResponse
     {
         // Update Product
-        $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
-        $product = Product::findOrFail($idProduct);
         $product->fill($request->validated());
         if ($product->isDirty()) {
             $product->save();
@@ -161,21 +150,32 @@ class ProductController extends Controller
 
         // Update Media
         if ($request->hasFile('images')) {
-            // Optional Delete old media
-            if ($request->has('delete_media')) {
-                $medias = $product->media;
-                foreach ($medias as $media) {
-                    $media->delete($media->id);
-                }
-            }
-            // Save new Media
-            $images = $request->file('images');
-            foreach ($images as $image) {
-                $product->addMedia($image)->toMediaCollection('products');
-            }
+            $this->saveImages($request, $product, $request->file('images'));
         }
 
         return redirect()->route('product.my_products');
+    }
+
+    /**
+     * @param ProductRequest $request
+     * @param Product $product
+     * @param array $photos
+     * @return void
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     */
+    public function saveImages(ProductRequest $request, Product $product, array $photos): void
+    {
+        // Optional Delete old media
+        if ($request->has('delete_media')) {
+            foreach ($product->media as $media) {
+                $media->delete($media->id);
+            }
+        }
+        // Save new Media
+        foreach ($photos as $image) {
+            $product->addMedia($image)->toMediaCollection('products');
+        }
     }
 
     /**
@@ -186,10 +186,8 @@ class ProductController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        if ($request->has('deleteProduct')) {
-            $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
-            Product::findOrFail($idProduct)->delete();
-        }
+        $idProduct = $request->validate(['id_product' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_product'];
+        Product::findOrFail($idProduct)->delete();
 
         return back();
     }
@@ -202,10 +200,8 @@ class ProductController extends Controller
      */
     public function restore(Request $request): RedirectResponse
     {
-        if ($request->has('restoreProduct')) {
-            $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_product'];
-            Product::onlyTrashed()->findOrFail($idProduct)->restore();
-        }
+        $idProduct = $request->validate(['id_product' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_product'];
+        Product::onlyTrashed()->findOrFail($idProduct)->restore();
 
         return back();
     }

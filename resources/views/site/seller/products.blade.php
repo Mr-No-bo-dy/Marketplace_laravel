@@ -5,33 +5,33 @@
     <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
-                <div class="flex justify-between items-center px-8">
+                <div class="flex justify-between items-center gap-2 px-0 sm:px-4 lg:px-8">
                     <h1 class="font-bold text-2xl">{{ __('products.myProducts') }}</h1>
-                    <div class="my-2">
+                    <div>
                         <a class="inline-block rounded-md bg-green-600 px-6 py-2 text-m font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             href="{{ route('product.create') }}">{{ __('products.addProduct') }}</a>
                     </div>
                 </div>
 
                 <ul role="list">
-                    @foreach ($products as $product)
+                    @forelse($products as $product)
                     <li
-                        class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 @if(!is_null($product->deleted_at)) bg-red-100 @endif ...">
+                        class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 mt-2 py-4 sm:px-4 lg:px-8 even:bg-slate-100 hover:bg-slate-200 @if(!is_null($product->deleted_at)) !bg-red-100 @endif">
                         <div class="sm:col-span-1">
-                            <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') }}"
+                            <img class="h-24 w-24 object-contain" src="{{ $product->getFirstMediaUrl('products') ? $product->getFirstMediaUrl('products') : asset('/images/_no_photo.svg') }}"
                                 alt="{{ $product->name . '-pic' }}">
                         </div>
                         <div class="sm:col-span-5">
-                            <h2 class="text-xl text-blue-800"><a class="hover:text-blue-600" href="{{ $product->url }}">{{ $product->name }}</a></h2>
+                            <h2 class="text-xl text-blue-800"><a class="hover:text-blue-600" href="{{ route('product.show', $product->id_product) }}">{{ $product->name }}</a></h2>
                             <p><b>{{ __('products.description') }}:</b> {{ $product->description }}</p>
                             <p><b>{{ __('products.price') }}:</b> {{ $product->price }}</p>
                             <p><b>{{ __('products.amount') }}:</b> {{ $product->amount }}</p>
                         </div>
+                        @if (is_null($product->deleted_at))
                         <div class="sm:col-span-1 justify-self-end self-center">
                             <a class="inline-block rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400"
                                 href="{{ route('product.edit', $product->id_product) }}">{{ __('products.update') }}</a>
                         </div>
-                        @if (is_null($product->deleted_at))
                         <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.delete') }}"
                             method="POST">
                             @method('DELETE')
@@ -44,7 +44,7 @@
                             </button>
                         </form>
                         @else
-                        <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('product.restore') }}"
+                        <form class="sm:col-span-2 justify-self-end self-center" action="{{ route('product.restore') }}"
                             method="POST">
                             @method('PATCH')
                             @csrf
@@ -57,7 +57,9 @@
                         </form>
                         @endif
                     </li>
-                    @endforeach
+                    @empty
+                        <p class="text-center">{{ __('products.empty') }}</p>
+                    @endforelse
                 </ul>
             </div>
         </div>

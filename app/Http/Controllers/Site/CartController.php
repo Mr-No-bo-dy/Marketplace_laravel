@@ -3,15 +3,32 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
-use App\Models\Site\Product;
+use App\Http\Services\CartService;
+use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use App\Http\Resource\Traits\Cart;
 
 class CartController extends Controller
 {
-    use Cart;
+    private CartService $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
+    /**
+     * Displaying listing of Cart.
+     *
+     * @return View
+     */
+    public function index(): View
+    {
+        extract($this->cartService->getCartData());
+
+        return view('site.cart.index', compact('products', 'marketsData', 'totalQuantity'));
+    }
 
     /**
      * Adding Products to Cart.
@@ -21,132 +38,46 @@ class CartController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        if ($request->has('addToCart')) {
-            $productModel = new Product();
+        $idProduct = $request->validate([
+            'id_product' => ['bail','required','integer','exists:App\Models\Product,id_product']
+        ])['id_product'];
 
-            $idProduct = $request->validate(['id_product' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807', 'exists:App\Models\Site\Product']])['id_product'];
-            $price = $request->validate(['price' => ['required', 'numeric', 'min:1', 'max:999999.99']])['price'];
-            $product = $productModel::findOrFail($idProduct);
-            $idMarketplace = $productModel->readSellerProductMarket($idProduct)->id_marketplace;
-            $cartProduct = $request->session()->get('cart.products.' . $idProduct);
+        $product = Product::with(['media', 'seller.marketplace:id_marketplace,currency'])->findOrFail($idProduct);
 
-            // Saving cart's Products data
-            $quantity = 1;
-            $productTotal = $price;
-            if (isset($cartProduct['id_product']) && $cartProduct['id_product'] == $idProduct) {
-                $quantity = $cartProduct['quantity'] + 1;
-                $productTotal = $quantity * $price;
-            }
-            $request->session()->put('cart.products.' . $idProduct, [
-                'id_marketplace' => $idMarketplace,
-                'id_seller' => $product->id_seller,
-                'id_product' => $idProduct,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total' => $productTotal,
-            ]);
-
-            // Saving cart's Markets data
-            $cart = $request->session()->get('cart.products', []);
-            if (!isset($totalQuantity)) {
-                $totalQuantity = 0;
-            }
-            $marketsTotal = [];
-            foreach ($cart as $cartProd) {
-                $idMarket = $cartProd['id_marketplace'];
-                if (!isset($marketsTotal[$idMarket])) {
-                    $marketsTotal[$idMarket] = [
-                        'quantity' => 0,
-                        'total' => 0,
-                    ];
-                }
-                $marketsTotal[$idMarket]['quantity'] += $cartProd['quantity'];
-                $marketsTotal[$idMarket]['total'] += $cartProd['total'];
-                $totalQuantity += $cartProd['quantity'];
-            }
-            $request->session()->put('cart.markets', $marketsTotal);
-            $request->session()->put('cart.total_quantity', $totalQuantity);
-        }
+        if ($product) $this->cartService->add($product);
 
         return back();
     }
 
     /**
-     * Displaying & Updating a listing of the Cart
+     * Updating listing of Cart.
      *
      * @param Request $request
-     * @return View
+     * @param int $idProduct
+     * @return RedirectResponse
      */
-    public function index(Request $request): View
+    public function update(Request $request, int $idProduct): RedirectResponse
     {
-        if (!$request->session()->has('cart')) {
-            return view('site.cart.index');
-        }
+        $validated = $request->validate([
+            'quantity' => ['required','integer','min:0','max:999999'],
+            'action_type' => ['nullable','string','max:32'],
+        ]);
 
-        if ($request->has('id_product')) {
-            $idProduct = $request->validate(['id_product' => ['int']])['id_product'];
-            $product = $request->session()->get('cart.products.' . $idProduct);
+        $this->cartService->update($idProduct, $validated['quantity'], $validated['action_type'] ?? '');
 
-            if (!is_null($product)) {
-                $idMarketplace = $product['id_marketplace'];
-                $newProduct = [
-                    'id_marketplace' => $idMarketplace,
-                    'id_seller' => $product['id_seller'],
-                    'id_product' => $idProduct,
-                    'quantity' => $product['quantity'],
-                    'price' => $product['price'],
-                    'total' => $product['total'],
-                ];
+        return back();
+    }
 
-                // Setting cart product's data
-                $newQuantity = $product['quantity'];
-                if ($request->has('quantity')) {
-                    $newQuantity = $request->validate(['quantity' => ['int']])['quantity'];
-                } elseif ($request->has('plus')) {
-                    $newQuantity += 1;
-                } elseif ($request->has('minus') && $product['quantity'] > 1) {
-                    $newQuantity -= 1;
-                } elseif (($request->has('minus') && $product['quantity'] <= 1) || $request->has('remove')) {
-                    // Removing cart's product & Updating cart's market
-                    $request->session()->forget('cart.products.' . $idProduct);
-                    unset($idProduct);
-                    $marketProducts = collect($request->session()->get('cart.products', []))
-                                    ->where('id_marketplace', $idMarketplace);
-                    if ($marketProducts->isNotEmpty()) {
-                        $marketTotal = $request->session()->get('cart.markets.' . $idMarketplace, []);
-                        $marketTotal['quantity'] -= $product['quantity'];
-                        $marketTotal['total'] -= $product['total'];
-                        $request->session()->put('cart.markets.' . $idMarketplace, $marketTotal);
-                    } else {
-                        $request->session()->forget('cart.markets.' . $idMarketplace);
-                    }
-                }
+    /**
+     * Remove product from Cart.
+     *
+     * @param int $idProduct
+     * @return RedirectResponse
+     */
+    public function delete(int $idProduct): RedirectResponse
+    {
+        $this->cartService->remove($idProduct);
 
-                // Updating cart's product
-                if (isset($idProduct)) {
-                    $newProduct['quantity'] = $newQuantity;
-                    $newProduct['total'] = $newQuantity * $product['price'];
-                    $request->session()->put('cart.products.' . $idProduct, $newProduct);
-
-                    // Updating cart's market if product is NOT removed
-                    $cartMarkets = $request->session()->get('cart.markets', []);
-                    if (!empty($cartMarkets)) {
-                        $marketTotal = $cartMarkets[$idMarketplace];
-                        $marketTotal['quantity'] = $marketTotal['quantity'] - $product['quantity'] + $newQuantity;
-                        $marketTotal['total'] = $marketTotal['total'] - $product['total'] + ($newQuantity * $product['price']);
-                        $request->session()->put('cart.markets.' . $idMarketplace, $marketTotal);
-                    }
-                }
-            }
-
-            // Updating & setting cart's total quantity
-            $totalQuantity = array_sum(array_column($request->session()->get('cart.products', []), 'quantity'));
-            $request->session()->put('cart.total_quantity', $totalQuantity);
-        }
-
-        // Setting data for view
-        extract($this->getCartData($request));
-
-        return view('site.cart.index', compact('products', 'cartProductsData', 'cartMarketsData', 'totalQuantity'));
+        return back();
     }
 }

@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Site;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClientRequest;
 use App\Http\Requests\PasswordRequest;
-use App\Models\Site\Client;
-use App\Models\Site\Review;
+use App\Models\Client;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,9 +17,9 @@ class ClientController extends Controller
      * Show one Client's personal page.
      *
      * @param Request $request
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function show(Request $request): View
+    public function show(Request $request): View|RedirectResponse
     {
         $idClient = $request->session()->get('id_client');
         $client = Client::findOrFail($idClient);
@@ -32,9 +31,9 @@ class ClientController extends Controller
      * Show the form for editing the specified Client.
      *
      * @param int $idClient
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(int $idClient): View
+    public function edit(int $idClient): View|RedirectResponse
     {
         $client = Client::findOrFail($idClient);
 
@@ -45,55 +44,47 @@ class ClientController extends Controller
      * Update the specified Client in storage.
      *
      * @param ClientRequest $request
+     * @param Client $client
      * @return RedirectResponse
      */
-    public function update(ClientRequest $request): RedirectResponse
+    public function update(ClientRequest $request, Client $client): RedirectResponse
     {
-        $clientModel = new Client();
-
         $status = false;
         $idClient = $request->session()->get('id_client');
-        if ($clientModel->passwordCheck($idClient, $request->validated('password'))) {
-            $client = $clientModel::findOrFail($idClient);
-            $client->fill($request->safe()->except('password'));
-            if ($client->isDirty()) {
-                $client->save();
-            }
+        if ($client->passwordCheck($idClient, $request->validated('password'))) {
+            $client->update($request->safe()->except('password'));
             $status = true;
         }
 
         return $status ? back()->with('status', 'profileUpdated')
-                        : back()->withErrors(['password' => trans('site_profile.wrongPassword')]);
+                        : back()->withErrors(['password' => trans('site_profile.wrongPassword')])->withInput();
     }
 
     /**
      * Update the specified Client's Password in storage.
      *
      * @param PasswordRequest $request
+     * @param Client $client
      * @return RedirectResponse
      */
-    public function updatePass(PasswordRequest $request): RedirectResponse
+    public function updatePass(PasswordRequest $request, Client $client): RedirectResponse
     {
-        $clientModel = new Client();
-
-        $status = 'wrongPassword';
         $idClient = $request->session()->get('id_client');
-        if ($clientModel->passwordCheck($idClient, $request->validated('old_password'))) {
-            if ($request->validated('new_password') == $request->validated('new_password2')) {
-                $setClientPasswordData = [
-                    'password' => Hash::make($request->validated('new_password')),
-                    'updated_at' => now(),
-                ];
-                $clientModel->updateClientPassword($idClient, $setClientPasswordData);
-                $status = 'success';
-            } else {
-                $status = 'differentPasswords';
-            }
+
+        if (!$client->passwordCheck($idClient, $request->validated('old_password'))) {
+            return back()->withErrors(['old_password' => trans('site_profile.wrongPassword')]);
         }
 
-        return $status == 'success' ? back()->with('status', 'passwordUpdated')
-            : ($status == 'wrongPassword' ? back()->withErrors(['old_password' => trans('site_profile.wrongPassword')])
-            : back()->withErrors(['new_password' => trans('site_profile.differentPasswords')]));
+        if ($request->validated('new_password') !== $request->validated('new_password2')) {
+            return back()->withErrors(['new_password' => trans('site_profile.differentPasswords')]);
+        }
+
+        $client->updateClientPassword($idClient, [
+            'password'   => Hash::make($request->validated('new_password')),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('status', 'passwordUpdated');
     }
 
     /**
@@ -104,20 +95,16 @@ class ClientController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $status = false;
-        if ($request->has('deleteClient')) {
-            $clientModel = new Client();
-            $reviewModel = new Review();
+        $clientModel = new Client();
 
-            $password = $request->validate(['passwordForDelete' => ['bail', 'required', 'string', 'min:8', 'max:255']])['passwordForDelete'];
-            $idClient = $request->session()->get('id_client');
-            if ($clientModel->passwordCheck($idClient, $password)) {
-                $reviewModel->deleteClientReviews($idClient);
-                $clientModel->deleteClient($idClient);
-                $request->session()->forget('id_client');
-                $request->session()->forget('cart');
-                $status = true;
-            }
+        $status = false;
+        $password = $request->validate(['passwordForDelete' => ['bail', 'required', 'string', 'min:8', 'max:255']])['passwordForDelete'];
+        $idClient = $request->session()->get('id_client');
+        if ($clientModel->passwordCheck($idClient, $password)) {
+            $clientModel->query()->findOrFail($idClient)->delete();
+            $request->session()->forget('id_client');
+            $request->session()->forget('cart');
+            $status = true;
         }
 
         return $status ? redirect()->route('index')

@@ -35,4 +35,6 @@ return [
     'cancel' => 'Cancel',
     'delete' => 'Delete',
     'restore' => 'Restore',
+    'empty' => 'You don\'t have any product yet.',
+    'noSuch' => 'No products found based on the specified criteria',
 ];

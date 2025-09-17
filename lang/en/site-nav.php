@@ -3,7 +3,7 @@
 return [
     'home' => 'Home',
     'admin' => 'Admin',
-    'products' => 'Products',
+    'catalog' => 'Catalog',
     'cart' => 'Cart',
     'signIn' => 'Sign in',
     'logout' => 'Logout',

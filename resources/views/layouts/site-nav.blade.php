@@ -1,71 +1,52 @@
-<nav class="bg-gray-800">
-    <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+<nav x-data="{ open: false }" class="bg-gray-800">
+    <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
         <div class="relative flex h-16 items-center justify-between">
-            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <!-- Mobile menu button-->
-                <button type="button"
-                    class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                    aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-
-                    <!-- Icon when menu is closed. Menu open: "hidden", Menu closed: "block" -->
-                    <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-
-                    <!-- Icon when menu is open. Menu open: "block", Menu closed: "hidden" -->
-                    <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div class="flex flex-1 items-center sm:items-stretch">
+                <!-- Logo -->
                 <div class="flex flex-shrink-0 items-center">
                     <a href="{{ route('index') }}">
-                        <img class="block h-8 w-auto lg:hidden"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
-                    </a>
-                    <a href="{{ route('index') }}">
-                        <img class="hidden h-8 w-auto lg:block"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+                        <x-site-logo class="block h-8 w-auto fill-current text-white" />
                     </a>
                 </div>
-                <div class="hidden sm:ml-6 sm:block">
-                    <div class="flex space-x-4">
-                        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                        <a href="{{ route('index') }}"
-                            class="text-white hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                            aria-current="page">{{ __('site-nav.home') }}</a>
-                        <a href="{{ route('product') }}"
-                            class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                            aria-current="page">{{ __('site-nav.products') }}</a>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:ml-6 md:block">
+                    <div class="flex gap-x-2">
+                    <x-site-link :href="route('index')" :active="request()->routeIs('index')">
+                        {{ __('site-nav.home') }}
+                    </x-site-link>
+                    <x-site-link :href="route('product')" :active="request()->routeIs('product')">
+                        {{ __('site-nav.catalog') }}
+                    </x-site-link>
                     @if(isset($seller_id))
-                        <a href="{{ route('product.my_products') }}"
-                           class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                           aria-current="page">{{ __('site_profile.myProducts') }}</a>
-                        <a href="{{ route('order.my_orders') }}"
-                           class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                           aria-current="page">{{ __('site_profile.myOrders') }}</a>
+                        <x-site-link :href="route('product.my_products')" :active="request()->routeIs('product.my_products')">
+                            {{ __('site_profile.myProducts') }}
+                        </x-site-link>
+                        <x-site-link :href="route('order.my_orders')" :active="request()->routeIs('order.my_orders')">
+                            {{ __('site_profile.myOrders') }}
+                        </x-site-link>
                     @endif
                     </div>
                 </div>
             </div>
 
-            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <div class="absolute inset-y-0 right-0 hidden md:flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
-                <form class="me-4" action="{{ route('switchLanguage') }}" method="POST">
-                    @csrf
-                    <button class="inline-block me-2 text-gray-400 hover:text-white" type="submit" name="lang"
-                        value="uk">UK</button>
-                    <button class="inline-block me-2 text-gray-400 hover:text-white" type="submit" name="lang"
-                        value="en">EN</button>
-                </form>
+                <!-- Language switch -->
+                <div class="me-2">
+                    @foreach(config('app.available_locales') as $locale)
+                        <a class="inline-block me-2 text-gray-400 hover:text-white"
+                           href="{{ route('locale.switch', $locale) }}">{{ strtoupper($locale) }}</a>
+                    @endforeach
+                </div>
 
-                <a class="inline-block me-2 text-gray-400 hover:text-white"
-                    href="{{ route('cart') }}">{{ __('site-nav.cart') }} ({{ $cartNum ?? '0' }})</a>
+                <!-- Cart -->
+                <a class="inline-block me-4 text-gray-400 hover:text-white relative"
+                    href="{{ route('cart') }}">{{ __('site-nav.cart') }}
+                    @if(session('cart.total_quantity'))
+                        <span class="absolute -bottom-1 -right-3 text-sm text-white font-bold">{{ session('cart.total_quantity') }}</span>
+                    @endif
+                </a>
 
                 @if(!isset($seller_name) && !isset($client_name))
                 <a class="inline-block ms-3 text-gray-400 hover:text-white"
@@ -80,6 +61,11 @@
                             <span class="sr-only"></span>
                             <span
                                 class="inline-block text-base text-gray-400 hover:text-white">{{ $seller_name ?? $client_name ?? __('site-nav.profile') }}</span>
+                                <div class="ml-1 pt-1">
+                                    <svg class="fill-gray-400 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
                         </button>
                     </div>
 
@@ -98,26 +84,74 @@
                 </div>
                 @endif
             </div>
+
+            <!-- Hamburger -->
+            <div class="absolute inset-y-0 right-0 flex items-center md:hidden">
+                <div class="-me-2 flex items-center md:hidden">
+                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Mobile menu, show/hide based on menu state. -->
-    <div class="sm:hidden" id="mobile-menu">
-        <div class="space-y-1 px-2 pb-3 pt-2">
-            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-            <a href="{{ route('index') }}"
-                class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-                aria-current="page">{{ __('site-nav.home') }}</a>
-            <a href="{{ route('product') }}"
-                class="bg-gray-900 text-white hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-                aria-current="page">{{ __('site-nav.products') }}</a>
+    <!-- Responsive Navigation Menu -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden lg:hidden">
+        <div class="ms-3 pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('index')" :active="request()->routeIs('index')">
+                {{ __('site-nav.home') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('product')" :active="request()->routeIs('product')">
+                {{ __('site-nav.catalog') }}
+            </x-responsive-nav-link>
             @if(isset($seller_id))
-                <a href="{{ route('product.my_products') }}"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    aria-current="page">{{ __('site_profile.myProducts') }}</a>
-                <a href="{{ route('order.my_orders') }}"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                    aria-current="page">{{ __('site_profile.myOrders') }}</a>
+                <x-responsive-nav-link :href="route('product.my_products')" :active="request()->routeIs('product.my_products')">
+                    {{ __('site_profile.myProducts') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('order.my_orders')" :active="request()->routeIs('order.my_orders')">
+                    {{ __('site_profile.myOrders') }}
+                </x-responsive-nav-link>
+            @endif
+        </div>
+
+        <!-- Responsive Settings Options -->
+        <div class="pt-4 pb-1 border-t border-gray-200">
+            <div>
+                @foreach(config('app.available_locales') as $locale)
+                    <a class="inline-block pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600"
+                       href="{{ route('locale.switch', $locale) }}">{{ strtoupper($locale) }}</a>
+                @endforeach
+            </div>
+
+            <a class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600"
+               href="{{ route('cart') }}">{{ __('site-nav.cart') }} ({{ session('cart.total_quantity') ?? '0' }})</a>
+
+            @if(!isset($seller_name) && !isset($client_name))
+                <a class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600"
+                   href="{{ route('auth') }}">{{ $seller_name ?? $client_name ?? __('site-nav.signIn') }}</a>
+            @else
+                <div class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600">
+                    <span class="font-medium text-base text-gray-600">{{ $seller_name ?? $client_name ?? __('site-nav.signIn') }}</span>
+                </div>
+
+                <div class="space-y-1">
+                    <x-responsive-nav-link :href="route('auth')">
+                        {{ __('site-nav.profile') }}
+                    </x-responsive-nav-link>
+
+                    <!-- Authentication -->
+                    <form method="POST" action="{{ route('log_out') }}">
+                        @csrf
+                        <x-responsive-nav-link :href="route('log_out')"
+                            onclick="event.preventDefault(); this.closest('form').submit();">
+                            {{ __('site-nav.logout') }}
+                        </x-responsive-nav-link>
+                    </form>
+                </div>
             @endif
         </div>
     </div>

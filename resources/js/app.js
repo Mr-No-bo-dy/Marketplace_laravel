@@ -8,6 +8,7 @@ Alpine.start();
 
 window.onload = () => {
 
+    // site-nav dropdown
     if (document.getElementById("user-menu-button")) {
         let menuButton = document.getElementById("user-menu-button");
         let dropdownMenu = document.querySelector("[aria-labelledby='user-menu-button']");

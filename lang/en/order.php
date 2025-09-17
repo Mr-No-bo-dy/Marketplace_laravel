@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Cart',
+    'title' => 'Order',
     'quantity' => 'Quantity',
     'price' => 'Price:',
     'total' => 'Total:',
@@ -11,7 +11,7 @@ return [
     'email' => 'Email',
     'phone' => 'Phone',
     'confirm' => 'Confirm order',
-    'cancel' => 'Cancel',
-    'done' => 'Order has been successfully done.',
+    'back' => 'Back',
+    'done' => 'Order has been successfully made.',
     'return' => 'Return to main page',
 ];

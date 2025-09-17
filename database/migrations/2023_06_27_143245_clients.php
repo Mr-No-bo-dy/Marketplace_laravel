@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('email')->unique();
-            $table->bigInteger('phone');
+            $table->string('phone')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

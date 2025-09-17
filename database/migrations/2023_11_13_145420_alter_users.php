@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('surname')->nullable()->after('name');
-            $table->bigInteger('phone')->after('email')->unique();
+            $table->string('phone')->after('email')->unique();
         });
     }
 
@@ -22,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropColumns('surname', 'phone');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['surname', 'phone']);
+        });
     }
 };

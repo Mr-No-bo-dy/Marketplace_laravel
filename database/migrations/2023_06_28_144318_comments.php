@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id('id_comment');
-            $table->foreignId('id_client')->constrained('clients', 'id_client');
-            $table->foreignId('id_product')->constrained('products', 'id_product');
+            $table->foreignId('id_client')->constrained('clients', 'id_client')->cascadeOnDelete();
+            $table->foreignId('id_product')->constrained('products', 'id_product')->cascadeOnDelete();
             $table->longText('comment');
             $table->float('rating');
             $table->timestamps();

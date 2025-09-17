@@ -8,14 +8,14 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     */    
+     */
     public function up(): void
     {
         Schema::create('subcategories', function (Blueprint $table) {
             $table->id('id_subcategory');
-            $table->foreignId('id_category')->constrained('categories', 'id_category');
+            $table->foreignId('id_category')->constrained('categories', 'id_category')->cascadeOnDelete();
             $table->string('name');
-            $table->string('description');
+            $table->text('description');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -5,7 +5,7 @@
     <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
-                <div class="flex justify-between items-center px-8">
+                <div class="flex justify-between items-center gap-2 px-0 sm:px-4 lg:px-8">
                     <h1 class="font-bold text-2xl">{{ __('admin/marketplaces.title') }}</h1>
                     <div class="my-2">
                         <a class="inline-block rounded-md bg-green-600 px-6 py-2 text-m font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -16,17 +16,17 @@
                 <ul role="list">
                     @foreach ($marketplaces as $marketplace)
                     <li
-                        class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 @if(!is_null($marketplace->deleted_at)) bg-red-100 @endif ...">
+                        class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 even:bg-slate-100 hover:bg-slate-200 @if(!is_null($marketplace->deleted_at)) !bg-red-100 @endif">
                         <div class="sm:col-span-6">
                             <b class="text-xl">{{ $marketplace->country_code }}</b>
                             <p><b>{{ __('admin/marketplaces.country') }}:</b> {{ $marketplace->country }}</p>
                             <p><b>{{ __('admin/marketplaces.currency') }}:</b> {{ $marketplace->currency }}</p>
                         </div>
+                        @if(is_null($marketplace->deleted_at))
                         <div class="sm:col-span-1 justify-self-end self-center">
                             <a class="inline-block rounded-md bg-yellow-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400"
                                 href="{{ route('admin.marketplace.edit', $marketplace->id_marketplace) }}">{{ __('admin/marketplaces.update') }}</a>
                         </div>
-                        @if(is_null($marketplace->deleted_at))
                         <form class="sm:col-span-1 justify-self-end self-center"
                             action="{{ route('admin.marketplace.delete') }}" method="POST">
                             @method('DELETE')
@@ -39,7 +39,7 @@
                             </button>
                         </form>
                         @else
-                        <form class="sm:col-span-1 justify-self-end self-center"
+                        <form class="sm:col-span-2 justify-self-end self-center"
                             action="{{ route('admin.marketplace.restore') }}" method="POST">
                             @method('PATCH')
                             @csrf

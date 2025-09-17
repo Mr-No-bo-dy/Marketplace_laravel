@@ -10,4 +10,5 @@ return [
     'date' => 'Date:',
     'accept' => 'Accept',
     'decline' => 'Decline',
+    'empty' => 'You don\'t have any orders yet.',
 ];

@@ -166,6 +166,11 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'images.*' => [
+            'image' => 'The file at position :position must be an image.',
+            'mimes' => 'The file at position :position must be one of the following types: :values.',
+            'max' => 'The file at position :position may not be greater than :max kilobytes.',
+        ],
     ],
 
     /*

@@ -23,9 +23,9 @@ class PasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'old_password' => ['bail', 'required', 'string', 'min:8', 'max:255'],
-            'new_password' => ['bail', 'required', 'string', 'min:8', 'max:255'],
-            'new_password2' => ['bail', 'required', 'string', 'min:8', 'max:255'],
+            'old_password' => ['required', 'string', 'min:8', 'max:255'],
+            'new_password' => ['required', 'string', 'min:8', 'max:255'],
+            'new_password2' => ['required', 'string', 'min:8', 'max:255'],
         ];
     }
 

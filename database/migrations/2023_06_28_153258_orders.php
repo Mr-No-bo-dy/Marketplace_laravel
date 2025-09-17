@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id('id_order');
-            $table->foreignId('id_client')->constrained('clients', 'id_client');
-            $table->foreignId('id_seller')->constrained('sellers', 'id_seller');
+            $table->foreignId('id_client')->constrained('clients', 'id_client')->cascadeOnDelete();
+            $table->foreignId('id_seller')->constrained('sellers', 'id_seller')->cascadeOnDelete();
             $table->string('status');
-            $table->dateTime('date');
             $table->timestamps();
             $table->softDeletes();
         });

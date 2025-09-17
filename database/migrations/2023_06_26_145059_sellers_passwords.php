@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sellers_passwords', function (Blueprint $table) {
             $table->id('id_password');
-            $table->foreignId('id_seller')->constrained('sellers', 'id_seller');
+            $table->foreignId('id_seller')->constrained('sellers', 'id_seller')->cascadeOnDelete();
             $table->string('password');
             $table->timestamps();
             $table->softDeletes();

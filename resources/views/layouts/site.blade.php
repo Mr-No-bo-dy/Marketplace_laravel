@@ -28,8 +28,8 @@
 
         <!-- Page Content -->
         <main>
-            @if (isset($slot))
-                {{ $slot }}
+            @if (isset($main))
+                {{ $main }}
             @else
                 @yield('content')
             @endif

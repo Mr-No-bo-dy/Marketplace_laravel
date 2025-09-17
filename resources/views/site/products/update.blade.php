@@ -6,7 +6,7 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h1>{{ __('products.updateProduct') }}</h1>
-                <form action="{{ route('product.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('product.update', $product) }}" method="POST" enctype="multipart/form-data">
                     @method('PATCH')
                     @csrf
 
@@ -102,12 +102,15 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="sm:col-span-2">
+                        <div class="col-span-2 sm:col-span-8">
                             <label for="image"
                                 class="inline-block text-sm font-medium leading-6 text-gray-900">{{ __('products.image') }}</label>
                             <div class="mt-2">
                                 <input type="file" name="images[]" multiple>
                             </div>
+                            @error('images.*')
+                            <p class="text-red-400">{{ $message }}</p>
+                            @enderror
                             <div class="mt-2">
                                 <input id="delImgs" class="rounded-sm" type="checkbox" name="delete_media" value="1">
                                 <label for="delImgs"
@@ -117,11 +120,11 @@
                     </div>
                     <input type="hidden" name="id_product" value="{{ $product->id_product }}">
                     <button type="submit" name="updateProduct" value="1"
-                        class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        class="rounded-md bg-indigo-600 mt-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         {{ __('products.update') }}
                     </button>
-                    <span class="inline-block my-3">
-                        <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                    <span class="inline-block mt-4 ml-4">
+                        <a class="inline-block rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
                             href="{{ route('product.my_products') }}">{{ __('products.cancel') }}</a>
                     </span>
                 </form>

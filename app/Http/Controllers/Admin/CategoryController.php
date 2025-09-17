@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
-use App\Models\Admin\Category;
-use App\Models\Admin\Subcategory;
-use App\Models\Site\Product;
+use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -52,9 +50,9 @@ class CategoryController extends Controller
      * Display Category update form
      *
      * @param int $idCategory
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(int $idCategory): View
+    public function edit(int $idCategory): View|RedirectResponse
     {
         $category = Category::findOrFail($idCategory);
 
@@ -69,7 +67,7 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request): RedirectResponse
     {
-        $idCategory = $request->validate(['id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_category'];
+        $idCategory = $request->validate(['id_category' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_category'];
         $category = Category::findOrFail($idCategory);
         $category->fill($request->validated());
         if ($category->isDirty()) {
@@ -80,22 +78,15 @@ class CategoryController extends Controller
     }
 
     /**
-     * Delete Category, all its Subcategories & Products
+     * Soft-Delete Category, all its Subcategories & Products
      *
      * @param Request $request
      * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        if ($request->has('deleteCategory')) {
-            $subcategoryModel = new Subcategory();
-            $productModel = new Product();
-
-            $idCategory = $request->validate(['id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_category'];
-            $productModel->deleteCategoryProducts($idCategory);
-            $subcategoryModel->deleteCategorySubcategories($idCategory);
-            Category::findOrFail($idCategory)->delete();
-        }
+        $idCategory = $request->validate(['id_category' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_category'];
+        Category::findOrFail($idCategory)->delete();
 
         return back();
     }
@@ -108,15 +99,8 @@ class CategoryController extends Controller
      */
     public function restore(Request $request): RedirectResponse
     {
-        if ($request->has('restoreCategory')) {
-            $subcategoryModel = new Subcategory();
-            $productModel = new Product();
-
-            $idCategory = $request->validate(['id_category' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_category'];
-            $productModel->restoreCategoryProducts($idCategory);
-            $subcategoryModel->restoreCategorySubcategories($idCategory);
-            Category::onlyTrashed()->findOrFail($idCategory)->restore();
-        }
+        $idCategory = $request->validate(['id_category' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_category'];
+        Category::onlyTrashed()->findOrFail($idCategory)->restore();
 
         return back();
     }

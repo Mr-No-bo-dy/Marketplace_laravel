@@ -3,104 +3,91 @@
 namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resource\Traits\Cart;
-use App\Models\Site\Client;
-use App\Models\Site\Order;
-use App\Models\Site\OrderDetails;
-use App\Models\Site\Seller;
+use App\Http\Requests\ClientRequest;
+use App\Http\Services\CartService;
+use App\Models\Client;
+use App\Models\Order;
+use App\Models\OrderDetails;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    use Cart;
+    private CartService $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
 
     /**
      * Display a listing of the Orders to given Seller.
      *
-     * @param Request $request
      * @return View
      */
-    public function index(Request $request): View
+    public function index(): View
     {
         $orderModel = new Order();
 
-        $idSeller = $request->session()->get('id_seller');
-        $seller = Seller::findOrFail($idSeller);
-        $orders = $orderModel->readSellerOrdersWithDetails($idSeller);
+        $orders = $orderModel->readSellerOrdersWithDetails(session('id_seller'));
 
-        return view('site.seller.orders', compact('seller', 'orders'));
+        return view('site.seller.orders', compact('orders'));
     }
 
     /**
      * Show the form for creating a new Order.
      *
      * @param Request $request
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
-        $client = ['name' => '', 'surname' => '', 'email' => '', 'phone' => ''];
+        $client = new Client;
+
         $idClient = $request->session()->get('id_client');
-        if ($idClient) {
-            $client = Client::findOrFail($idClient)->toArray();
-        }
+        if ($idClient) $client = Client::findOrFail($idClient);
 
-        extract($this->getCartData($request));
+        extract($this->cartService->getCartData());
 
-        return view('site.order.index', compact('client', 'products', 'cartProductsData', 'cartMarketsData', 'totalQuantity'));
+        return view('site.order.index', compact('client', 'marketsData', 'totalQuantity'));
     }
 
     /**
      * Store a newly created Order in storage.
      *
-     * @param Request $request
+     * @param ClientRequest $request
      * @return View
      */
-    public function store(Request $request): View
+    public function store(ClientRequest $request): View
     {
-        /** Register new client or use existing:
-         * If a customer with the given email doesn't exist, create a new one;
-         * otherwise, only retrieve the ID of the existing customer.
-         */
-        $client = Client::firstOrCreate([
-            'email' => $request->validate(['email' => ['string', 'email']])['email'],
-        ],
-        [
-            'phone' => $request->validate(['phone' => ['int', 'regex:/^[0-9]{10,14}$/']])['phone'],
-            'name' => $request->validate(['name' => ['string', 'max:255']])['name'],
-            'surname' => $request->validate(['surname' => ['string', 'max:255']])['surname'],
-        ]);
-        // Additionally, if the existing customer's data from the form is different, update it in the DB.
-        $client->email = $request->validate(['email' => ['string', 'email']])['email'];
-        $client->phone = $request->validate(['phone' => ['int', 'regex:/^[0-9]{10,14}$/']])['phone'];
-        $client->name = $request->validate(['name' => ['string', 'max:255']])['name'];
-        $client->surname = $request->validate(['surname' => ['string', 'max:255']])['surname'];
-        if ($client->isDirty()) {
-            $client->save();
-        }
+        $idClient = $this->saveClient($request);
 
-        // Forming Order's data
         $cartData = $request->session()->get('cart');
-        if (!empty($cartData) && $request->has('makeOrder')) {
-            foreach ($cartData['products'] as $product) {
-                $orderData = [
-                    'id_client' => $client->id_client,
-                    'id_seller' => $product['id_seller'],
-                    'status' => 'new',
-                    'date' => now(),
-                ];
-                $idNewOrder = Order::create($orderData)->id_order;
+        if (!empty($cartData) && !empty($cartData['products'])) {
+            $productsBySeller = collect($cartData['products'])->groupBy('id_seller');
+            foreach ($productsBySeller as $idSeller => $products) {
+                // Saving Order
+                $idOrder = Order::create([
+                    'id_client' => $idClient,
+                    'id_seller' => $idSeller,
+                    'status' => 'pending',
+                ])->id_order;
 
-                $orderDetailsData = [
-                    'id_order' => $idNewOrder,
-                    'id_product' => $product['id_product'],
-                    'count' => $product['quantity'],
-                    'total' => $product['total'],
-                ];
-                OrderDetails::create($orderDetailsData);
+                // Saving Order's Details
+                $orderDetails = $products->map(function ($product) use ($idOrder) {
+                    return [
+                        'id_order' => $idOrder,
+                        'id_product' => $product['id_product'],
+                        'count' => $product['quantity'],
+                        'total' => $product['cost'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->all();
+                OrderDetails::insert($orderDetails);
             }
+
             $request->session()->forget('cart');
         }
 
@@ -108,18 +95,37 @@ class OrderController extends Controller
     }
 
     /**
-     * Update active Orders by given Seller.
+     * Register new client or update existing.
+     *
+     * @param ClientRequest $request
+     * @return int
+     */
+    public function saveClient(ClientRequest $request): int
+    {
+        $validated = $request->validated();
+
+        $idClient = session('id_client');
+        if ($idClient) {
+            Client::find($idClient)->update($validated);
+            return $idClient;
+        }
+
+        return Client::create($validated)->id_client;
+    }
+
+    /**
+     * Update active Orders to specific Seller.
      *
      * @param Request $request
      * @return RedirectResponse
      */
     public function update(Request $request): RedirectResponse
     {
-        $idOrder = $request->validate(['id_order' => ['int']])['id_order'];
+        $idOrder = $request->validate(['id_order' => ['bail', 'required', 'int', 'exists:orders']])['id_order'];
         if ($request->has('order_accept')) {
             Order::findOrFail($idOrder)->update(['status' => 'processed']);
         } elseif ($request->has('order_decline')) {
-            Order::findOrFail($idOrder)->update(['status' => 'declined']);
+            Order::findOrFail($idOrder)->update(['status' => 'canceled']);
         }
 
         return redirect()->route('order.my_orders');

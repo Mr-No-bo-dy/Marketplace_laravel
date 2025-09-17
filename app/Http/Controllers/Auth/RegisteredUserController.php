@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\User;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'surname' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'phone' => ['required', 'int', 'regex:/^[0-9]{10,14}$/'],
+            'phone' => ['required', 'string', 'regex:/^(\+\d{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)([0-9][\s-]?){6}[0-9]$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

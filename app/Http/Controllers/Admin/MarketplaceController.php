@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MarketplaceRequest;
-use App\Models\Admin\Marketplace;
-use App\Models\Site\Product;
-use App\Models\Site\Seller;
+use App\Models\Marketplace;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -52,9 +50,9 @@ class MarketplaceController extends Controller
      * Display Marketplace update form
      *
      * @param int $idMarketplace
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(int $idMarketplace): View
+    public function edit(int $idMarketplace): View|RedirectResponse
     {
         $marketplace = Marketplace::findOrFail($idMarketplace);
 
@@ -69,7 +67,7 @@ class MarketplaceController extends Controller
      */
     public function update(MarketplaceRequest $request): RedirectResponse
     {
-        $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_marketplace'];
+        $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_marketplace'];
         $marketplace = Marketplace::findOrFail($idMarketplace);
         $marketplace->fill($request->validated());
         if ($marketplace->isDirty()) {
@@ -87,15 +85,8 @@ class MarketplaceController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        if ($request->has('deleteMarketplace')) {
-            $sellerModel = new Seller();
-            $productModel = new Product();
-
-            $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_marketplace'];
-            $idsSeller = $sellerModel->deleteMarketplaceSellers($idMarketplace);
-            $productModel->deleteSellersProducts($idsSeller);
-            Marketplace::findOrFail($idMarketplace)->delete();
-        }
+        $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_marketplace'];
+        Marketplace::findOrFail($idMarketplace)->delete();
 
         return back();
     }
@@ -108,15 +99,8 @@ class MarketplaceController extends Controller
      */
     public function restore(Request $request): RedirectResponse
     {
-        if ($request->has('restoreMarketplace')) {
-            $sellerModel = new Seller();
-            $productModel = new Product();
-
-            $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'integer', 'min: 1', 'max:9223372036854775807']])['id_marketplace'];
-            Marketplace::onlyTrashed()->findOrFail($idMarketplace)->restore();
-            $idsSeller = $sellerModel->restoreMarketplaceSellers($idMarketplace);
-            $productModel->restoreSellerProducts($idsSeller);
-        }
+        $idMarketplace = $request->validate(['id_marketplace' => ['bail', 'required', 'integer', 'min:1', 'max:999999999']])['id_marketplace'];
+        Marketplace::onlyTrashed()->findOrFail($idMarketplace)->restore();
 
         return back();
     }

@@ -50,11 +50,11 @@
                     </div>
                     <input type="hidden" name="id_marketplace" value="{{ $marketplace->id_marketplace }}">
                     <button type="submit" name="updateMarketplace" value="1"
-                        class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        class="rounded-md bg-indigo-600 mt-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         {{ __('admin/marketplaces.update') }}
                     </button>
-                    <span class="inline-block my-3">
-                        <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                    <span class="inline-block mt-4 ml-4">
+                        <a class="inline-block rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
                             href="{{ route('admin.marketplace') }}">{{ __('admin/marketplaces.cancel') }}</a>
                     </span>
                 </form>

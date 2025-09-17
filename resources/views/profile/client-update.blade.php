@@ -7,7 +7,7 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h1 class="text-xl">{{ __('site_profile.editProfile') }}</h1>
-                <form action="{{ route('client.update') }}" method="POST">
+                <form action="{{ route('client.update', $client) }}" method="POST">
                     @method('PATCH')
                     @csrf
 
@@ -74,11 +74,11 @@
                     </div>
 
                     <button type="submit" name="updateClient" value="1"
-                        class="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        class="rounded-md bg-indigo-600 mt-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         {{ __('site_profile.update') }}
                     </button>
-                    <span class="inline-block my-3">
-                        <a class="inline-block rounded-md bg-gray-600 m-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+                    <span class="inline-block mt-4 ml-4">
+                        <a class="inline-block rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
                             href="{{ route('client.personal') }}">{{ __('site_profile.cancel') }}</a>
                     </span>
                     @if (session('status') === 'profileUpdated')
@@ -97,12 +97,12 @@
 </div>
 
 {{--Change Password--}}
-<div class="py-6">
+<div class="pt-6">
     <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h1 class="text-xl">{{ __('site_profile.changePassword') }}</h1>
-                <form action="{{ route('client.updatePass') }}" method="POST">
+                <form action="{{ route('client.updatePass', $client) }}" method="POST">
                     @method('PATCH')
                     @csrf
 
@@ -143,7 +143,7 @@
                     </div>
 
                     <button type="submit" name="changePassword" value="1"
-                            class="rounded-md bg-yellow-400 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400">
+                            class="rounded-md bg-yellow-400 mt-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-yellow-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400">
                         {{ __('site_profile.update') }}
                     </button>
                     @if (session('status') === 'passwordUpdated')
@@ -186,7 +186,7 @@
                     </div>
 
                     <button type="submit" name="deleteClient" value="1"
-                            class="rounded-md bg-red-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            class="rounded-md bg-red-600 mt-4 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
                         {{ __('site_profile.deleteAccount') }}
                     </button>
                 </form>

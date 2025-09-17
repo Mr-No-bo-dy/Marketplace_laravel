@@ -5,24 +5,35 @@
     <div class="max-w-7xl mx-auto sm:px-4 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
-                <div class="flex justify-between items-center px-8">
+                <div class="flex justify-between items-center gap-2 px-2 sm:px-4 lg:px-8">
                     <h1 class="font-bold text-2xl">{{ __('seller_orders.title') }}</h1>
                 </div>
 
                 <ul role="list">
-                    @foreach ($orders as $order)
-                    <li class="group/item grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 py-4 sm:px-4 lg:px-8 hover:bg-slate-100 @if($order->status == 'new') bg-green-100 @endif ...">
-                        <div class="sm:col-span-7">
+                    @forelse ($orders as $order)
+                    <li class="group/item grid grid-cols-[2fr_1fr] gap-4 mt-2 py-4 px-2 sm:px-4 lg:px-8 hover:bg-slate-200
+                        @switch($order->status)
+                            @case('pending')
+                                bg-yellow-100
+                                @break
+                            @case('canceled')
+                                bg-gray-200
+                                @break
+                            @case('completed')
+                                bg-green-100
+                                @break
+                        @endswitch">
+                        <div>
                             <p><b>{{ __('seller_orders.client') }}</b>
                                 {{ $order->client_surname . ' ' . $order->client_name }}</p>
                             <p><b>{{ __('seller_orders.idProduct') }}</b> {{ $order->id_product }}</p>
                             <p><b>{{ __('seller_orders.count') }}</b> {{ $order->count }}</p>
                             <p><b>{{ __('seller_orders.total') }}</b> {{ $order->total }}</p>
                             <p><b>{{ __('seller_orders.status') }}</b> {{ $order->status }}</p>
-                            <p><b>{{ __('seller_orders.date') }}</b> {{ $order->date }}</p>
+                            <p><b>{{ __('seller_orders.date') }}</b> {{ $order->created_at }}</p>
                         </div>
                         @if($order->status != 'processed')
-                        <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('order.my_orders') }}"
+                        <form class="justify-self-end self-center" action="{{ route('order.my_orders') }}"
                             method="POST">
                             @method('PATCH')
                             @csrf
@@ -34,7 +45,7 @@
                             </button>
                         </form>
                         @else
-                        <form class="sm:col-span-1 justify-self-end self-center" action="{{ route('order.my_orders') }}"
+                        <form class="justify-self-end self-center" action="{{ route('order.my_orders') }}"
                             method="POST">
                             @method('PATCH')
                             @csrf
@@ -47,7 +58,9 @@
                         </form>
                         @endif
                     </li>
-                    @endforeach
+                    @empty
+                        <p class="text-center">{{ __('seller_orders.empty') }}</p>
+                    @endforelse
                 </ul>
             </div>
         </div>
